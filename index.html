@@ -193,7 +193,7 @@ table.main-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58,
 .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.75); z-index:1000; align-items:center; justify-content:center; backdrop-filter:blur(3px); }
 .modal-overlay.active { display:flex; }
 
-/* ── YENİLENEN CARİ DETAY MODAL (ORİJİNAL ÇİFT SÜTUN DÜZENİ) ── */
+/* ── CARİ DETAY MODAL (ORİJİNAL ÇİFT SÜTUN DÜZENİ) ── */
 .detay-modal {
   background:var(--bg); border:2px solid var(--border2); border-radius:8px;
   width:96vw; max-width:1100px; height:90vh;
@@ -216,7 +216,7 @@ table.main-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58,
 /* Çift Sütun Gövde Yapısı */
 .detay-main-layout {
   display:grid;
-  grid-template-columns: 1fr 340px; /* Sol Tablo, Sağ Panel (Tıpkı C# programı gibi) */
+  grid-template-columns: 1fr 340px;
   flex:1;
   overflow:hidden;
   background:var(--bg3);
@@ -252,7 +252,7 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
 .dcol-tahsilat { width:95px; text-align:right; font-family:'Roboto Mono',monospace; }
 .dcol-bakiye { width:105px; text-align:right; font-family:'Roboto Mono',monospace; }
 
-/* Sağ Taraf: Sabit/Dinamik İşlem Paneli (C# Görseliyle Aynı Mantık) */
+/* Sağ Taraf: İşlem Paneli */
 .detay-right-pane {
   background:var(--bg2);
   padding:16px;
@@ -262,9 +262,8 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
   overflow-y:auto;
 }
 
-/* Yenilenen Kırmızı/Yeşil Işıklı İşlem Paneli Kutusu */
 .islem-panel {
-  display:none; /* Sadece F5/F6 basınca veya butonla görünür */
+  display:none;
   flex-direction:column;
   background:var(--bg3);
   border-radius:6px;
@@ -273,7 +272,6 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
   transition: all 0.2s ease;
 }
 .islem-panel.active { display:flex; }
-/* Borç modunda kırmızı, Tahsilatta yeşil kalın çerçeve parlaması */
 .islem-panel.borc-mode { border: 2.5px solid var(--red); box-shadow: 0 0 14px rgba(239,83,80,0.3); }
 .islem-panel.tahsilat-mode { border: 2.5px solid var(--green); box-shadow: 0 0 14px rgba(67,160,71,0.3); }
 
@@ -628,14 +626,11 @@ async function sbDelete(tablo, params) {
 }
 
 // ═══════════════════════════════════════════════════════
-// ŞİFRE (localStorage)
+// ŞİFRE
 // ═══════════════════════════════════════════════════════
 function getSifre() { return localStorage.getItem('mmk_sifre') || '1234'; }
 function setSifre(s) { localStorage.setItem('mmk_sifre', s); }
 
-// ═══════════════════════════════════════════════════════
-// LOGIN
-// ═══════════════════════════════════════════════════════
 function loginDene() {
   const v = document.getElementById('loginSifre').value;
   if (v === getSifre()) {
@@ -678,9 +673,7 @@ function loading(aktif, metin='Yükleniyor...') {
   el.classList.toggle('active', aktif);
 }
 
-// ═══════════════════════════════════════════════════════
-// SAAT
-// ═══════════════════════════════════════════════════════
+// ── SAAT ──
 function saatBaslat() {
   function g() {
     const n = new Date(), f = d=>String(d).padStart(2,'0');
@@ -690,9 +683,7 @@ function saatBaslat() {
   g(); setInterval(g,1000);
 }
 
-// ═══════════════════════════════════════════════════════
-// TAKVİM
-// ═══════════════════════════════════════════════════════
+// ── TAKVİM ──
 let takvimYil=new Date().getFullYear(), takvimAy=new Date().getMonth();
 const AYLAR=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
 function takvimCiz(y,m) {
@@ -709,9 +700,7 @@ function takvimCiz(y,m) {
 function takvimGeri(){if(takvimAy===0){takvimAy=11;takvimYil--;}else takvimAy--;takvimCiz(takvimYil,takvimAy);}
 function takvimIleri(){if(takvimAy===11){takvimAy=0;takvimYil++;}else takvimAy++;takvimCiz(takvimYil,takvimAy);}
 
-// ═══════════════════════════════════════════════════════
-// YARDIMCI FONKSİYONLAR
-// ═══════════════════════════════════════════════════════
+// ── YARDIMCILAR ──
 function fmt(v){return Number(v).toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function renkSinifi(b){return b<0?'color-blue':b>=1000?'color-red':'color-black';}
 function bugunStr(){const n=new Date(),f=d=>String(d).padStart(2,'0');return `${f(n.getDate())}.${f(n.getMonth()+1)}.${n.getFullYear()}`;}
@@ -826,7 +815,6 @@ function araKeyDown(e) {
   }
 }
 
-// ── CARİ EKLE ──
 async function cariUnvanKeyDown(e) {
   if (e.key!=='Enter') return;
   const unvan = document.getElementById('txtCariUnvan').value.trim().toUpperCase();
@@ -845,7 +833,6 @@ async function cariUnvanKeyDown(e) {
   loading(false);
 }
 
-// ── CARİ SİL ──
 async function cariSil() {
   if (!seciliCariKodlar.length) { toast('Önce en az bir cari seçin!',true); return; }
   if (!confirm(`${seciliCariKodlar.length} adet cari kartı silinecektir. Onaylıyor musunuz?`)) return;
@@ -906,7 +893,7 @@ async function hizliIslemYap() {
 }
 
 // ═══════════════════════════════════════════════════════
-// CARİ DETAY (C# PROGRAMINIZDAKİ MODELDEN UYARLANAN)
+// CARİ DETAY
 // ═══════════════════════════════════════════════════════
 let aktifDetayKod=null;
 let seciliDetayIds=[];
@@ -983,7 +970,6 @@ async function detayKapat() {
 }
 function detayOverlayClick(e){if(e.target===document.getElementById('detayOverlay'))detayKapat();}
 
-// ── SAĞ SABİT PANEL TETİKLEYİCİLERİ (F5 / F6) ──
 function borcPanelAc(){
   const p=document.getElementById('islemPanel');
   p.className='islem-panel borc-mode active';
@@ -1039,7 +1025,6 @@ async function hareketSil(){
   loading(false);
 }
 
-// ── DETAY EXCEL / PDF ──
 async function detayExcel(){
   const hareketler=await sbGet('hareketler',`cari_kod=eq.${aktifDetayKod}&order=id.asc`);
   const c=cariListesi.find(x=>x.kod==aktifDetayKod);
@@ -1060,7 +1045,7 @@ async function detayPdf(){
 }
 
 // ═══════════════════════════════════════════════════════
-// ANA EXCEL / GÜNLÜK RAPOR
+// ANA EXCEL / GÜNLÜK RAPOR (YENİLENDİ — TARİH SEÇİMLİ)
 // ═══════════════════════════════════════════════════════
 function excelAktar(){
   let csv='Kod;Ünvan;Bakiye\n';
@@ -1070,23 +1055,23 @@ function excelAktar(){
 }
 
 async function gunlukRapor(){
-  const tarih=prompt('Rapor tarihi (gg.aa.yyyy):',bugunStr());
-  if(!tarih)return;
+  const tarih=prompt('Raporunu görmek istediğiniz tarihi girin (gg.aa.yyyy):', bugunStr());
+  if(!tarih || tarih.trim()==="") return;
   loading(true,'Rapor hazırlanıyor...');
   try {
     const hareketler=await sbGet('hareketler','order=cari_kod.asc');
     let satirlar='',tB=0,tT=0,var_=false;
     hareketler.forEach(r=>{
-      if(r.tarih.startsWith(tarih)){
+      if(r.tarih.startsWith(tarih.trim())){
         var_=true; tB+=Number(r.borc); tT+=Number(r.tahsilat);
         const c=cariListesi.find(x=>x.kod==r.cari_kod);
         const cls=Number(r.borc)>0?'color:#ff4444':'color:#43a047';
         satirlar+=`<tr style="${cls}"><td>${r.cari_kod}</td><td>${c?.unvan||''}</td><td>${r.aciklama}</td><td style="text-align:right">${fmt(r.borc)}</td><td style="text-align:right">${fmt(r.tahsilat)}</td></tr>`;
       }
     });
-    if(!var_){toast(`${tarih} tarihinde hareket yok`,true);loading(false);return;}
+    if(!var_){toast(`${tarih} tarihine ait hiçbir hareket bulunamadı!`,true);loading(false);return;}
     document.getElementById('raporBody').innerHTML=`
-      <p style="color:var(--text-muted);margin-bottom:12px;font-size:12px">Tarih: <strong style="color:var(--white)">${tarih}</strong></p>
+      <p style="color:var(--text-muted);margin-bottom:12px;font-size:12px">Sorgulanan Tarih: <strong style="color:var(--white)">${tarih}</strong></p>
       <table style="width:100%;border-collapse:collapse">
         <thead><tr style="background:var(--header-bg)">
           <th style="padding:8px;border:1px solid var(--border);font-family:Oswald;font-size:11px;color:var(--blue-bright)">KOD</th>
@@ -1097,7 +1082,7 @@ async function gunlukRapor(){
         </tr></thead>
         <tbody>${satirlar}</tbody>
         <tfoot><tr style="background:var(--panel);font-weight:700">
-          <td colspan="3" style="padding:8px;border:1px solid var(--border);text-align:right;color:var(--white)">GÜNLÜK TOPLAM:</td>
+          <td colspan="3" style="padding:8px;border:1px solid var(--border);text-align:right;color:var(--white)">TOPLAM:</td>
           <td style="padding:8px;border:1px solid var(--border);text-align:right;color:#ff4444;font-family:'Roboto Mono'">${fmt(tB)}</td>
           <td style="padding:8px;border:1px solid var(--border);text-align:right;color:#43a047;font-family:'Roboto Mono'">${fmt(tT)}</td>
         </tr></tfoot>
@@ -1110,52 +1095,90 @@ async function gunlukRapor(){
 function raporKapat(){document.getElementById('raporOverlay').classList.remove('active');}
 
 // ═══════════════════════════════════════════════════════
-// MANUEL JSON YEDEK SİSTEMLERİ
+// MANUEL JSON YEDEKLEME VE PANEL SİSTEMLERİ (YENİ)
 // ═══════════════════════════════════════════════════════
 async function veritabaniYedekAl() {
   loading(true, 'Yedek dosyası hazırlanıyor...');
   try {
     const cariler = await sbGet('cariler', 'order=kod.asc');
     const hareketler = await sbGet('hareketler', 'order=id.asc');
+    
     const yedekData = {
       olusturmaTarihi: new Date().toLocaleString('tr-TR'),
       program: 'MMK Veresiye Web',
       cariler: cariler,
       hareketler: hareketler
     };
+
     const blob = new Blob([JSON.stringify(yedekData, null, 2)], { type: 'application/json' });
     const a = document.createElement('a');
     const d = new Date();
     a.href = URL.createObjectURL(blob);
     a.download = `mmk_veresiye_yedek_${d.getDate()}_${d.getMonth()+1}_${d.getFullYear()}.json`;
     a.click();
-    toast('✓ Bulut yedeği JSON olarak indirildi');
-  } catch(err) { toast('Yedek alma hatası: ' + err.message, true); }
+    toast('✓ Supabase veritabanı yedeği bilgisayarınıza indirildi.');
+  } catch(err) {
+    toast('Yedek alma sırasında hata: ' + err.message, true);
+  }
   loading(false);
 }
 
-function veritabaniYedekYukleTetikle() { document.getElementById('yedekDosyaSec').click(); }
+function veritabaniYedekYukleTetikle() {
+  document.getElementById('yedekDosyaSec').click();
+}
 
 function yedekDosyasiniOku(event) {
-  const dosya = event.target.files[0]; if (!dosya) return;
+  const dosya = event.target.files[0];
+  if (!dosya) return;
+  
   const reader = new FileReader();
   reader.onload = async function(e) {
     try {
       const yedek = JSON.parse(e.target.result);
-      if (!yedek.cariler || !yedek.hareketler) throw new Error('Geçersiz şablon yapısı.');
-      if (!confirm(`Dosyadaki ${yedek.cariler.length} cari ve ${yedek.hareketler.length} hareket yüklensin mi?`)) return;
+      if (!yedek.cariler || !yedek.hareketler) {
+        throw new Error('Dosya yapısı geçerli bir MMK Veresiye yedeği değil.');
+      }
+      
+      const onay = confirm(`Bu işlem Supabase üzerindeki mevcut verilerinizin üzerine yazacaktır.\n\nDosyadaki ${yedek.cariler.length} cari ve ${yedek.hareketler.length} hareket yüklensin mi?`);
+      if (!onay) return;
 
-      loading(true, 'Yedek geri yükleniyor...');
+      loading(true, 'Yedek geri yükleniyor (Eski veriler temizleniyor)...');
+      
+      // Çakışma olmaması için mevcut tüm verileri siliyoruz
+      try { await sbDelete('hareketler', 'id=gt.0'); } catch(e){}
+      try { await sbDelete('cariler', 'kod=gt.0'); } catch(e){}
+
+      // Carileri sırayla yükle
       for(let cari of yedek.cariler) {
-         await sbPost('cariler', { kod: parseInt(cari.kod), unvan: cari.unvan, bakiye: parseFloat(cari.bakiye) });
+        await sbPost('cariler', {
+          kod: parseInt(cari.kod),
+          unvan: cari.unvan,
+          bakiye: parseFloat(cari.bakiye)
+        });
       }
+
+      // Hareketleri sırayla yükle
       for(let hkt of yedek.hareketler) {
-         await sbPost('hareketler', { cari_kod: parseInt(hkt.cari_kod), tarih: hkt.tarih, aciklama: hkt.aciklama, borc: parseFloat(hkt.borc), tahsilat: parseFloat(hkt.tahsilat) });
+        await sbPost('hareketler', {
+          cari_kod: parseInt(hkt.cari_kod),
+          tarih: hkt.tarih,
+          aciklama: hkt.aciklama,
+          borc: parseFloat(hkt.borc),
+          tahsilat: parseFloat(hkt.tahsilat)
+        });
       }
-      toast('✓ Yedek başarıyla yüklendi!');
-      await carileritabloyaYukle(); genelBakiyeHesapla(); hizliCariListesiGuncelle();
-    } catch(err) { toast('Yükleme hatası: ' + err.message, true); }
-    finally { loading(false); document.getElementById('yedekDosyaSec').value = ''; }
+
+      toast('✓ Yedek başarıyla Supabase\'e yüklendi ve eşitlendi!');
+      await carileritabloyaYukle();
+      genelBakiyeHesapla();
+      hizliCariListesiGuncelle();
+      otomatikKodVer();
+    } catch(err) {
+      toast('Yedek yükleme hatası: ' + err.message, true);
+    } finally {
+      loading(false);
+      document.getElementById('yedekDosyaSec').value = '';
+    }
   };
   reader.readAsText(dosya);
 }
@@ -1167,15 +1190,15 @@ function menuDosya(){
   else if(s==='2')window.close();
 }
 function menuAraclar(){
-  const s=prompt('Araçlar:\n1) Günlük Rapor (F3)\n2) Şifre Değiştir\n3) Veritabanını Yedekle (JSON İndir)\n4) Yedeği Geri Yükle (JSON Seç)\nSeçin:');
+  const s=prompt('Araçlar:\n1) Tarih Seçimli Günlük Rapor (F3)\n2) Giriş Şifresini Değiştir\n3) Veritabanını Yedekle (JSON İndir)\n4) Yedeği Geri Yükle (JSON Seç)\nSeçin:');
   if(s==='1')gunlukRapor();
   else if(s==='2'){const y=prompt('Yeni şifre:');if(y&&y.trim()){setSifre(y.trim());toast('Şifre güncellendi!');}}
   else if(s==='3')veritabaniYedekAl();
   else if(s==='4')veritabaniYedekYukleTetikle();
 }
-function hakkinda(){alert('MMK Veresiye Kısayolları:\n\nF3 — Günlük Rapor\nF5 — Borç Ekle (Detayda)\nF6 — Tahsilat Ekle (Detayda)\nESC — Kapat / Paneli Gizle\nENTER — Kaydet / Geçiş\nCtrl+Tıkla — Çoklu satır seç (Listede)\nOk Tuşları ↑↓ — Listede gezin');}
+function hakkinda(){alert('MMK Veresiye Kısayolları:\n\nF3 — Günlük Rapor (Tarih Seçimli)\nF5 — Borç Ekle (Detayda)\nF6 — Tahsilat Ekle (Detayda)\nESC — Kapat / Paneli Gizle\nENTER — Kaydet / Geçiş\nCtrl+Tıkla — Çoklu satır seç (Listede)\nOk Tuşları ↑↓ — Listede gezin');}
 
-// ── GLOBAL KLAVYE KISAYOLLARI ──
+// ── GLOBAL KLAVYE ──
 function globalKeyDown(e){
   if(e.key==='F3'){e.preventDefault();gunlukRapor();return;}
   const detayAcik=document.getElementById('detayOverlay').classList.contains('active');
