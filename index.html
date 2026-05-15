@@ -75,14 +75,22 @@ body {
 /* ── LEFT ── */
 .left-pane { display:flex; flex-direction:column; border-right:2px solid var(--border); overflow:hidden; }
 
-/* ── TOOLBAR ── */
+/* ── TOOLBAR (PUNTOLAR BÜYÜTÜLDÜ VE BEYAZ YAPILDI) ── */
 .toolbar {
   background:var(--bg2);
   border-bottom:1px solid var(--border);
   padding:8px 12px;
-  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap;
 }
-.toolbar-label { font-family:'Oswald',sans-serif; font-size:13px; font-weight:600; color:var(--text-muted); letter-spacing:1px; text-transform:uppercase; }
+.toolbar-label { 
+  font-family:'Oswald',sans-serif; 
+  font-size:16px; 
+  font-weight:700; 
+  color:#ffffff !important; 
+  letter-spacing:1px; 
+  text-transform:uppercase;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
 .tb-input {
   background:var(--input-bg); border:1px solid var(--input-border); border-radius:4px;
   padding:6px 12px; color:var(--white); font-family:'Exo 2',sans-serif;
@@ -91,7 +99,7 @@ body {
 .tb-input:focus { border-color:var(--accent); box-shadow:0 0 0 2px rgba(33,150,243,.2); }
 .tb-input::placeholder { color:var(--text-muted); }
 #txtCariKod { width:55px; text-align:center; }
-#txtCariUnvan { width:180px; }
+#txtCariUnvan { width:200px; }
 #txtAra { width:160px; }
 
 .btn { padding:6px 16px; border:none; border-radius:4px; font-family:'Oswald',sans-serif; font-size:13px; font-weight:600; letter-spacing:.5px; cursor:pointer; transition:all .2s; text-transform:uppercase; }
@@ -100,7 +108,7 @@ body {
 .btn-secondary { background:var(--panel2); color:var(--text); border:1px solid var(--border2); }
 .btn-secondary:hover { background:var(--border2); }
 
-/* ── TABLE ── */
+/* ── TABLE (ARALIK DARALTILDI, PUNTOLAR BÜYÜTÜLDÜ VE KALINLAŞTIRILDI) ── */
 .table-wrap { flex:1; overflow-y:auto; overflow-x:hidden; position:relative; }
 .table-wrap::-webkit-scrollbar { width:8px; }
 .table-wrap::-webkit-scrollbar-track { background:var(--bg3); }
@@ -109,21 +117,32 @@ table.main-table { width:100%; border-collapse:collapse; table-layout:fixed; }
 table.main-table thead { position:sticky; top:0; z-index:10; }
 table.main-table thead th {
   background:var(--header-bg); border:1px solid var(--border);
-  padding:9px 12px; text-align:left; font-family:'Oswald',sans-serif;
-  font-size:14px; font-weight:600; color:var(--blue-bright); letter-spacing:.8px; text-transform:uppercase; user-select:none;
+  padding:10px 12px; text-align:left; font-family:'Oswald',sans-serif;
+  font-size:15px; font-weight:700; color:var(--blue-bright); letter-spacing:.8px; text-transform:uppercase; user-select:none;
 }
 table.main-table tbody tr { border-bottom:1px solid rgba(30,58,95,.5); cursor:pointer; transition:background .1s; }
 table.main-table tbody tr:hover { background:var(--row-hover); }
 table.main-table tbody tr.selected { background:var(--row-selected); }
-table.main-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58,95,.3); font-size:15px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+table.main-table tbody td { 
+  padding:11px 12px; 
+  border-right:1px solid rgba(30,58,95,.3); 
+  font-size:17px; 
+  font-weight:800; 
+  white-space:nowrap; 
+  overflow:hidden; 
+  text-overflow:ellipsis; 
+}
+
+/* Sütun genişlikleri ayarlanarak aradaki devasa boşluk daraltıldı */
 .col-arrow { width:22px; }
-.col-kod { width:60px; }
-.col-unvan { width:auto; }
-.col-tutar { width:110px; text-align:right; font-family:'Roboto Mono',monospace; }
+.col-kod { width:90px; }
+.col-unvan { width:450px; } /* Maksimum genişlik sınırı verilerek tutar sola yaklaştırıldı */
+.col-tutar { width:160px; text-align:right; font-family:'Roboto Mono',monospace; }
+
 .color-red { color:var(--cell-red)!important; }
 .color-blue { color:var(--cell-blue)!important; }
 .color-black { color:var(--cell-black)!important; }
-.row-arrow { color:var(--blue-bright); font-size:10px; }
+.row-arrow { color:var(--blue-bright); font-size:12px; }
 
 /* ── BOTTOM BAR ── */
 .bottom-bar {
@@ -158,7 +177,7 @@ table.main-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58,
 .takvim-cell.other-month { color:var(--text-muted); }
 .takvim-today-label { padding:4px 8px; font-size:10px; color:var(--text-muted); border-top:1px solid var(--border); text-align:center; font-family:'Roboto Mono',monospace; }
 
-/* ── HIZLI İŞLEM ARATMA (GÜNCELLENDİ) ── */
+/* ── HIZLI İŞLEM PANELİ ── */
 .hizli-box { background:var(--bg3); border:1px solid var(--border); border-radius:6px; overflow:hidden; }
 .hizli-header { background:var(--header-bg); padding:7px 12px; display:flex; align-items:center; justify-content:space-between; }
 .hizli-title { font-family:'Oswald',sans-serif; font-size:15px; font-weight:600; color:var(--blue-bright); letter-spacing:1px; }
@@ -292,7 +311,7 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
 .btn-login:hover { background:linear-gradient(135deg,var(--blue2),var(--blue-bright)); }
 .login-error { color:var(--red); font-size:11px; margin-top:8px; min-height:16px; }
 
-/* ── MODERN YENİ RAPOR VE YEDEK PANELLERİ (F3 - F4) ── */
+/* ── MODERN RAPOR VE YEDEK PANELLERİ ── */
 .rapor-modal {
   background:var(--bg2); border:2px solid var(--border2); border-radius:8px;
   width:90vw; max-width:900px; max-height:85vh;
@@ -385,7 +404,7 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
       <span class="toolbar-label">Cari Ünvan</span>
       <input class="tb-input" id="txtCariKod" placeholder="Kod" readonly>
       <input class="tb-input" id="txtCariUnvan" placeholder="Müşteri adı girin..." onkeydown="cariUnvanKeyDown(event)">
-      <span class="toolbar-label" style="margin-left:4px">Müşteri Ara</span>
+      <span class="toolbar-label" style="margin-left:8px">Müşteri Ara</span>
       <input class="tb-input" id="txtAra" placeholder="Ara..." oninput="araFilter()">
       <button class="btn btn-danger" onclick="cariSil()">CARİ SİL</button>
     </div>
@@ -665,7 +684,7 @@ function toast(msg,hata=false){
 }
 
 // ═══════════════════════════════════════════════════════
-// CARİ LİSTESİ VE OK TUŞLARI DÜZELTMESİ (DÜZELTME 1)
+// CARİ LİSTESİ VE OK TUŞLARI
 // ═══════════════════════════════════════════════════════
 let cariListesi = [];
 let seciliCariKodlar = [];
@@ -780,7 +799,7 @@ async function bakiyeGuncelleDB(kod) {
 }
 
 // ═══════════════════════════════════════════════════════
-// HIZLI İŞLEM DİNAMİK ARAMA VE ENTEGRASYON (DÜZELTME 2)
+// HIZLI İŞLEM DİNAMİK ARAMA VE ENTEGRASYON
 // ═══════════════════════════════════════════════════════
 let hizliSeciliCariKod = null;
 let hizliAramaAktifIndex = -1;
@@ -1051,7 +1070,7 @@ function excelAktar(){
 }
 
 // ═══════════════════════════════════════════════════════
-// F3 GÜNLÜK RAPOR - TAKVİMLİ PANEL (DÜZELTME 4)
+// F3 GÜNLÜK RAPOR - TAKVİMLİ PANEL
 // ═══════════════════════════════════════════════════════
 function gunlukRaporEkraniAc() {
   const d = new Date();
@@ -1074,7 +1093,6 @@ async function gunlukRaporHesaplaVeListele() {
   const secilenTarihRaw = document.getElementById('raporTarihGirdisi').value;
   if(!secilenTarihRaw) return;
   
-  // yyyy-mm-dd formatını gg.aa.yyyy formatına çeviriyoruz
   const parca = secilenTarihRaw.split('-');
   const hedefFormat = `${parca[2]}.${parca[1]}.${parca[0]}`;
   
@@ -1110,7 +1128,7 @@ async function gunlukRaporHesaplaVeListele() {
           <thead>
             <tr style="background:var(--header-bg)">
               <th style="padding:8px; border:1px solid var(--border); font-family:Oswald; text-align:left; color:var(--blue-bright)">KOD</th>
-              <th style="padding:8px; border:1px solid var(--border); font-family:Oswald; text-align:left; color:var(--blue-bright)">MÜŞTERİ</th>
+              <th style="padding:8px; border:1px solid var(--border); font-family:Oswald; text-align:left; color:var(--blue-bright)">MÜŞTERI</th>
               <th style="padding:8px; border:1px solid var(--border); font-family:Oswald; text-align:left; color:var(--blue-bright)">AÇIKLAMA</th>
               <th style="padding:8px; border:1px solid var(--border); font-family:Oswald; text-align:right; color:var(--blue-bright)">BORÇ</th>
               <th style="padding:8px; border:1px solid var(--border); font-family:Oswald; text-align:right; color:var(--blue-bright)">TAHSİLAT</th>
@@ -1133,7 +1151,7 @@ async function gunlukRaporHesaplaVeListele() {
 function raporKapat(){document.getElementById('raporOverlay').classList.remove('active');}
 
 // ═══════════════════════════════════════════════════════
-// F4 YEDEKLEME VE GERİ YÜKLEME PANELİ (DÜZELTME 3)
+// F4 YEDEKLEME VE GERİ YÜKLEME PANELİ
 // ═══════════════════════════════════════════════════════
 function yedekEkraniAc() {
   document.getElementById('raporTitle').textContent = "💾 YEDEKLEME VE GERİ YÜKLEME PANELİ (F4)";
@@ -1259,10 +1277,9 @@ function globalKeyDown(e){
   // ANA EKRANDA OK TUŞLARI İLE CARİ SEÇİM YÖNETİMİ
   if(e.key === 'ArrowDown' || e.key === 'ArrowUp') {
     const focusEl = document.activeElement ? document.activeElement.id : '';
-    // Eğer hızlı işlem arama listesi açıksa yön tuşları orayı yönlendirir, ana listeyi bozmaz
     if(focusEl === 'txtHizliCariAra' && document.getElementById('hizliAramaSonuclari').style.display === 'block') return;
 
-    e.preventDefault(); // Sayfanın kaymasını engelle
+    e.preventDefault();
     
     const rows = [...document.querySelectorAll('#tbodyMain tr')];
     if(rows.length === 0) return;
@@ -1290,7 +1307,6 @@ function globalKeyDown(e){
   }
 }
 
-// Tıklama ile dinamik arama listesini dışarı basınca kapatma
 document.addEventListener('click', function(e) {
   if(!e.target.closest('.hizli-arama-container')) {
     document.getElementById('hizliAramaSonuclari').style.display = 'none';
