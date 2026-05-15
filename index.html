@@ -41,7 +41,7 @@ body {
   color:var(--text);
   min-height:100vh;
   overflow-x:hidden;
-  font-size:13px;
+  font-size:15px;
 }
 
 /* ── TITLEBAR ── */
@@ -82,19 +82,19 @@ body {
   padding:8px 12px;
   display:flex; align-items:center; gap:8px; flex-wrap:wrap;
 }
-.toolbar-label { font-family:'Oswald',sans-serif; font-size:11px; font-weight:600; color:var(--text-muted); letter-spacing:1px; text-transform:uppercase; }
+.toolbar-label { font-family:'Oswald',sans-serif; font-size:13px; font-weight:600; color:var(--text-muted); letter-spacing:1px; text-transform:uppercase; }
 .tb-input {
   background:var(--input-bg); border:1px solid var(--input-border); border-radius:4px;
-  padding:5px 10px; color:var(--white); font-family:'Exo 2',sans-serif;
-  font-size:12px; font-weight:600; outline:none; transition:border-color .2s;
+  padding:6px 12px; color:var(--white); font-family:'Exo 2',sans-serif;
+  font-size:14px; font-weight:600; outline:none; transition:border-color .2s;
 }
 .tb-input:focus { border-color:var(--accent); box-shadow:0 0 0 2px rgba(33,150,243,.2); }
 .tb-input::placeholder { color:var(--text-muted); }
-#txtCariKod { width:50px; text-align:center; }
-#txtCariUnvan { width:170px; }
-#txtAra { width:150px; }
+#txtCariKod { width:55px; text-align:center; }
+#txtCariUnvan { width:180px; }
+#txtAra { width:160px; }
 
-.btn { padding:5px 14px; border:none; border-radius:4px; font-family:'Oswald',sans-serif; font-size:12px; font-weight:600; letter-spacing:.5px; cursor:pointer; transition:all .2s; text-transform:uppercase; }
+.btn { padding:6px 16px; border:none; border-radius:4px; font-family:'Oswald',sans-serif; font-size:13px; font-weight:600; letter-spacing:.5px; cursor:pointer; transition:all .2s; text-transform:uppercase; }
 .btn-danger { background:var(--red2); color:#fff; }
 .btn-danger:hover { background:#c62828; }
 .btn-secondary { background:var(--panel2); color:var(--text); border:1px solid var(--border2); }
@@ -109,13 +109,13 @@ table.main-table { width:100%; border-collapse:collapse; table-layout:fixed; }
 table.main-table thead { position:sticky; top:0; z-index:10; }
 table.main-table thead th {
   background:var(--header-bg); border:1px solid var(--border);
-  padding:8px 10px; text-align:left; font-family:'Oswald',sans-serif;
-  font-size:12px; font-weight:600; color:var(--blue-bright); letter-spacing:.8px; text-transform:uppercase; user-select:none;
+  padding:9px 12px; text-align:left; font-family:'Oswald',sans-serif;
+  font-size:14px; font-weight:600; color:var(--blue-bright); letter-spacing:.8px; text-transform:uppercase; user-select:none;
 }
 table.main-table tbody tr { border-bottom:1px solid rgba(30,58,95,.5); cursor:pointer; transition:background .1s; }
 table.main-table tbody tr:hover { background:var(--row-hover); }
 table.main-table tbody tr.selected { background:var(--row-selected); }
-table.main-table tbody td { padding:7px 10px; border-right:1px solid rgba(30,58,95,.3); font-size:13px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+table.main-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58,95,.3); font-size:15px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .col-arrow { width:22px; }
 .col-kod { width:60px; }
 .col-unvan { width:auto; }
@@ -141,7 +141,7 @@ table.main-table tbody td { padding:7px 10px; border-right:1px solid rgba(30,58,
 
 /* ── SAAT ── */
 .saat-box { background:var(--bg3); border:1px solid var(--border); border-radius:6px; padding:8px 14px; text-align:center; }
-#lblCanliSaat { font-family:'Roboto Mono',monospace; font-size:18px; font-weight:700; color:var(--blue-bright); letter-spacing:2px; text-shadow:0 0 12px rgba(66,165,245,.5); }
+#lblCanliSaat { font-family:'Roboto Mono',monospace; font-size:20px; font-weight:700; color:var(--blue-bright); letter-spacing:2px; text-shadow:0 0 12px rgba(66,165,245,.5); }
 
 /* ── TAKVİM ── */
 .takvim-box { background:var(--bg3); border:1px solid var(--border); border-radius:6px; overflow:hidden; }
@@ -161,33 +161,33 @@ table.main-table tbody td { padding:7px 10px; border-right:1px solid rgba(30,58,
 /* ── HIZLI İŞLEM ── */
 .hizli-box { background:var(--bg3); border:1px solid var(--border); border-radius:6px; overflow:hidden; }
 .hizli-header { background:var(--header-bg); padding:7px 12px; display:flex; align-items:center; justify-content:space-between; }
-.hizli-title { font-family:'Oswald',sans-serif; font-size:13px; font-weight:600; color:var(--blue-bright); letter-spacing:1px; }
+.hizli-title { font-family:'Oswald',sans-serif; font-size:15px; font-weight:600; color:var(--blue-bright); letter-spacing:1px; }
 .radio-group { display:flex; gap:10px; align-items:center; }
-.radio-option { display:flex; align-items:center; gap:4px; cursor:pointer; font-size:11px; font-weight:600; }
+.radio-option { display:flex; align-items:center; gap:4px; cursor:pointer; font-size:13px; font-weight:600; }
 .radio-option input[type=radio] { accent-color:var(--accent); cursor:pointer; }
 .radio-plus { color:var(--green2); }
 .radio-minus { color:var(--red); }
 .hizli-body { padding:10px 12px; display:flex; flex-direction:column; gap:8px; }
-.hizli-label { font-family:'Oswald',sans-serif; font-size:10px; font-weight:600; letter-spacing:1px; color:var(--text-muted); text-transform:uppercase; margin-bottom:2px; }
+.hizli-label { font-family:'Oswald',sans-serif; font-size:12px; font-weight:600; letter-spacing:1px; color:var(--text-muted); text-transform:uppercase; margin-bottom:2px; }
 .hizli-select,.hizli-input {
   width:100%; background:var(--input-bg); border:1px solid var(--input-border);
-  border-radius:4px; padding:6px 10px; color:var(--white);
-  font-family:'Exo 2',sans-serif; font-size:12px; font-weight:600; outline:none; transition:border-color .2s;
+  border-radius:4px; padding:7px 10px; color:var(--white);
+  font-family:'Exo 2',sans-serif; font-size:14px; font-weight:600; outline:none; transition:border-color .2s;
 }
 .hizli-select:focus,.hizli-input:focus { border-color:var(--accent); }
 .hizli-select option { background:#0d1e33; }
 .hizli-input::placeholder { color:var(--text-muted); font-weight:400; }
 .btn-hizli-kaydet {
-  width:100%; padding:8px; background:linear-gradient(135deg,var(--blue),var(--blue2));
+  width:100%; padding:9px; background:linear-gradient(135deg,var(--blue),var(--blue2));
   border:none; border-radius:4px; color:#fff; font-family:'Oswald',sans-serif;
-  font-size:13px; font-weight:600; letter-spacing:1px; cursor:pointer; transition:all .2s; text-transform:uppercase;
+  font-size:14px; font-weight:600; letter-spacing:1px; cursor:pointer; transition:all .2s; text-transform:uppercase;
 }
 .btn-hizli-kaydet:hover { background:linear-gradient(135deg,var(--blue2),#42a5f5); box-shadow:0 4px 12px rgba(33,150,243,.35); }
 
 /* ── BAKİYE ── */
 .bakiye-box { background:var(--bg3); border:1px solid var(--border); border-radius:6px; padding:12px; text-align:center; }
 .bakiye-label { font-family:'Oswald',sans-serif; font-size:11px; letter-spacing:1.5px; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px; }
-#lblGenelBakiye { font-family:'Roboto Mono',monospace; font-size:28px; font-weight:700; color:var(--cell-red); text-shadow:0 0 16px rgba(239,83,80,.5); }
+#lblGenelBakiye { font-family:'Roboto Mono',monospace; font-size:32px; font-weight:700; color:var(--cell-red); text-shadow:0 0 16px rgba(239,83,80,.5); }
 
 /* ── MODAL ── */
 .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.75); z-index:1000; align-items:center; justify-content:center; backdrop-filter:blur(3px); }
@@ -220,13 +220,13 @@ table.detay-table { width:100%; border-collapse:collapse; table-layout:fixed; }
 table.detay-table thead { position:sticky; top:0; z-index:5; }
 table.detay-table thead th {
   background:var(--header-bg); border:1px solid var(--border);
-  padding:8px 10px; font-family:'Oswald',sans-serif; font-size:12px; font-weight:600;
+  padding:9px 12px; font-family:'Oswald',sans-serif; font-size:13px; font-weight:600;
   color:var(--blue-bright); letter-spacing:.8px; text-transform:uppercase; text-align:left;
 }
 table.detay-table tbody tr { border-bottom:1px solid rgba(30,58,95,.4); transition:background .1s; cursor:pointer; }
 table.detay-table tbody tr:hover { background:var(--row-hover); }
 table.detay-table tbody tr.selected { background:var(--row-selected); }
-table.detay-table tbody td { padding:7px 10px; border-right:1px solid rgba(30,58,95,.2); font-size:12px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58,95,.2); font-size:14px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .dcol-arrow { width:22px; }
 .dcol-tarih { width:125px; }
 .dcol-aciklama { width:auto; }
@@ -252,55 +252,60 @@ table.detay-table tbody td { padding:7px 10px; border-right:1px solid rgba(30,58
 .btn-sil-hareket { background:#37474f; color:#fff; }
 .btn-sil-hareket:hover { background:#546e7a; }
 
-/* ── İŞLEM PANELİ (DÜZELTİLDİ - daha geniş ve görünür) ── */
+/* ── İŞLEM PANELİ — GENİŞ VE NET ── */
 .detay-modal-inner { position:relative; flex:1; display:flex; flex-direction:column; overflow:hidden; }
 
 .islem-panel {
   display:none;
   position:absolute;
-  top:50%; left:50%;
-  transform:translate(-50%,-50%);
+  top:0; left:0; right:0; bottom:0;   /* tüm detay alanını kapla */
   background:var(--bg2);
   z-index:20;
-  border-radius:10px;
-  width:420px;          /* GENİŞLETİLDİ */
-  max-width:90%;
-  box-shadow:0 16px 48px rgba(0,0,0,.7);
+  border-radius:0;
   animation:modalIn .15s ease;
+  overflow-y:auto;
 }
-.islem-panel.active { display:block; }
-.islem-panel.borc-mode { border:4px solid var(--red2); }
-.islem-panel.tahsilat-mode { border:4px solid var(--green); }
+.islem-panel.active { display:flex; flex-direction:column; }
+.islem-panel.borc-mode { border-top:6px solid var(--red2); }
+.islem-panel.tahsilat-mode { border-top:6px solid var(--green); }
 
 .islem-panel-header {
-  padding:12px 18px;
+  padding:16px 24px;
   display:flex; align-items:center; justify-content:space-between;
   border-bottom:1px solid var(--border);
+  flex-shrink:0;
 }
-.islem-panel-title { font-family:'Oswald',sans-serif; font-size:22px; font-weight:700; letter-spacing:1px; }
+.islem-panel-title { font-family:'Oswald',sans-serif; font-size:28px; font-weight:700; letter-spacing:2px; }
 .borc-mode .islem-panel-title { color:var(--red); }
 .tahsilat-mode .islem-panel-title { color:var(--green2); }
 
-.islem-panel-body { padding:16px 18px; display:flex; flex-direction:column; gap:12px; }
-.islem-field-label { font-family:'Oswald',sans-serif; font-size:11px; font-weight:600; letter-spacing:1px; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px; }
+.islem-panel-body {
+  padding:24px 28px;
+  display:flex; flex-direction:column; gap:18px;
+  flex:1;
+}
+.islem-field-label {
+  font-family:'Oswald',sans-serif; font-size:13px; font-weight:600;
+  letter-spacing:1px; color:var(--text-muted); text-transform:uppercase; margin-bottom:6px;
+}
 .islem-input {
-  width:100%; background:var(--input-bg); border:1px solid var(--input-border);
-  border-radius:6px; padding:10px 14px; color:var(--white);
-  font-family:'Exo 2',sans-serif; font-size:14px; font-weight:600; outline:none;
+  width:100%; background:var(--input-bg); border:2px solid var(--input-border);
+  border-radius:8px; padding:14px 18px; color:var(--white);
+  font-family:'Exo 2',sans-serif; font-size:18px; font-weight:600; outline:none;
   transition:border-color .2s;
 }
-.islem-input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(33,150,243,.15); }
-.islem-input::placeholder { color:var(--text-muted); font-weight:400; font-size:12px; }
-.islem-enter-hint { font-size:10px; color:var(--text-muted); text-align:center; font-family:'Roboto Mono',monospace; }
+.islem-input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(33,150,243,.2); }
+.islem-input::placeholder { color:var(--text-muted); font-weight:400; font-size:15px; }
+.islem-enter-hint { font-size:12px; color:var(--text-muted); text-align:center; font-family:'Roboto Mono',monospace; }
 .btn-islem-kaydet {
-  width:100%; padding:11px; border:none; border-radius:6px;
-  font-family:'Oswald',sans-serif; font-size:15px; font-weight:700;
-  letter-spacing:1px; cursor:pointer; transition:all .2s; text-transform:uppercase;
+  width:100%; padding:16px; border:none; border-radius:8px;
+  font-family:'Oswald',sans-serif; font-size:18px; font-weight:700;
+  letter-spacing:2px; cursor:pointer; transition:all .2s; text-transform:uppercase;
 }
 .borc-mode .btn-islem-kaydet { background:var(--red2); color:#fff; }
-.borc-mode .btn-islem-kaydet:hover { background:#c62828; }
+.borc-mode .btn-islem-kaydet:hover { background:#c62828; box-shadow:0 6px 20px rgba(183,28,28,.4); }
 .tahsilat-mode .btn-islem-kaydet { background:var(--green); color:#fff; }
-.tahsilat-mode .btn-islem-kaydet:hover { background:#388e3c; }
+.tahsilat-mode .btn-islem-kaydet:hover { background:#388e3c; box-shadow:0 6px 20px rgba(27,94,32,.4); }
 
 /* ── LOGİN ── */
 .login-modal {
@@ -622,6 +627,11 @@ function loginDene() {
 }
 document.getElementById('loginSifre').addEventListener('keydown', e => { if(e.key==='Enter') loginDene(); });
 
+// Sayfa açılınca şifre kutusuna otomatik focus
+window.addEventListener('load', () => {
+  setTimeout(() => document.getElementById('loginSifre').focus(), 100);
+});
+
 // ═══════════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════════
@@ -758,40 +768,62 @@ function satirSec(tr) {
 function araFilter() { tabloYenile(); }
 
 function araKeyDown(e) {
-  const rows = [...document.querySelectorAll('#tbodyMain tr')].filter(r=>r.style.display!=='none');
+  // Görünür satırları al
+  const rows = [...document.querySelectorAll('#tbodyMain tr')]
+    .filter(r => r.style.display !== 'none');
   if (!rows.length) return;
-  // Aşağı ok — ilk görünür satıra geç
-  if (e.key==='ArrowDown') {
+
+  if (e.key === 'ArrowDown') {
     e.preventDefault();
-    const idx = rows.findIndex(r=>r.classList.contains('selected'));
-    const hedef = rows[idx+1] || rows[0];
+    const idx = rows.findIndex(r => r.classList.contains('selected'));
+    const hedef = (idx === -1 || idx >= rows.length - 1) ? rows[0] : rows[idx + 1];
     satirSec(hedef);
-    hedef.scrollIntoView({block:'nearest'});
-  }
-  // Enter — seçili satırı aç
-  if (e.key==='Enter') {
-    const secili = rows.find(r=>r.classList.contains('selected')) || rows[0];
-    if (secili) { satirSec(secili); cariAc(secili.dataset.kod); }
+    hedef.scrollIntoView({ block: 'nearest' });
+
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    const idx = rows.findIndex(r => r.classList.contains('selected'));
+    const hedef = (idx <= 0) ? rows[rows.length - 1] : rows[idx - 1];
+    satirSec(hedef);
+    hedef.scrollIntoView({ block: 'nearest' });
+
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    const secili = rows.find(r => r.classList.contains('selected'));
+    if (secili) cariAc(secili.dataset.kod);
+    else if (rows.length === 1) { satirSec(rows[0]); cariAc(rows[0].dataset.kod); }
   }
 }
 
-// Tabloda ok tuşu ile gezinme
+// Tablo focus'tayken ok tuşları
 document.addEventListener('keydown', e => {
-  const aktifEl = document.activeElement;
-  // Eğer tablo focus'taysa veya hiçbir input focused değilse
-  if (aktifEl.id === 'txtAra') return; // araKeyDown halleder
-  const rows = [...document.querySelectorAll('#tbodyMain tr')].filter(r=>r.style.display!=='none');
+  // Detay açıksa geçme
+  if (document.getElementById('detayOverlay').classList.contains('active')) return;
+  const aktif = document.activeElement;
+  // txtAra'dan gelen ok tuşları araKeyDown halleder, global tetiklenmesin
+  if (aktif && aktif.id === 'txtAra') return;
+  // Diğer input/select alanlarında da geçme
+  if (aktif && (aktif.tagName === 'INPUT' || aktif.tagName === 'SELECT' || aktif.tagName === 'TEXTAREA')) return;
+
+  const rows = [...document.querySelectorAll('#tbodyMain tr')]
+    .filter(r => r.style.display !== 'none');
   if (!rows.length) return;
-  const idx = rows.findIndex(r=>r.classList.contains('selected'));
-  if (e.key==='ArrowDown' && idx>=0 && document.getElementById('detayOverlay').classList.contains('active')===false) {
+
+  if (e.key === 'ArrowDown') {
     e.preventDefault();
-    const hedef = rows[Math.min(idx+1,rows.length-1)];
-    satirSec(hedef); hedef.scrollIntoView({block:'nearest'});
-  }
-  if (e.key==='ArrowUp' && idx>0 && document.getElementById('detayOverlay').classList.contains('active')===false) {
+    const idx = rows.findIndex(r => r.classList.contains('selected'));
+    const hedef = (idx === -1 || idx >= rows.length - 1) ? rows[0] : rows[idx + 1];
+    satirSec(hedef); hedef.scrollIntoView({ block: 'nearest' });
+
+  } else if (e.key === 'ArrowUp') {
     e.preventDefault();
-    const hedef = rows[idx-1];
-    satirSec(hedef); hedef.scrollIntoView({block:'nearest'});
+    const idx = rows.findIndex(r => r.classList.contains('selected'));
+    const hedef = (idx <= 0) ? rows[rows.length - 1] : rows[idx - 1];
+    satirSec(hedef); hedef.scrollIntoView({ block: 'nearest' });
+
+  } else if (e.key === 'Enter') {
+    const secili = rows.find(r => r.classList.contains('selected'));
+    if (secili) cariAc(secili.dataset.kod);
   }
 });
 
@@ -903,39 +935,40 @@ async function detayYukle() {
     eskidenYeni.forEach(r=>{b+=(Number(r.borc)-Number(r.tahsilat));bakiyeMap[r.id]=b;});
     // En yeni üstte göster
     hareketler.forEach(r=>{
+      const rId = parseInt(r.id); // her zaman integer
       const tr=document.createElement('tr');
-      tr.dataset.id=r.id;
+      tr.dataset.id = rId;
       const isBorc=Number(r.borc)>0;
       const renk=isBorc?'#ff4444':'#66bb6a';
       tr.innerHTML=`
         <td class="dcol-arrow"><span class="row-arrow" style="display:none">▶</span></td>
-        <td class="dcol-tarih" style="color:${renk};font-size:11px">${r.tarih}</td>
+        <td class="dcol-tarih" style="color:${renk};font-size:13px">${r.tarih}</td>
         <td class="dcol-aciklama" style="color:${renk}">${r.aciklama}</td>
         <td class="dcol-borc" style="color:${renk}">${fmt(r.borc)}</td>
         <td class="dcol-tahsilat" style="color:${renk}">${fmt(r.tahsilat)}</td>
         <td class="dcol-bakiye" style="color:${renk}">${fmt(bakiyeMap[r.id])}</td>`;
-      // Ctrl+tıklama ile çoklu seçim
-      tr.addEventListener('click',ev=>{
-        if(ev.ctrlKey||ev.metaKey) {
-          // Ctrl basılıysa çoklu seçim
-          if(seciliDetayIds.includes(r.id)){
-            seciliDetayIds=seciliDetayIds.filter(x=>x!==r.id);
+
+      tr.addEventListener('click', ev => {
+        if (ev.ctrlKey || ev.metaKey) {
+          // ── CTRL basılı: çoklu seçim toggle ──
+          if (seciliDetayIds.includes(rId)) {
+            seciliDetayIds = seciliDetayIds.filter(x => x !== rId);
             tr.classList.remove('selected');
-            tr.querySelector('.row-arrow').style.display='none';
+            tr.querySelector('.row-arrow').style.display = 'none';
           } else {
-            seciliDetayIds.push(r.id);
+            seciliDetayIds.push(rId);
             tr.classList.add('selected');
-            tr.querySelector('.row-arrow').style.display='inline';
+            tr.querySelector('.row-arrow').style.display = 'inline';
           }
         } else {
-          // Normal tıklama — tek seçim
-          document.querySelectorAll('#detayTbody tr').forEach(t=>{
+          // ── Normal tıklama: tek seçim ──
+          document.querySelectorAll('#detayTbody tr').forEach(t => {
             t.classList.remove('selected');
-            t.querySelector('.row-arrow').style.display='none';
+            t.querySelector('.row-arrow').style.display = 'none';
           });
-          seciliDetayIds=[r.id];
+          seciliDetayIds = [rId];
           tr.classList.add('selected');
-          tr.querySelector('.row-arrow').style.display='inline';
+          tr.querySelector('.row-arrow').style.display = 'inline';
         }
       });
       tbody.appendChild(tr);
@@ -996,20 +1029,23 @@ async function islemKaydet(){
   loading(false);
 }
 
-// ── HAREKET SİL (Ctrl ile çoklu) ──
+// ── HAREKET SİL (tek veya Ctrl ile çoklu) ──
 async function hareketSil(){
-  if(!seciliDetayIds.length){toast('Silinecek satırları seçin! (Ctrl+tıkla ile çoklu)',true);return;}
-  const kaç=seciliDetayIds.length;
-  if(!confirm(`${kaç} hareket silinsin mi?`))return;
+  if(!seciliDetayIds.length){
+    toast('Silinecek satır(lar)ı seçin!\nTek: tıkla  |  Çoklu: Ctrl+tıkla',true);
+    return;
+  }
+  const kaç = seciliDetayIds.length;
+  if(!confirm(`${kaç} hareket silinsin mi?`)) return;
   loading(true,'Siliniyor...');
   try {
-    for(const id of seciliDetayIds){
-      await sbDelete('hareketler',`id=eq.${id}`);
-    }
-    seciliDetayIds=[];
+    // id listesini integer'a çevir, Supabase in() filtresiyle tek seferde sil
+    const idler = seciliDetayIds.map(x => parseInt(x));
+    await sbDelete('hareketler', `id=in.(${idler.join(',')})`);
+    seciliDetayIds = [];
     await detayYukle();
-    toast(`${kaç} hareket silindi`);
-  } catch(err){toast('Hata: '+err.message,true);}
+    toast(`✓ ${kaç} hareket silindi`);
+  } catch(err){ toast('Silme hatası: '+err.message, true); }
   loading(false);
 }
 
