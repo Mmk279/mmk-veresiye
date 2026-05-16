@@ -417,6 +417,51 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
 @keyframes spin { to{transform:rotate(360deg)} }
 .loading-text { font-family:'Oswald',sans-serif; font-size:14px; color:var(--blue-bright); letter-spacing:1px; }
 
+/* ── F4 YEDEK PANELİ ── */
+.f4-overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,.6); z-index:2000;
+  align-items:center; justify-content:center;
+  backdrop-filter:blur(4px);
+}
+.f4-overlay.active { display:flex; }
+.f4-panel {
+  background:var(--bg2); border:2px solid var(--blue2);
+  border-radius:12px; width:420px; max-width:95vw;
+  box-shadow:0 24px 60px rgba(0,0,0,.7);
+  animation:modalIn .2s ease;
+  overflow:hidden;
+}
+.f4-header {
+  background:linear-gradient(90deg, var(--bg3), var(--header-bg));
+  padding:12px 18px; display:flex; align-items:center; justify-content:space-between;
+  border-bottom:2px solid var(--blue2);
+}
+.f4-title { font-family:'Oswald',sans-serif; font-size:16px; font-weight:700; color:var(--blue-bright); letter-spacing:1.5px; }
+.f4-body { padding:20px; display:flex; flex-direction:column; gap:12px; }
+.f4-btn {
+  width:100%; padding:13px 16px; border:none; border-radius:8px;
+  font-family:'Oswald',sans-serif; font-size:15px; font-weight:700;
+  letter-spacing:1px; cursor:pointer; transition:all .2s;
+  text-transform:uppercase; display:flex; align-items:center; gap:10px;
+  justify-content:center;
+}
+.f4-btn-yedek { background:linear-gradient(135deg,#1565c0,#1976d2); color:#fff; }
+.f4-btn-yedek:hover { background:linear-gradient(135deg,#1976d2,#42a5f5); box-shadow:0 4px 16px rgba(21,101,192,.5); transform:translateY(-1px); }
+.f4-btn-yukle { background:linear-gradient(135deg,#2e7d32,#43a047); color:#fff; }
+.f4-btn-yukle:hover { background:linear-gradient(135deg,#43a047,#66bb6a); box-shadow:0 4px 16px rgba(46,125,50,.5); transform:translateY(-1px); }
+.f4-bilgi {
+  background:rgba(0,0,0,.2); border:1px dashed var(--border2);
+  border-radius:6px; padding:10px 14px;
+  font-size:11px; color:var(--text-muted); line-height:1.7;
+}
+.f4-bilgi strong { color:var(--text); }
+.f4-kapat-bar {
+  padding:10px 18px; border-top:1px solid var(--border);
+  text-align:center; font-size:11px; color:var(--text-muted);
+  background:var(--bg3);
+}
+
 /* ── TOAST ── */
 .toast {
   position:fixed; bottom:20px; right:20px;
@@ -634,6 +679,32 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
       <button class="detay-close" onclick="raporKapat()">✕</button>
     </div>
     <div class="rapor-body" id="raporBody"></div>
+  </div>
+</div>
+
+<!-- F4 YEDEK PANELİ -->
+<div class="f4-overlay" id="f4Overlay" onclick="if(event.target===this)f4Kapat()">
+  <div class="f4-panel">
+    <div class="f4-header">
+      <span class="f4-title">💾 YEDEKLEME MERKEZİ</span>
+      <button class="detay-close" onclick="f4Kapat()">✕</button>
+    </div>
+    <div class="f4-body">
+      <button class="f4-btn f4-btn-yedek" onclick="veritabaniYedekAl()">
+        📦 TAM YEDEĞİ İNDİR (ZIP)
+      </button>
+      <button class="f4-btn f4-btn-yukle" onclick="veritabaniYedekYukleTetikle()">
+        📂 YEDEĞİ GERİ YÜKLE (JSON)
+      </button>
+      <div class="f4-bilgi">
+        <strong>ZIP içeriği:</strong><br>
+        📄 Tüm veriler → <code>yedek.json</code> (geri yükleme için)<br>
+        📋 Her cari için ayrı ekstre → <code>HTML dosyaları</code><br>
+        📝 Özet liste → <code>OKUBENI.txt</code><br><br>
+        <strong>Geri Yükleme:</strong> ZIP içindeki <code>.json</code> dosyasını seçin.
+      </div>
+    </div>
+    <div class="f4-kapat-bar">ESC veya F4 ile kapat</div>
   </div>
 </div>
 
@@ -1500,17 +1571,35 @@ function menuDosya(){
   else if(s==='2')window.close();
 }
 function menuAraclar(){
-  const s=prompt('Araçlar:\n1) Tarih Seçimli Günlük Rapor (F3)\n2) Giriş Şifresini Değiştir\n3) Veritabanını Yedekle (JSON İndir)\n4) Yedeği Geri Yükle (JSON Seç)\nSeçin:');
+  const s=prompt('Araçlar:\n1) Tarih Seçimli Günlük Rapor (F3)\n2) Giriş Şifresini Değiştir\n3) Yedekleme Merkezi (F4)\nSeçin:');
   if(s==='1')gunlukRapor();
   else if(s==='2'){const y=prompt('Yeni şifre:');if(y&&y.trim()){setSifre(y.trim());toast('Şifre güncellendi!');}}
-  else if(s==='3')veritabaniYedekAl();
-  else if(s==='4')veritabaniYedekYukleTetikle();
+  else if(s==='3')f4Ac();
 }
-function hakkinda(){alert('MMK Veresiye Kısayolları:\n\nF3 — Günlük Rapor (Tarih Seçimli)\nF5 — Borç Ekle (Detayda)\nF6 — Tahsilat Ekle (Detayda)\nESC — Kapat / Paneli Gizle\nENTER — Kaydet / Geçiş\nCtrl+Tıkla — Çoklu satır seç (Listede)\nOk Tuşları ↑↓ — Listede gezin');}
+function hakkinda(){alert('MMK Veresiye Kısayolları:\n\nF3 — Günlük Rapor (Tarih Seçimli)\nF4 — Yedekleme Merkezi (Aç/Kapat)\nF5 — Borç Ekle (Detayda)\nF6 — Tahsilat Ekle (Detayda)\nESC — Kapat / Paneli Gizle\nENTER — Kaydet / Geçiş\nCtrl+Tıkla — Çoklu satır seç\nOk Tuşları ↑↓ — Listede gezin');}
+
+// ── F4 YEDEK PANELİ ──
+function f4Ac() {
+  document.getElementById('f4Overlay').classList.add('active');
+}
+function f4Kapat() {
+  document.getElementById('f4Overlay').classList.remove('active');
+}
 
 // ── GLOBAL KLAVYE ──
 function globalKeyDown(e){
+  // F4 — Yedek paneli aç/kapat
+  if(e.key==='F4'){ e.preventDefault(); 
+    const overlay = document.getElementById('f4Overlay');
+    if(overlay.classList.contains('active')) f4Kapat();
+    else f4Ac();
+    return;
+  }
   if(e.key==='F3'){e.preventDefault();gunlukRapor();return;}
+  // ESC — açık olan paneli kapat
+  if(e.key==='Escape'){
+    if(document.getElementById('f4Overlay').classList.contains('active')){ f4Kapat(); return; }
+  }
   const detayAcik=document.getElementById('detayOverlay').classList.contains('active');
   if(detayAcik){
     if(e.key==='F5'){e.preventDefault();borcPanelAc();}
