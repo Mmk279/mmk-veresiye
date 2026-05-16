@@ -75,22 +75,14 @@ body {
 /* ── LEFT ── */
 .left-pane { display:flex; flex-direction:column; border-right:2px solid var(--border); overflow:hidden; }
 
-/* ── TOOLBAR (PUNTOLAR BÜYÜTÜLDÜ VE BEYAZ YAPILDI) ── */
+/* ── TOOLBAR ── */
 .toolbar {
   background:var(--bg2);
   border-bottom:1px solid var(--border);
   padding:8px 12px;
-  display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
 }
-.toolbar-label { 
-  font-family:'Oswald',sans-serif; 
-  font-size:16px; 
-  font-weight:700; 
-  color:#ffffff !important; 
-  letter-spacing:1px; 
-  text-transform:uppercase;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
-}
+.toolbar-label { font-family:'Oswald',sans-serif; font-size:13px; font-weight:600; color:var(--text-muted); letter-spacing:1px; text-transform:uppercase; }
 .tb-input {
   background:var(--input-bg); border:1px solid var(--input-border); border-radius:4px;
   padding:6px 12px; color:var(--white); font-family:'Exo 2',sans-serif;
@@ -99,7 +91,7 @@ body {
 .tb-input:focus { border-color:var(--accent); box-shadow:0 0 0 2px rgba(33,150,243,.2); }
 .tb-input::placeholder { color:var(--text-muted); }
 #txtCariKod { width:55px; text-align:center; }
-#txtCariUnvan { width:200px; }
+#txtCariUnvan { width:180px; }
 #txtAra { width:160px; }
 
 .btn { padding:6px 16px; border:none; border-radius:4px; font-family:'Oswald',sans-serif; font-size:13px; font-weight:600; letter-spacing:.5px; cursor:pointer; transition:all .2s; text-transform:uppercase; }
@@ -108,7 +100,7 @@ body {
 .btn-secondary { background:var(--panel2); color:var(--text); border:1px solid var(--border2); }
 .btn-secondary:hover { background:var(--border2); }
 
-/* ── TABLE (ARALIK DARALTILDI, PUNTOLAR BÜYÜTÜLDÜ VE KALINLAŞTIRILDI) ── */
+/* ── TABLE ── */
 .table-wrap { flex:1; overflow-y:auto; overflow-x:hidden; position:relative; }
 .table-wrap::-webkit-scrollbar { width:8px; }
 .table-wrap::-webkit-scrollbar-track { background:var(--bg3); }
@@ -117,32 +109,21 @@ table.main-table { width:100%; border-collapse:collapse; table-layout:fixed; }
 table.main-table thead { position:sticky; top:0; z-index:10; }
 table.main-table thead th {
   background:var(--header-bg); border:1px solid var(--border);
-  padding:10px 12px; text-align:left; font-family:'Oswald',sans-serif;
-  font-size:15px; font-weight:700; color:var(--blue-bright); letter-spacing:.8px; text-transform:uppercase; user-select:none;
+  padding:9px 12px; text-align:left; font-family:'Oswald',sans-serif;
+  font-size:14px; font-weight:600; color:var(--blue-bright); letter-spacing:.8px; text-transform:uppercase; user-select:none;
 }
 table.main-table tbody tr { border-bottom:1px solid rgba(30,58,95,.5); cursor:pointer; transition:background .1s; }
 table.main-table tbody tr:hover { background:var(--row-hover); }
 table.main-table tbody tr.selected { background:var(--row-selected); }
-table.main-table tbody td { 
-  padding:11px 12px; 
-  border-right:1px solid rgba(30,58,95,.3); 
-  font-size:17px; 
-  font-weight:800; 
-  white-space:nowrap; 
-  overflow:hidden; 
-  text-overflow:ellipsis; 
-}
-
-/* Sütun genişlikleri ayarlanarak aradaki devasa boşluk daraltıldı */
+table.main-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58,95,.3); font-size:15px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .col-arrow { width:22px; }
-.col-kod { width:90px; }
-.col-unvan { width:450px; } /* Maksimum genişlik sınırı verilerek tutar sola yaklaştırıldı */
-.col-tutar { width:160px; text-align:right; font-family:'Roboto Mono',monospace; }
-
+.col-kod { width:60px; }
+.col-unvan { width:auto; }
+.col-tutar { width:110px; text-align:right; font-family:'Roboto Mono',monospace; }
 .color-red { color:var(--cell-red)!important; }
 .color-blue { color:var(--cell-blue)!important; }
 .color-black { color:var(--cell-black)!important; }
-.row-arrow { color:var(--blue-bright); font-size:12px; }
+.row-arrow { color:var(--blue-bright); font-size:10px; }
 
 /* ── BOTTOM BAR ── */
 .bottom-bar {
@@ -177,7 +158,7 @@ table.main-table tbody td {
 .takvim-cell.other-month { color:var(--text-muted); }
 .takvim-today-label { padding:4px 8px; font-size:10px; color:var(--text-muted); border-top:1px solid var(--border); text-align:center; font-family:'Roboto Mono',monospace; }
 
-/* ── HIZLI İŞLEM PANELİ ── */
+/* ── HIZLI İŞLEM ── */
 .hizli-box { background:var(--bg3); border:1px solid var(--border); border-radius:6px; overflow:hidden; }
 .hizli-header { background:var(--header-bg); padding:7px 12px; display:flex; align-items:center; justify-content:space-between; }
 .hizli-title { font-family:'Oswald',sans-serif; font-size:15px; font-weight:600; color:var(--blue-bright); letter-spacing:1px; }
@@ -188,25 +169,55 @@ table.main-table tbody td {
 .radio-minus { color:var(--red); }
 .hizli-body { padding:10px 12px; display:flex; flex-direction:column; gap:8px; }
 .hizli-label { font-family:'Oswald',sans-serif; font-size:12px; font-weight:600; letter-spacing:1px; color:var(--text-muted); text-transform:uppercase; margin-bottom:2px; }
-.hizli-input {
+.hizli-select,.hizli-input {
   width:100%; background:var(--input-bg); border:1px solid var(--input-border);
   border-radius:4px; padding:7px 10px; color:var(--white);
   font-family:'Exo 2',sans-serif; font-size:14px; font-weight:600; outline:none; transition:border-color .2s;
 }
-.hizli-input:focus { border-color:var(--accent); }
+.hizli-select:focus,.hizli-input:focus { border-color:var(--accent); }
+.hizli-select option { background:#0d1e33; }
 .hizli-input::placeholder { color:var(--text-muted); font-weight:400; }
 
-/* Dinamik Arama Sonuç Listesi */
-.hizli-arama-container { position: relative; }
-.hizli-arama-sonuclari {
-  position: absolute; top: 100%; left: 0; right: 0;
-  background: var(--bg2); border: 1px solid var(--border2);
-  border-radius: 0 0 4px 4px; max-height: 150px; overflow-y: auto;
-  z-index: 99; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+/* ── AUTOCOMPLETE ── */
+.autocomplete-wrap { position:relative; width:100%; }
+.autocomplete-input {
+  width:100%; background:var(--input-bg); border:1px solid var(--input-border);
+  border-radius:4px; padding:7px 10px; color:var(--white);
+  font-family:'Exo 2',sans-serif; font-size:14px; font-weight:600; outline:none; transition:border-color .2s;
 }
-.hizli-arama-item { padding: 6px 10px; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--text); }
-.hizli-arama-item:hover, .hizli-arama-item.aktif { background: var(--panel); color: var(--white); }
-
+.autocomplete-input:focus { border-color:var(--accent); box-shadow:0 0 0 2px rgba(33,150,243,.15); }
+.autocomplete-input::placeholder { color:var(--text-muted); font-weight:400; }
+.autocomplete-dropdown {
+  display:none;
+  position:absolute;
+  top:calc(100% + 3px); left:0; right:0;
+  background:#0d1e33;
+  border:1px solid var(--accent);
+  border-radius:6px;
+  max-height:200px;
+  overflow-y:auto;
+  z-index:500;
+  box-shadow:0 8px 24px rgba(0,0,0,.5);
+}
+.autocomplete-dropdown.acik { display:block; }
+.autocomplete-item {
+  padding:9px 12px;
+  font-size:13px;
+  font-weight:600;
+  color:var(--white);
+  cursor:pointer;
+  border-bottom:1px solid rgba(255,255,255,.05);
+  transition:background .1s;
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+.autocomplete-item:last-child { border-bottom:none; }
+.autocomplete-item:hover, .autocomplete-item.aktif { background:rgba(33,150,243,.2); color:var(--blue-bright); }
+.autocomplete-item .ac-kod { font-size:11px; color:var(--text-muted); font-family:'Roboto Mono',monospace; min-width:28px; }
+.autocomplete-item .ac-unvan { flex:1; }
+.autocomplete-dropdown::-webkit-scrollbar { width:5px; }
+.autocomplete-dropdown::-webkit-scrollbar-thumb { background:var(--panel2); border-radius:3px; }
 .btn-hizli-kaydet {
   width:100%; padding:9px; background:linear-gradient(135deg,var(--blue),var(--blue2));
   border:none; border-radius:4px; color:#fff; font-family:'Oswald',sans-serif;
@@ -223,7 +234,7 @@ table.main-table tbody td {
 .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.75); z-index:1000; align-items:center; justify-content:center; backdrop-filter:blur(3px); }
 .modal-overlay.active { display:flex; }
 
-/* ── CARİ DETAY MODAL ── */
+/* ── CARİ DETAY MODAL (ORİJİNAL ÇİFT SÜTUN DÜZENİ) ── */
 .detay-modal {
   background:var(--bg); border:2px solid var(--border2); border-radius:8px;
   width:96vw; max-width:1100px; height:90vh;
@@ -243,8 +254,23 @@ table.main-table tbody td {
 .detay-close { background:none; border:none; color:var(--text-muted); font-size:18px; cursor:pointer; width:28px; height:28px; display:flex; align-items:center; justify-content:center; border-radius:4px; transition:all .15s; }
 .detay-close:hover { background:var(--red2); color:#fff; }
 
-.detay-main-layout { display:grid; grid-template-columns: 1fr 340px; flex:1; overflow:hidden; background:var(--bg3); }
-.detay-left-pane { display:flex; flex-direction:column; overflow:hidden; border-right:2px solid var(--border); background:var(--bg); }
+/* Çift Sütun Gövde Yapısı */
+.detay-main-layout {
+  display:grid;
+  grid-template-columns: 1fr 340px;
+  flex:1;
+  overflow:hidden;
+  background:var(--bg3);
+}
+
+/* Sol Taraf: Hareketler Listesi */
+.detay-left-pane {
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  border-right:2px solid var(--border);
+  background:var(--bg);
+}
 .detay-table-wrap { flex:1; overflow-y:auto; padding:6px; }
 .detay-table-wrap::-webkit-scrollbar { width:8px; }
 .detay-table-wrap::-webkit-scrollbar-thumb { background:var(--panel2); border-radius:4px; }
@@ -267,27 +293,66 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
 .dcol-tahsilat { width:95px; text-align:right; font-family:'Roboto Mono',monospace; }
 .dcol-bakiye { width:105px; text-align:right; font-family:'Roboto Mono',monospace; }
 
-.detay-right-pane { background:var(--bg2); padding:16px; display:flex; flex-direction:column; gap:16px; overflow-y:auto; }
+/* Sağ Taraf: İşlem Paneli */
+.detay-right-pane {
+  background:var(--bg2);
+  padding:16px;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  overflow-y:auto;
+}
 
-.islem-panel { display:none; flex-direction:column; background:var(--bg3); border-radius:6px; border:2px solid var(--border); box-shadow:0 4px 15px rgba(0,0,0,0.4); }
+.islem-panel {
+  display:none;
+  flex-direction:column;
+  background:var(--bg3);
+  border-radius:6px;
+  border:2px solid var(--border);
+  box-shadow:0 4px 15px rgba(0,0,0,0.4);
+  transition: all 0.2s ease;
+}
 .islem-panel.active { display:flex; }
 .islem-panel.borc-mode { border: 2.5px solid var(--red); box-shadow: 0 0 14px rgba(239,83,80,0.3); }
 .islem-panel.tahsilat-mode { border: 2.5px solid var(--green); box-shadow: 0 0 14px rgba(67,160,71,0.3); }
-.islem-panel-header { padding:10px 14px; display:flex; align-items:center; justify-content:between; border-bottom:1px solid var(--border); background:rgba(25, 42, 74, 0.4); }
+
+.islem-panel-header {
+  padding:10px 14px;
+  display:flex; align-items:center; justify-content:between;
+  border-bottom:1px solid var(--border);
+  background:rgba(25, 42, 74, 0.4);
+}
 .islem-panel-title { font-family:'Oswald',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; text-transform:uppercase; }
 .borc-mode .islem-panel-title { color:var(--red); }
 .tahsilat-mode .islem-panel-title { color:var(--green2); }
+
 .islem-panel-body { padding:14px; display:flex; flex-direction:column; gap:10px; }
 .islem-field-label { font-family:'Oswald',sans-serif; font-size:11px; font-weight:600; letter-spacing:1px; color:var(--text-muted); text-transform:uppercase; }
-.islem-input { width:100%; background:var(--input-bg); border:1px solid var(--input-border); border-radius:4px; padding:8px 12px; color:var(--white); font-family:'Exo 2',sans-serif; font-size:14px; font-weight:600; outline:none; }
+.islem-input {
+  width:100%; background:var(--input-bg); border:1px solid var(--input-border);
+  border-radius:4px; padding:8px 12px; color:var(--white);
+  font-family:'Exo 2',sans-serif; font-size:14px; font-weight:600; outline:none;
+}
 .islem-input:focus { border-color:var(--accent); }
-.btn-islem-kaydet { width:100%; padding:9px; border:none; border-radius:4px; font-family:'Oswald',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; cursor:pointer; text-transform:uppercase; margin-top:4px; }
+.btn-islem-kaydet {
+  width:100%; padding:9px; border:none; border-radius:4px;
+  font-family:'Oswald',sans-serif; font-size:14px; font-weight:700;
+  letter-spacing:1px; cursor:pointer; text-transform:uppercase; margin-top:4px;
+}
 .borc-mode .btn-islem-kaydet { background:var(--red2); color:#fff; }
 .tahsilat-mode .btn-islem-kaydet { background:var(--green); color:#fff; }
-.islem-panel-kapat-btn { background:none; border:none; color:var(--text-muted); font-weight:bold; cursor:pointer; font-size:12px; }
+
+.islem-panel-kapat-btn {
+  background:none; border:none; color:var(--text-muted); font-weight:bold; cursor:pointer; font-size:12px;
+}
 .islem-panel-kapat-btn:hover { color:#fff; }
 
-.detay-footer { padding:8px 12px; border-top:2px solid var(--border); display:flex; gap:8px; align-items:center; flex-wrap:wrap; background:var(--bg3); flex-shrink:0; }
+/* ── DETAY FOOTER ── */
+.detay-footer {
+  padding:8px 12px; border-top:2px solid var(--border);
+  display:flex; gap:8px; align-items:center; flex-wrap:wrap;
+  background:var(--bg3); flex-shrink:0;
+}
 .detay-spacer { flex:1; }
 .btn-excel { background:#1b5e20; color:#fff; }
 .btn-excel:hover { background:#2e7d32; }
@@ -301,17 +366,30 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
 .btn-sil-hareket:hover { background:#546e7a; }
 
 /* ── LOGIN ── */
-.login-modal { background:var(--bg2); border:2px solid var(--blue2); border-radius:10px; padding:36px 40px; width:320px; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,.7); }
+.login-modal {
+  background:var(--bg2); border:2px solid var(--blue2); border-radius:10px;
+  padding:36px 40px; width:320px; text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,.7);
+}
 .login-logo { font-size:42px; margin-bottom:12px; }
 .login-title { font-family:'Oswald',sans-serif; font-size:22px; font-weight:700; color:var(--white); letter-spacing:1px; margin-bottom:4px; }
 .login-sub { font-size:11px; color:var(--text-muted); margin-bottom:24px; }
-.login-input { width:100%; background:var(--input-bg); border:1px solid var(--input-border); border-radius:5px; padding:10px 14px; color:var(--white); font-family:'Exo 2',sans-serif; font-size:14px; font-weight:600; outline:none; text-align:center; letter-spacing:4px; margin-bottom:14px; }
+.login-input {
+  width:100%; background:var(--input-bg); border:1px solid var(--input-border);
+  border-radius:5px; padding:10px 14px; color:var(--white);
+  font-family:'Exo 2',sans-serif; font-size:14px; font-weight:600; outline:none;
+  text-align:center; letter-spacing:4px; margin-bottom:14px;
+}
 .login-input:focus { border-color:var(--accent); }
-.btn-login { width:100%; padding:10px; background:linear-gradient(135deg,var(--blue),var(--blue2)); border:none; border-radius:5px; color:#fff; font-family:'Oswald',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; cursor:pointer; transition:all .2s; text-transform:uppercase; }
+.btn-login {
+  width:100%; padding:10px; background:linear-gradient(135deg,var(--blue),var(--blue2));
+  border:none; border-radius:5px; color:#fff; font-family:'Oswald',sans-serif;
+  font-size:14px; font-weight:700; letter-spacing:1px; cursor:pointer; transition:all .2s; text-transform:uppercase;
+}
 .btn-login:hover { background:linear-gradient(135deg,var(--blue2),var(--blue-bright)); }
 .login-error { color:var(--red); font-size:11px; margin-top:8px; min-height:16px; }
 
-/* ── MODERN RAPOR VE YEDEK PANELLERİ ── */
+/* ── RAPOR MODAL ── */
 .rapor-modal {
   background:var(--bg2); border:2px solid var(--border2); border-radius:8px;
   width:90vw; max-width:900px; max-height:85vh;
@@ -324,34 +402,29 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
 .rapor-body::-webkit-scrollbar { width:6px; }
 .rapor-body::-webkit-scrollbar-thumb { background:var(--panel2); border-radius:3px; }
 
-.rapor-tarih-secici-kutusu {
-  background: var(--bg3); padding: 12px; border: 1px solid var(--border);
-  border-radius: 6px; margin-bottom: 16px; display: flex; align-items: center; gap: 12px;
-}
-.rapor-date-input {
-  background: var(--input-bg); border: 1px solid var(--input-border); color: var(--white);
-  padding: 6px 12px; border-radius: 4px; font-family: 'Exo 2', sans-serif; font-weight: bold; outline: none;
-}
-
-.yedek-panel-kutusu {
-  display: flex; flex-direction: column; gap: 16px; padding: 10px 5px;
-}
-.yedek-kart {
-  background: var(--bg3); border: 1px solid var(--border); padding: 14px; border-radius: 6px;
-  display: flex; flex-direction: column; gap: 8px;
-}
-.yedek-kart-baslik { font-family: 'Oswald', sans-serif; font-size: 15px; color: var(--blue-bright); font-weight: bold; }
-.yedek-kart-aciklama { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
-
 /* ── LOADING ── */
-.loading-overlay { display:none; position:fixed; inset:0; background:rgba(10,22,40,.85); z-index:9000; align-items:center; justify-content:center; flex-direction:column; gap:16px; }
+.loading-overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(10,22,40,.85); z-index:9000;
+  align-items:center; justify-content:center; flex-direction:column; gap:16px;
+}
 .loading-overlay.active { display:flex; }
-.spinner { width:42px; height:42px; border:4px solid var(--border2); border-top-color:var(--blue-bright); border-radius:50%; animation:spin .8s linear infinite; }
+.spinner {
+  width:42px; height:42px; border:4px solid var(--border2);
+  border-top-color:var(--blue-bright); border-radius:50%;
+  animation:spin .8s linear infinite;
+}
 @keyframes spin { to{transform:rotate(360deg)} }
 .loading-text { font-family:'Oswald',sans-serif; font-size:14px; color:var(--blue-bright); letter-spacing:1px; }
 
 /* ── TOAST ── */
-.toast { position:fixed; bottom:20px; right:20px; background:var(--panel2); border:1px solid var(--border2); border-left:4px solid var(--green); border-radius:6px; padding:10px 16px; font-size:12px; font-weight:600; color:var(--white); z-index:9999; transform:translateX(120%); transition:transform .3s ease; max-width:280px; }
+.toast {
+  position:fixed; bottom:20px; right:20px;
+  background:var(--panel2); border:1px solid var(--border2);
+  border-left:4px solid var(--green); border-radius:6px;
+  padding:10px 16px; font-size:12px; font-weight:600; color:var(--white);
+  z-index:9999; transform:translateX(120%); transition:transform .3s ease; max-width:280px;
+}
 .toast.show { transform:translateX(0); }
 .toast.error { border-left-color:var(--red); }
 
@@ -404,8 +477,8 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
       <span class="toolbar-label">Cari Ünvan</span>
       <input class="tb-input" id="txtCariKod" placeholder="Kod" readonly>
       <input class="tb-input" id="txtCariUnvan" placeholder="Müşteri adı girin..." onkeydown="cariUnvanKeyDown(event)">
-      <span class="toolbar-label" style="margin-left:8px">Müşteri Ara</span>
-      <input class="tb-input" id="txtAra" placeholder="Ara..." oninput="araFilter()">
+      <span class="toolbar-label" style="margin-left:4px">Müşteri Ara</span>
+      <input class="tb-input" id="txtAra" placeholder="Ara..." oninput="araFilter()" onkeydown="araKeyDown(event)">
       <button class="btn btn-danger" onclick="cariSil()">CARİ SİL</button>
     </div>
 
@@ -425,8 +498,7 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
 
     <div class="bottom-bar">
       <button class="btn btn-secondary" onclick="excelAktar()">📊 Excel Aktar</button>
-      <button class="btn btn-secondary" onclick="gunlukRaporEkraniAc()">📋 F3 Günlük Rapor</button>
-      <button class="btn btn-secondary" onclick="yedekEkraniAc()">💾 F4 Yedekleme Paneli</button>
+      <button class="btn btn-secondary" onclick="gunlukRapor()">📋 F3 Günlük Rapor</button>
     </div>
   </div>
 
@@ -463,10 +535,12 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
       </div>
       <div class="hizli-body">
         <div>
-          <div class="hizli-label">Cari Ara (İsim Yazın)</div>
-          <div class="hizli-arama-container">
-            <input class="hizli-input" id="txtHizliCariAra" placeholder="Müşteri adı yazın..." oninput="hizliCariAraInput()" onkeydown="hizliCariAraKeyDown(event)">
-            <div class="hizli-arama-sonuclari" id="hizliAramaSonuclari"></div>
+          <div class="hizli-label">Cari Ara</div>
+          <div class="autocomplete-wrap">
+            <input class="autocomplete-input" id="hizliCariAra" placeholder="İsim yazın..." 
+              autocomplete="off" oninput="acDropdownGuncelle()" onkeydown="acKeyDown(event)" onfocus="acDropdownGuncelle()">
+            <input type="hidden" id="hizliCariKod">
+            <div class="autocomplete-dropdown" id="acDropdown"></div>
           </div>
         </div>
         <div>
@@ -630,6 +704,7 @@ async function init() {
   try {
     await carileritabloyaYukle();
     genelBakiyeHesapla();
+    hizliCariListesiGuncelle();
     otomatikKodVer();
   } catch(e) {
     toast('Veritabanı bağlantı hatası: ' + e.message, true);
@@ -674,6 +749,7 @@ function takvimIleri(){if(takvimAy===11){takvimAy=0;takvimYil++;}else takvimAy++
 // ── YARDIMCILAR ──
 function fmt(v){return Number(v).toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function renkSinifi(b){return b<0?'color-blue':b>=1000?'color-red':'color-black';}
+function bugunStr(){const n=new Date(),f=d=>String(d).padStart(2,'0');return `${f(n.getDate())}.${f(n.getMonth()+1)}.${n.getFullYear()}`;}
 let toastTimer;
 function toast(msg,hata=false){
   const el=document.getElementById('toast');
@@ -684,7 +760,7 @@ function toast(msg,hata=false){
 }
 
 // ═══════════════════════════════════════════════════════
-// CARİ LİSTESİ VE OK TUŞLARI
+// CARİ LİSTESİ — Supabase
 // ═══════════════════════════════════════════════════════
 let cariListesi = [];
 let seciliCariKodlar = [];
@@ -730,6 +806,81 @@ function otomatikKodVer() {
   document.getElementById('txtCariKod').value = max+1;
 }
 
+// ── AUTOCOMPLETE SİSTEMİ ──
+let acSeciliIdx = -1;
+
+function acDropdownGuncelle() {
+  const ara = document.getElementById('hizliCariAra').value.toLowerCase().trim();
+  const dropdown = document.getElementById('acDropdown');
+  document.getElementById('hizliCariKod').value = ''; // seçim sıfırla
+  acSeciliIdx = -1;
+
+  const eslesen = ara
+    ? cariListesi.filter(c => c.unvan.toLowerCase().includes(ara))
+    : cariListesi;
+
+  if (!eslesen.length) { dropdown.innerHTML = ''; dropdown.classList.remove('acik'); return; }
+
+  dropdown.innerHTML = eslesen.slice(0, 30).map((c, i) =>
+    `<div class="autocomplete-item" data-kod="${c.kod}" data-unvan="${c.unvan}" onclick="acSec(${c.kod},'${c.unvan.replace(/'/g,"\\'")}')">
+      <span class="ac-kod">${c.kod}</span>
+      <span class="ac-unvan">${c.unvan}</span>
+    </div>`
+  ).join('');
+  dropdown.classList.add('acik');
+}
+
+function acSec(kod, unvan) {
+  document.getElementById('hizliCariAra').value = unvan;
+  document.getElementById('hizliCariKod').value = kod;
+  document.getElementById('acDropdown').classList.remove('acik');
+  acSeciliIdx = -1;
+  document.getElementById('txtHizliAciklama').focus();
+}
+
+function acKeyDown(e) {
+  const dropdown = document.getElementById('acDropdown');
+  const items = [...dropdown.querySelectorAll('.autocomplete-item')];
+  if (!items.length) return;
+
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    acSeciliIdx = Math.min(acSeciliIdx + 1, items.length - 1);
+    items.forEach((el, i) => el.classList.toggle('aktif', i === acSeciliIdx));
+    items[acSeciliIdx]?.scrollIntoView({ block: 'nearest' });
+
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    acSeciliIdx = Math.max(acSeciliIdx - 1, 0);
+    items.forEach((el, i) => el.classList.toggle('aktif', i === acSeciliIdx));
+    items[acSeciliIdx]?.scrollIntoView({ block: 'nearest' });
+
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    if (acSeciliIdx >= 0 && items[acSeciliIdx]) {
+      const el = items[acSeciliIdx];
+      acSec(el.dataset.kod, el.dataset.unvan);
+    } else if (items.length === 1) {
+      const el = items[0];
+      acSec(el.dataset.kod, el.dataset.unvan);
+    }
+  } else if (e.key === 'Escape') {
+    dropdown.classList.remove('acik');
+  }
+}
+
+// Dropdown dışına tıklanınca kapat
+document.addEventListener('click', e => {
+  if (!e.target.closest('.autocomplete-wrap')) {
+    document.getElementById('acDropdown')?.classList.remove('acik');
+  }
+});
+
+function hizliCariListesiGuncelle() {
+  // Autocomplete sisteminde select yok, sadece listeyi tazele
+  acDropdownGuncelle();
+}
+
 function satirSec(tr, ev) {
   const cKod = parseInt(tr.dataset.kod);
   if (ev && (ev.ctrlKey || ev.metaKey)) {
@@ -755,6 +906,68 @@ function satirSec(tr, ev) {
 
 function araFilter() { tabloYenile(); }
 
+// Tabloyu yeniden render etmeden sadece DOM'daki seçimi değiştirir
+function okTusuSec(hedefTr) {
+  document.querySelectorAll('#tbodyMain tr').forEach(r => {
+    r.classList.remove('selected');
+    r.querySelector('.row-arrow').style.display = 'none';
+  });
+  hedefTr.classList.add('selected');
+  hedefTr.querySelector('.row-arrow').style.display = 'inline';
+  seciliCariKodlar = [parseInt(hedefTr.dataset.kod)];
+  hedefTr.scrollIntoView({ block: 'nearest' });
+}
+
+function araKeyDown(e) {
+  const rows = [...document.querySelectorAll('#tbodyMain tr')]
+    .filter(r => r.style.display !== 'none');
+  if (!rows.length) return;
+
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    const idx = rows.findIndex(r => r.classList.contains('selected'));
+    const hedef = (idx === -1 || idx >= rows.length - 1) ? rows[0] : rows[idx + 1];
+    okTusuSec(hedef);
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    const idx = rows.findIndex(r => r.classList.contains('selected'));
+    const hedef = (idx <= 0) ? rows[rows.length - 1] : rows[idx - 1];
+    okTusuSec(hedef);
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    const secili = rows.find(r => r.classList.contains('selected'));
+    if (secili) cariAc(secili.dataset.kod);
+    else if (rows.length === 1) cariAc(rows[0].dataset.kod);
+  }
+}
+
+// Global ok tuşu — herhangi bir input focus'ta değilken tabloda gezin
+document.addEventListener('keydown', e => {
+  if (document.getElementById('detayOverlay').classList.contains('active')) return;
+  const aktif = document.activeElement;
+  if (aktif && aktif.id === 'txtAra') return; // araKeyDown halleder
+  if (aktif && (aktif.tagName === 'INPUT' || aktif.tagName === 'SELECT' || aktif.tagName === 'TEXTAREA')) return;
+
+  const rows = [...document.querySelectorAll('#tbodyMain tr')]
+    .filter(r => r.style.display !== 'none');
+  if (!rows.length) return;
+
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    const idx = rows.findIndex(r => r.classList.contains('selected'));
+    const hedef = (idx === -1 || idx >= rows.length - 1) ? rows[0] : rows[idx + 1];
+    okTusuSec(hedef);
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    const idx = rows.findIndex(r => r.classList.contains('selected'));
+    const hedef = (idx <= 0) ? rows[rows.length - 1] : rows[idx - 1];
+    okTusuSec(hedef);
+  } else if (e.key === 'Enter') {
+    const secili = rows.find(r => r.classList.contains('selected'));
+    if (secili) cariAc(secili.dataset.kod);
+  }
+});
+
 async function cariUnvanKeyDown(e) {
   if (e.key!=='Enter') return;
   const unvan = document.getElementById('txtCariUnvan').value.trim().toUpperCase();
@@ -765,7 +978,7 @@ async function cariUnvanKeyDown(e) {
     const res = await sbPost('cariler',{kod, unvan, bakiye:0});
     cariListesi.push(res[0]);
     cariListesi.sort((a,b)=>a.kod-b.kod);
-    tabloYenile(); otomatikKodVer(); genelBakiyeHesapla();
+    tabloYenile(); otomatikKodVer(); genelBakiyeHesapla(); hizliCariListesiGuncelle();
     document.getElementById('txtCariUnvan').value='';
     document.getElementById('txtCariUnvan').focus();
     toast(`✓ ${unvan} eklendi`);
@@ -783,7 +996,7 @@ async function cariSil() {
     await sbDelete('cariler',`kod=in.(${kodlarString})`);
     cariListesi = cariListesi.filter(x=> !seciliCariKodlar.includes(parseInt(x.kod)));
     seciliCariKodlar=[];
-    tabloYenile(); otomatikKodVer(); genelBakiyeHesapla();
+    tabloYenile(); otomatikKodVer(); genelBakiyeHesapla(); hizliCariListesiGuncelle();
     toast('Seçili cariler silindi');
   } catch(err){ toast('Hata: '+err.message,true); }
   loading(false);
@@ -799,95 +1012,18 @@ async function bakiyeGuncelleDB(kod) {
 }
 
 // ═══════════════════════════════════════════════════════
-// HIZLI İŞLEM DİNAMİK ARAMA VE ENTEGRASYON
+// HIZLI İŞLEM (SAĞ ANAPANEL)
 // ═══════════════════════════════════════════════════════
-let hizliSeciliCariKod = null;
-let hizliAramaAktifIndex = -1;
-
-function hizliCariAraInput() {
-  const txt = document.getElementById('txtHizliCariAra').value.toLowerCase().trim();
-  const box = document.getElementById('hizliAramaSonuclari');
-  box.innerHTML = '';
-  hizliSeciliCariKod = null;
-  hizliAramaAktifIndex = -1;
-
-  if(!txt) { box.style.display = 'none'; return; }
-
-  const filtrelenmis = cariListesi.filter(c => c.unvan.toLowerCase().includes(txt));
-  if(filtrelenmis.length === 0) {
-    box.style.display = 'none';
-    return;
-  }
-
-  filtrelenmis.forEach((c, index) => {
-    const div = document.createElement('div');
-    div.className = 'hizli-arama-item';
-    div.textContent = c.unvan;
-    div.dataset.kod = c.kod;
-    div.addEventListener('click', () => {
-      hizliCariSec(c.kod, c.unvan);
-    });
-    box.appendChild(div);
-  });
-  box.style.display = 'block';
-}
-
-function hizliCariSec(kod, unvan) {
-  document.getElementById('txtHizliCariAra').value = unvan;
-  hizliSeciliCariKod = kod;
-  document.getElementById('hizliAramaSonuclari').style.display = 'none';
-  document.getElementById('txtHizliAciklama').focus();
-}
-
-function hizliCariAraKeyDown(e) {
-  const box = document.getElementById('hizliAramaSonuclari');
-  const items = box.querySelectorAll('.hizli-arama-item');
-  
-  if (box.style.display === 'block' && items.length > 0) {
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      hizliAramaAktifIndex = (hizliAramaAktifIndex + 1) % items.length;
-      hizliAramaListeyiGorselle(items);
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      hizliAramaAktifIndex = (hizliAramaAktifIndex - 1 + items.length) % items.length;
-      hizliAramaListeyiGorselle(items);
-    } else if (e.key === 'Enter') {
-      e.preventDefault();
-      if (hizliAramaAktifIndex >= 0) {
-        const item = items[hizliAramaAktifIndex];
-        hizliCariSec(item.dataset.kod, item.textContent);
-      } else if(items.length > 0) {
-        hizliCariSec(items[0].dataset.kod, items[0].textContent);
-      }
-    }
-  } else if (e.key === 'Enter') {
-    e.preventDefault();
-    document.getElementById('txtHizliAciklama').focus();
-  }
-}
-
-function hizliAramaListeyiGorselle(items) {
-  items.forEach((item, idx) => {
-    if(idx === hizliAramaAktifIndex) {
-      item.classList.add('aktif');
-      item.scrollIntoView({ block: 'nearest' });
-    } else {
-      item.classList.remove('aktif');
-    }
-  });
-}
-
 function hizliKeyDown(e,alan){
-  if(e.key==='Enter') {
-    e.preventDefault();
+  if(e.key==='Enter'){
     if(alan==='aciklama') document.getElementById('txtHizliTutar').focus();
     else if(alan==='tutar') hizliIslemYap();
   }
 }
 
 async function hizliIslemYap() {
-  if(!hizliSeciliCariKod){toast('Lütfen geçerli bir cari seçin!',true); return;}
+  const kod = document.getElementById('hizliCariKod').value;
+  if(!kod){toast('Listeden bir cari seçin!',true);document.getElementById('hizliCariAra').focus();return;}
   const tutar = parseFloat(document.getElementById('txtHizliTutar').value);
   if(!tutar||tutar<=0){toast('Geçerli tutar girin!',true);return;}
   const aciklama = document.getElementById('txtHizliAciklama').value.trim()||'Hızlı İşlem';
@@ -896,16 +1032,17 @@ async function hizliIslemYap() {
   const tarih=`${f(n.getDate())}.${f(n.getMonth()+1)}.${n.getFullYear()} ${f(n.getHours())}:${f(n.getMinutes())}`;
   loading(true,'Kaydediliyor...');
   try {
-    await sbPost('hareketler',{cari_kod:parseInt(hizliSeciliCariKod),tarih,aciklama,borc:isBorc?tutar:0,tahsilat:isBorc?0:tutar});
-    await bakiyeGuncelleDB(hizliSeciliCariKod);
+    await sbPost('hareketler',{cari_kod:parseInt(kod),tarih,aciklama,borc:isBorc?tutar:0,tahsilat:isBorc?0:tutar});
+    await bakiyeGuncelleDB(kod);
     tabloYenile(); genelBakiyeHesapla();
-    
     document.getElementById('txtHizliTutar').value='';
     document.getElementById('txtHizliAciklama').value='';
-    document.getElementById('txtHizliCariAra').value='';
-    hizliSeciliCariKod = null;
-    document.getElementById('txtHizliCariAra').focus();
-    toast('✓ Hızlı işlem kaydedildi.');
+    document.getElementById('hizliCariAra').value='';
+    document.getElementById('hizliCariKod').value='';
+    document.getElementById('acDropdown').classList.remove('acik');
+    document.getElementById('hizliCariAra').focus();
+    const c=cariListesi.find(x=>x.kod==kod);
+    toast(`✓ ${isBorc?'Borç':'Tahsilat'} eklendi → ${c?.unvan||''}`);
   } catch(err){toast('Hata: '+err.message,true);}
   loading(false);
 }
@@ -1007,8 +1144,8 @@ function tahsilatPanelAc(){
 function islemPanelKapat(){document.getElementById('islemPanel').classList.remove('active');}
 
 function islemKeyDown(e,alan){
-  if(e.key==='Enter') { e.preventDefault(); if(alan==='aciklama') document.getElementById('txtIslemTutar').focus(); else islemKaydet(); }
-  if(e.key==='Escape') islemPanelKapat();
+  if(e.key==='Enter'){e.preventDefault();if(alan==='aciklama')document.getElementById('txtIslemTutar').focus();else islemKaydet();}
+  if(e.key==='Escape')islemPanelKapat();
 }
 
 async function islemKaydet(){
@@ -1062,6 +1199,9 @@ async function detayPdf(){
   const w=window.open('','_blank');w.document.write(html);w.document.close();w.print();
 }
 
+// ═══════════════════════════════════════════════════════
+// ANA EXCEL / GÜNLÜK RAPOR (YENİLENDİ — TARİH SEÇİMLİ)
+// ═══════════════════════════════════════════════════════
 function excelAktar(){
   let csv='Kod;Ünvan;Bakiye\n';
   cariListesi.forEach(c=>{csv+=`${c.kod};${c.unvan};${fmt(c.bakiye)}\n`;});
@@ -1069,135 +1209,233 @@ function excelAktar(){
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='CariListesi.csv';a.click();
 }
 
-// ═══════════════════════════════════════════════════════
-// F3 GÜNLÜK RAPOR - TAKVİMLİ PANEL
-// ═══════════════════════════════════════════════════════
-function gunlukRaporEkraniAc() {
-  const d = new Date();
-  const bugunIso = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-  
-  document.getElementById('raporTitle').textContent = `GÜNLÜK RAPOR GÖRÜNTÜLE`;
-  document.getElementById('raporBody').innerHTML = `
-    <div class="rapor-tarih-secici-kutusu">
-      <span style="font-weight:bold; font-size:13px;">Rapor Tarihi Seçin:</span>
-      <input type="date" id="raporTarihGirdisi" class="rapor-date-input" value="${bugunIso}">
-      <button class="btn btn-secondary" style="background:var(--blue2); color:#fff; padding:5px 14px;" onclick="gunlukRaporHesaplaVeListele()">SORGULA</button>
-    </div>
-    <div id="raporIcerikTabloAlani"></div>
-  `;
-  document.getElementById('raporOverlay').classList.add('active');
-  document.getElementById('raporTarihGirdisi').focus();
-}
-
-async function gunlukRaporHesaplaVeListele() {
-  const secilenTarihRaw = document.getElementById('raporTarihGirdisi').value;
-  if(!secilenTarihRaw) return;
-  
-  const parca = secilenTarihRaw.split('-');
-  const hedefFormat = `${parca[2]}.${parca[1]}.${parca[0]}`;
-  
-  loading(true, 'Rapor verileri getiriliyor...');
+async function gunlukRapor(){
+  const tarih=prompt('Raporunu görmek istediğiniz tarihi girin (gg.aa.yyyy):', bugunStr());
+  if(!tarih || tarih.trim()==="") return;
+  loading(true,'Rapor hazırlanıyor...');
   try {
-    const hareketler = await sbGet('hareketler', 'order=cari_kod.asc');
-    let satirlar = '', tB = 0, tT = 0, bulundu = false;
-    
-    hareketler.forEach(r => {
-      if(r.tarih.startsWith(hedefFormat)) {
-        bulundu = true;
-        tB += Number(r.borc);
-        tT += Number(r.tahsilat);
-        const c = cariListesi.find(x => x.kod == r.cari_kod);
-        const cls = Number(r.borc) > 0 ? 'color:#ff4444' : 'color:#43a047';
-        satirlar += `
-          <tr style="${cls}">
-            <td style="padding:8px; border:1px solid var(--border); font-weight:bold;">${r.cari_kod}</td>
-            <td style="padding:8px; border:1px solid var(--border); font-weight:bold;">${c?.unvan || 'Bilinmeyen'}</td>
-            <td style="padding:8px; border:1px solid var(--border); font-weight:bold;">${r.aciklama}</td>
-            <td style="padding:8px; border:1px solid var(--border); text-align:right; font-family:'Roboto Mono'; font-weight:bold;">${fmt(r.borc)}</td>
-            <td style="padding:8px; border:1px solid var(--border); text-align:right; font-family:'Roboto Mono'; font-weight:bold;">${fmt(r.tahsilat)}</td>
-          </tr>`;
+    const hareketler=await sbGet('hareketler','order=cari_kod.asc');
+    let satirlar='',tB=0,tT=0,var_=false;
+    hareketler.forEach(r=>{
+      if(r.tarih.startsWith(tarih.trim())){
+        var_=true; tB+=Number(r.borc); tT+=Number(r.tahsilat);
+        const c=cariListesi.find(x=>x.kod==r.cari_kod);
+        const cls=Number(r.borc)>0?'color:#ff4444':'color:#43a047';
+        satirlar+=`<tr style="${cls}"><td>${r.cari_kod}</td><td>${c?.unvan||''}</td><td>${r.aciklama}</td><td style="text-align:right">${fmt(r.borc)}</td><td style="text-align:right">${fmt(r.tahsilat)}</td></tr>`;
       }
     });
-    
-    const alan = document.getElementById('raporIcerikTabloAlani');
-    if(!bulundu) {
-      alan.innerHTML = `<div style="text-align:center; padding:30px; color:var(--text-muted); font-weight:bold;">⚠️ Seçtiğiniz tarihe (${hedefFormat}) ait hareket kaydı bulunamadı.</div>`;
-    } else {
-      alan.innerHTML = `
-        <table style="width:100%; border-collapse:collapse; margin-top:10px;">
-          <thead>
-            <tr style="background:var(--header-bg)">
-              <th style="padding:8px; border:1px solid var(--border); font-family:Oswald; text-align:left; color:var(--blue-bright)">KOD</th>
-              <th style="padding:8px; border:1px solid var(--border); font-family:Oswald; text-align:left; color:var(--blue-bright)">MÜŞTERI</th>
-              <th style="padding:8px; border:1px solid var(--border); font-family:Oswald; text-align:left; color:var(--blue-bright)">AÇIKLAMA</th>
-              <th style="padding:8px; border:1px solid var(--border); font-family:Oswald; text-align:right; color:var(--blue-bright)">BORÇ</th>
-              <th style="padding:8px; border:1px solid var(--border); font-family:Oswald; text-align:right; color:var(--blue-bright)">TAHSİLAT</th>
-            </tr>
-          </thead>
-          <tbody>${satirlar}</tbody>
-          <tfoot>
-            <tr style="background:var(--panel); font-weight:700">
-              <td colspan="3" style="padding:8px; border:1px solid var(--border); text-align:right; color:var(--white)">TOPLAM:</td>
-              <td style="padding:8px; border:1px solid var(--border); text-align:right; color:#ff4444; font-family:'Roboto Mono'">${fmt(tB)}</td>
-              <td style="padding:8px; border:1px solid var(--border); text-align:right; color:#43a047; font-family:'Roboto Mono'">${fmt(tT)}</td>
-            </tr>
-          </tfoot>
-        </table>
-      `;
-    }
-  } catch(e) { toast('Rapor hatası: '+e.message, true); }
+    if(!var_){toast(`${tarih} tarihine ait hiçbir hareket bulunamadı!`,true);loading(false);return;}
+    document.getElementById('raporBody').innerHTML=`
+      <p style="color:var(--text-muted);margin-bottom:12px;font-size:12px">Sorgulanan Tarih: <strong style="color:var(--white)">${tarih}</strong></p>
+      <table style="width:100%;border-collapse:collapse">
+        <thead><tr style="background:var(--header-bg)">
+          <th style="padding:8px;border:1px solid var(--border);font-family:Oswald;font-size:11px;color:var(--blue-bright)">KOD</th>
+          <th style="padding:8px;border:1px solid var(--border);font-family:Oswald;font-size:11px;color:var(--blue-bright)">MÜŞTERİ</th>
+          <th style="padding:8px;border:1px solid var(--border);font-family:Oswald;font-size:11px;color:var(--blue-bright)">AÇIKLAMA</th>
+          <th style="padding:8px;border:1px solid var(--border);font-family:Oswald;font-size:11px;color:var(--blue-bright);text-align:right">BORÇ</th>
+          <th style="padding:8px;border:1px solid var(--border);font-family:Oswald;font-size:11px;color:var(--blue-bright);text-align:right">TAHSİLAT</th>
+        </tr></thead>
+        <tbody>${satirlar}</tbody>
+        <tfoot><tr style="background:var(--panel);font-weight:700">
+          <td colspan="3" style="padding:8px;border:1px solid var(--border);text-align:right;color:var(--white)">TOPLAM:</td>
+          <td style="padding:8px;border:1px solid var(--border);text-align:right;color:#ff4444;font-family:'Roboto Mono'">${fmt(tB)}</td>
+          <td style="padding:8px;border:1px solid var(--border);text-align:right;color:#43a047;font-family:'Roboto Mono'">${fmt(tT)}</td>
+        </tr></tfoot>
+      </table>`;
+    document.getElementById('raporTitle').textContent=`GÜNLÜK RAPOR — ${tarih}`;
+    document.getElementById('raporOverlay').classList.add('active');
+  } catch(err){toast('Rapor hatası: '+err.message,true);}
   loading(false);
 }
 function raporKapat(){document.getElementById('raporOverlay').classList.remove('active');}
 
 // ═══════════════════════════════════════════════════════
-// F4 YEDEKLEME VE GERİ YÜKLEME PANELİ
+// MANUEL JSON YEDEKLEME VE PANEL SİSTEMLERİ (YENİ)
 // ═══════════════════════════════════════════════════════
-function yedekEkraniAc() {
-  document.getElementById('raporTitle').textContent = "💾 YEDEKLEME VE GERİ YÜKLEME PANELİ (F4)";
-  document.getElementById('raporBody').innerHTML = `
-    <div class="yedek-panel-kutusu">
-      <div class="yedek-kart">
-        <div class="yedek-kart-baslik">1) Bulut Veritabanını Bilgisayara Yedekle</div>
-        <div class="yedek-kart-aciklama">Supabase üzerindeki tüm müşteri ve hareket dökümlerini tek tuşla güvenli bir şekilde bilgisayarınıza .json dosyası olarak indirebilirsiniz.</div>
-        <button class="btn btn-secondary" style="background:var(--green); color:#fff; margin-top:8px;" onclick="veritabaniYedekAl()">YEDEĞİ BİLGİSAYARA İNDİR</button>
-      </div>
-      
-      <div class="yedek-kart">
-        <div class="yedek-kart-baslik">2) Bilgisayardaki Yedeği Geri Yükle</div>
-        <div class="yedek-kart-aciklama">Daha önce indirdiğiniz bir yedek dosyasını seçerek bulut veritabanına geri yükleyebilirsiniz. <span style="color:var(--red); font-weight:bold;">Dikkat! Mevcut veritabanı silinir ve yedek dosyası içeriği yazılır.</span></div>
-        <button class="btn btn-secondary" style="background:var(--red2); color:#fff; margin-top:8px;" onclick="veritabaniYedekYukleTetikle()">YEDEKTEN GERİ YÜKLE (.JSON SEÇ)</button>
-      </div>
+// ── PDF HTML oluşturucu (her cari için) ──
+function cariPdfHtmlOlustur(cari, hareketler) {
+  const bugun = new Date().toLocaleDateString('tr-TR');
+  let bakiye = 0;
+  const satirlar = [...hareketler].reverse().map(r => {
+    bakiye += Number(r.borc) - Number(r.tahsilat);
+    const renk = Number(r.borc) > 0 ? '#c0392b' : '#27ae60';
+    return `
+      <tr>
+        <td style="color:${renk}">${r.tarih}</td>
+        <td style="color:${renk}">${r.aciklama || ''}</td>
+        <td style="text-align:right;color:#c0392b;font-weight:700">${Number(r.borc)>0 ? fmt(r.borc) : ''}</td>
+        <td style="text-align:right;color:#27ae60;font-weight:700">${Number(r.tahsilat)>0 ? fmt(r.tahsilat) : ''}</td>
+        <td style="text-align:right;font-weight:700;color:${bakiye>=0?'#c0392b':'#2980b9'}">${fmt(bakiye)}</td>
+      </tr>`;
+  }).join('');
+
+  const sonBakiye = hareketler.reduce((t,r)=>t+Number(r.borc)-Number(r.tahsilat), 0);
+  const bakiyeRenk = sonBakiye > 0 ? '#c0392b' : sonBakiye < 0 ? '#2980b9' : '#27ae60';
+  const bakiyeDurum = sonBakiye > 0 ? 'BORÇLU' : sonBakiye < 0 ? 'ALACAKLI' : 'SIFIR';
+
+  return `<!DOCTYPE html>
+<html lang="tr"><head><meta charset="UTF-8">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: Arial, sans-serif; padding: 24px; color: #2c3e50; background:#fff; }
+  .header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:20px; padding-bottom:14px; border-bottom:3px solid #1a3358; }
+  .header-left h1 { font-size:22px; color:#1a3358; letter-spacing:1px; }
+  .header-left p { font-size:12px; color:#7f8c8d; margin-top:3px; }
+  .header-right { text-align:right; }
+  .bakiye-kutu { background:${bakiyeRenk}; color:#fff; padding:10px 20px; border-radius:8px; text-align:center; }
+  .bakiye-kutu .etiket { font-size:10px; letter-spacing:1px; opacity:0.85; }
+  .bakiye-kutu .tutar { font-size:22px; font-weight:700; font-family:monospace; }
+  .bakiye-kutu .durum { font-size:11px; font-weight:700; letter-spacing:1px; margin-top:2px; }
+  .bilgi-satir { display:flex; gap:30px; background:#f8f9fa; padding:10px 14px; border-radius:6px; margin-bottom:16px; font-size:12px; }
+  .bilgi-satir span { color:#7f8c8d; }
+  .bilgi-satir strong { color:#2c3e50; }
+  table { width:100%; border-collapse:collapse; font-size:12px; }
+  thead tr { background:#1a3358; color:#fff; }
+  thead th { padding:9px 10px; text-align:left; font-size:11px; letter-spacing:.5px; }
+  thead th:nth-child(3), thead th:nth-child(4), thead th:nth-child(5) { text-align:right; }
+  tbody tr:nth-child(even) { background:#f8f9fa; }
+  tbody tr:hover { background:#eaf4ff; }
+  tbody td { padding:8px 10px; border-bottom:1px solid #ecf0f1; font-size:12px; }
+  tfoot tr { background:#2c3e50; color:#fff; }
+  tfoot td { padding:9px 10px; font-weight:700; font-size:12px; }
+  .footer { margin-top:20px; font-size:10px; color:#bdc3c7; text-align:center; border-top:1px solid #ecf0f1; padding-top:10px; }
+  @media print { body { padding:12px; } }
+</style>
+</head><body>
+<div class="header">
+  <div class="header-left">
+    <h1>💳 MMK VERESİYE TAKİP</h1>
+    <p>Müşteri Hesap Ekstresi — Oluşturma: ${bugun}</p>
+  </div>
+  <div class="header-right">
+    <div class="bakiye-kutu">
+      <div class="etiket">GÜNCEL BAKİYE</div>
+      <div class="tutar">${fmt(sonBakiye)} ₺</div>
+      <div class="durum">${bakiyeDurum}</div>
     </div>
-  `;
-  document.getElementById('raporOverlay').classList.add('active');
+  </div>
+</div>
+<div class="bilgi-satir">
+  <div><span>Cari Kod: </span><strong>${cari.kod}</strong></div>
+  <div><span>Müşteri Ünvanı: </span><strong>${cari.unvan}</strong></div>
+  <div><span>Toplam İşlem: </span><strong>${hareketler.length} adet</strong></div>
+</div>
+<table>
+  <thead>
+    <tr>
+      <th>TARİH / SAAT</th>
+      <th>AÇIKLAMA</th>
+      <th style="text-align:right">BORÇ (+)</th>
+      <th style="text-align:right">TAHSİLAT (−)</th>
+      <th style="text-align:right">BAKİYE</th>
+    </tr>
+  </thead>
+  <tbody>${satirlar || '<tr><td colspan="5" style="text-align:center;color:#bdc3c7;padding:20px">Hareket kaydı bulunamadı</td></tr>'}</tbody>
+  <tfoot>
+    <tr>
+      <td colspan="2">TOPLAM</td>
+      <td style="text-align:right">${fmt(hareketler.reduce((t,r)=>t+Number(r.borc),0))} ₺</td>
+      <td style="text-align:right">${fmt(hareketler.reduce((t,r)=>t+Number(r.tahsilat),0))} ₺</td>
+      <td style="text-align:right">${fmt(sonBakiye)} ₺</td>
+    </tr>
+  </tfoot>
+</table>
+<div class="footer">MMK Veresiye Web Programı — Bu belge ${bugun} tarihinde otomatik oluşturulmuştur.</div>
+</body></html>`;
 }
 
+// ── ANA YEDEK FONKSİYONU: ZIP içinde JSON + Her cari için PDF ──
 async function veritabaniYedekAl() {
-  loading(true, 'Yedek dosyası hazırlanıyor...');
+  loading(true, '📦 Yedek hazırlanıyor — veriler çekiliyor...');
   try {
+    // 1. Verileri çek
     const cariler = await sbGet('cariler', 'order=kod.asc');
-    const hareketler = await sbGet('hareketler', 'order=id.asc');
-    
+    const tumHareketler = await sbGet('hareketler', 'order=cari_kod.asc,id.asc');
+
+    const d = new Date();
+    const tarihStr = `${d.getDate()}_${d.getMonth()+1}_${d.getFullYear()}`;
+
+    // 2. JSZip yükle (CDN'den dinamik)
+    loading(true, '📦 ZIP kütüphanesi yükleniyor...');
+    if (!window.JSZip) {
+      await new Promise((res, rej) => {
+        const s = document.createElement('script');
+        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+        s.onload = res; s.onerror = rej;
+        document.head.appendChild(s);
+      });
+    }
+
+    const zip = new JSZip();
+
+    // 3. JSON yedeği ekle
+    loading(true, '📄 JSON yedek dosyası oluşturuluyor...');
     const yedekData = {
       olusturmaTarihi: new Date().toLocaleString('tr-TR'),
       program: 'MMK Veresiye Web',
-      cariler: cariler,
-      hareketler: hareketler
+      surum: '2.0',
+      cariler,
+      hareketler: tumHareketler
     };
+    zip.file(`mmk_yedek_${tarihStr}.json`, JSON.stringify(yedekData, null, 2));
 
-    const blob = new Blob([JSON.stringify(yedekData, null, 2)], { type: 'application/json' });
+    // 4. Her cari için ayrı PDF klasörüne HTML ekle
+    const pdfKlasor = zip.folder('📋 Cari_Ekstreleri');
+    const toplamCari = cariler.length;
+
+    for (let i = 0; i < cariler.length; i++) {
+      const cari = cariler[i];
+      loading(true, `📄 Ekstre oluşturuluyor: ${cari.unvan} (${i+1}/${toplamCari})`);
+      const cariHareketler = tumHareketler.filter(h => h.cari_kod == cari.kod);
+      const htmlIcerik = cariPdfHtmlOlustur(cari, cariHareketler);
+      // Dosya adından özel karakterleri temizle
+      const temizAd = cari.unvan.replace(/[^a-zA-Z0-9ÇçĞğİıÖöŞşÜü\s]/g, '').trim();
+      pdfKlasor.file(`${String(cari.kod).padStart(3,'0')}_${temizAd}.html`, htmlIcerik);
+    }
+
+    // 5. Özet dosyası ekle
+    let ozet = `MMK VERESİYE — YEDEK ÖZETİ\n`;
+    ozet += `${'='.repeat(40)}\n`;
+    ozet += `Oluşturma: ${new Date().toLocaleString('tr-TR')}\n`;
+    ozet += `Toplam Cari: ${cariler.length}\n`;
+    ozet += `Toplam Hareket: ${tumHareketler.length}\n\n`;
+    ozet += `CARİ LİSTESİ VE BAKİYELER:\n${'─'.repeat(40)}\n`;
+    cariler.forEach(c => {
+      const b = Number(c.bakiye);
+      const durum = b > 0 ? 'BORÇLU' : b < 0 ? 'ALACAKLI' : 'SIFIR';
+      ozet += `[${String(c.kod).padStart(3,'0')}] ${c.unvan.padEnd(30)} ${fmt(b)} ₺  (${durum})\n`;
+    });
+    const genelToplam = cariler.reduce((t,c)=>t+Number(c.bakiye),0);
+    ozet += `\n${'─'.repeat(40)}\nGENEL TOPLAM ALACAK: ${fmt(genelToplam)} ₺\n`;
+    ozet += `\nNASIL KULLANILIR:\n`;
+    ozet += `• mmk_yedek_*.json → Programı geri yüklemek için Araçlar > Yedeği Geri Yükle\n`;
+    ozet += `• 📋 Cari_Ekstreleri klasörü → Her .html dosyasını tarayıcıda açıp yazdırabilirsiniz\n`;
+    zip.file('OKUBENI.txt', ozet);
+
+    // 6. ZIP'i oluştur ve indir
+    loading(true, '📦 ZIP dosyası oluşturuluyor...');
+    const zipBlob = await zip.generateAsync({
+      type: 'blob',
+      compression: 'DEFLATE',
+      compressionOptions: { level: 6 }
+    });
+
     const a = document.createElement('a');
-    const d = new Date();
-    a.href = URL.createObjectURL(blob);
-    a.download = `mmk_veresiye_yedek_${d.getDate()}_${d.getMonth()+1}_${d.getFullYear()}.json`;
+    a.href = URL.createObjectURL(zipBlob);
+    a.download = `MMK_Veresiye_Yedek_${tarihStr}.zip`;
     a.click();
-    toast('✓ Supabase yedek dosyası başarıyla indirildi.');
-  } catch(err) { toast('Yedek alma hatası: ' + err.message, true); }
+
+    toast(`✓ Yedek hazır! ${cariler.length} cari, ${tumHareketler.length} hareket → ZIP indirildi`);
+  } catch(err) {
+    toast('Yedek hatası: ' + err.message, true);
+    console.error(err);
+  }
   loading(false);
 }
 
-function veritabaniYedekYukleTetikle() { document.getElementById('yedekDosyaSec').click(); }
+function veritabaniYedekYukleTetikle() {
+  document.getElementById('yedekDosyaSec').click();
+}
 
 function yedekDosyasiniOku(event) {
   const dosya = event.target.files[0];
@@ -1207,33 +1445,50 @@ function yedekDosyasiniOku(event) {
   reader.onload = async function(e) {
     try {
       const yedek = JSON.parse(e.target.result);
-      if (!yedek.cariler || !yedek.hareketler) throw new Error('Dosya yapısı geçerli bir yedek dosyası değil.');
+      if (!yedek.cariler || !yedek.hareketler) {
+        throw new Error('Dosya yapısı geçerli bir MMK Veresiye yedeği değil.');
+      }
       
-      const onay = confirm(`DİKKAT!\n\nBu işlem Supabase üzerindeki tüm mevcut verilerinizi kalıcı olarak silecek ve bu yedeği yükleyecektir.\n\nDosyadaki ${yedek.cariler.length} müşteri kartı ve ${yedek.hareketler.length} işlem kaydı yüklensin mi?`);
+      const onay = confirm(`Bu işlem Supabase üzerindeki mevcut verilerinizin üzerine yazacaktır.\n\nDosyadaki ${yedek.cariler.length} cari ve ${yedek.hareketler.length} hareket yüklensin mi?`);
       if (!onay) return;
 
-      raporKapat();
-      loading(true, 'Mevcut veriler temizleniyor...');
+      loading(true, 'Yedek geri yükleniyor (Eski veriler temizleniyor)...');
       
+      // Çakışma olmaması için mevcut tüm verileri siliyoruz
       try { await sbDelete('hareketler', 'id=gt.0'); } catch(e){}
       try { await sbDelete('cariler', 'kod=gt.0'); } catch(e){}
 
-      loading(true, 'Müşteriler aktarılıyor...');
+      // Carileri sırayla yükle
       for(let cari of yedek.cariler) {
-        await sbPost('cariler', { kod: parseInt(cari.kod), unvan: cari.unvan, bakiye: parseFloat(cari.bakiye) });
+        await sbPost('cariler', {
+          kod: parseInt(cari.kod),
+          unvan: cari.unvan,
+          bakiye: parseFloat(cari.bakiye)
+        });
       }
 
-      loading(true, 'Hareketler işleniyor...');
+      // Hareketleri sırayla yükle
       for(let hkt of yedek.hareketler) {
-        await sbPost('hareketler', { cari_kod: parseInt(hkt.cari_kod), tarih: hkt.tarih, aciklama: hkt.aciklama, borc: parseFloat(hkt.borc), tahsilat: parseFloat(hkt.tahsilat) });
+        await sbPost('hareketler', {
+          cari_kod: parseInt(hkt.cari_kod),
+          tarih: hkt.tarih,
+          aciklama: hkt.aciklama,
+          borc: parseFloat(hkt.borc),
+          tahsilat: parseFloat(hkt.tahsilat)
+        });
       }
 
-      toast('✓ Veritabanı yedeği geri yüklendi ve eşitlendi!');
+      toast('✓ Yedek başarıyla Supabase\'e yüklendi ve eşitlendi!');
       await carileritabloyaYukle();
       genelBakiyeHesapla();
+      hizliCariListesiGuncelle();
       otomatikKodVer();
-    } catch(err) { toast('Yedek yükleme hatası: ' + err.message, true); }
-    finally { loading(false); document.getElementById('yedekDosyaSec').value = ''; }
+    } catch(err) {
+      toast('Yedek yükleme hatası: ' + err.message, true);
+    } finally {
+      loading(false);
+      document.getElementById('yedekDosyaSec').value = '';
+    }
   };
   reader.readAsText(dosya);
 }
@@ -1241,27 +1496,22 @@ function yedekDosyasiniOku(event) {
 // ── MENÜ YÖNLENDİRMELERİ ──
 function menuDosya(){
   const s=prompt('Dosya:\n1) Excel Aktar\n2) Çıkış\nSeçin:');
-  if(s==='1')excelAktar(); else if(s==='2')window.close();
+  if(s==='1')excelAktar();
+  else if(s==='2')window.close();
 }
 function menuAraclar(){
-  const s=prompt('Araçlar:\n1) Günlük Rapor Paneli (F3)\n2) Yedekleme & Geri Yükleme (F4)\n3) Giriş Şifresini Değiştir\nSeçin:');
-  if(s==='1')gunlukRaporEkraniAc();
-  else if(s==='2')yedekEkraniAc();
-  else if(s==='3'){const y=prompt('Yeni şifre:');if(y&&y.trim()){setSifre(y.trim());toast('Şifre güncellendi!');}}
+  const s=prompt('Araçlar:\n1) Tarih Seçimli Günlük Rapor (F3)\n2) Giriş Şifresini Değiştir\n3) Veritabanını Yedekle (JSON İndir)\n4) Yedeği Geri Yükle (JSON Seç)\nSeçin:');
+  if(s==='1')gunlukRapor();
+  else if(s==='2'){const y=prompt('Yeni şifre:');if(y&&y.trim()){setSifre(y.trim());toast('Şifre güncellendi!');}}
+  else if(s==='3')veritabaniYedekAl();
+  else if(s==='4')veritabaniYedekYukleTetikle();
 }
-function hakkinda(){alert('MMK Veresiye Kısayolları:\n\nF3 — Tarih Seçimli Günlük Rapor\nF4 — Yedekleme & Geri Yükleme Paneli\nF5 — Borç Girişi (Detayda)\nF6 — Tahsilat Girişi (Detayda)\nESC — Kapat / Gizle\nENTER — Kaydet / Geçiş\nOk Tuşları ↑↓ — Listede gezinme');}
+function hakkinda(){alert('MMK Veresiye Kısayolları:\n\nF3 — Günlük Rapor (Tarih Seçimli)\nF5 — Borç Ekle (Detayda)\nF6 — Tahsilat Ekle (Detayda)\nESC — Kapat / Paneli Gizle\nENTER — Kaydet / Geçiş\nCtrl+Tıkla — Çoklu satır seç (Listede)\nOk Tuşları ↑↓ — Listede gezin');}
 
-// ── GLOBAL KLAVYE VE OK TUŞLARI YÖNETİMİ ──
+// ── GLOBAL KLAVYE ──
 function globalKeyDown(e){
+  if(e.key==='F3'){e.preventDefault();gunlukRapor();return;}
   const detayAcik=document.getElementById('detayOverlay').classList.contains('active');
-  const raporAcik=document.getElementById('raporOverlay').classList.contains('active');
-  const loginAcik=document.getElementById('loginOverlay').classList.contains('active');
-  
-  if(loginAcik) return;
-
-  if(e.key==='F3'){e.preventDefault(); gunlukRaporEkraniAc(); return;}
-  if(e.key==='F4'){e.preventDefault(); yedekEkraniAc(); return;}
-  
   if(detayAcik){
     if(e.key==='F5'){e.preventDefault();borcPanelAc();}
     if(e.key==='F6'){e.preventDefault();tahsilatPanelAc();}
@@ -1269,49 +1519,8 @@ function globalKeyDown(e){
       if(document.getElementById('islemPanel').classList.contains('active'))islemPanelKapat();
       else detayKapat();
     }
-    return;
-  }
-  
-  if(raporAcik){ if(e.key==='Escape') raporKapat(); return; }
-
-  // ANA EKRANDA OK TUŞLARI İLE CARİ SEÇİM YÖNETİMİ
-  if(e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-    const focusEl = document.activeElement ? document.activeElement.id : '';
-    if(focusEl === 'txtHizliCariAra' && document.getElementById('hizliAramaSonuclari').style.display === 'block') return;
-
-    e.preventDefault();
-    
-    const rows = [...document.querySelectorAll('#tbodyMain tr')];
-    if(rows.length === 0) return;
-    
-    let currentIdx = rows.findIndex(r => r.classList.contains('selected'));
-    
-    if(e.key === 'ArrowDown') {
-      currentIdx = (currentIdx === -1 || currentIdx >= rows.length - 1) ? 0 : currentIdx + 1;
-    } else {
-      currentIdx = (currentIdx <= 0) ? rows.length - 1 : currentIdx - 1;
-    }
-    
-    const targetRow = rows[currentIdx];
-    satirSec(targetRow, null);
-    targetRow.scrollIntoView({ block: 'nearest' });
-  }
-  
-  if(e.key === 'Enter') {
-    const focusEl = document.activeElement ? document.activeElement.id : '';
-    if(focusEl === 'txtAra' || document.activeElement === document.body) {
-      e.preventDefault();
-      const seciliTr = document.querySelector('#tbodyMain tr.selected');
-      if(seciliTr) cariAc(seciliTr.dataset.kod);
-    }
   }
 }
-
-document.addEventListener('click', function(e) {
-  if(!e.target.closest('.hizli-arama-container')) {
-    document.getElementById('hizliAramaSonuclari').style.display = 'none';
-  }
-});
 </script>
 </body>
 </html>
