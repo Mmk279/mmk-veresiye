@@ -75,7 +75,7 @@ body {
 /* ── LEFT ── */
 .left-pane { display:flex; flex-direction:column; border-right:2px solid var(--border); overflow:hidden; }
 
-/* ── TOOLBAR (PUNTOLAR BÜYÜTÜLDÜ VE BEYAZ YAPILDI) ── */
+/* ── TOOLBAR ── */
 .toolbar {
   background:var(--bg2);
   border-bottom:1px solid var(--border);
@@ -108,7 +108,7 @@ body {
 .btn-secondary { background:var(--panel2); color:var(--text); border:1px solid var(--border2); }
 .btn-secondary:hover { background:var(--border2); }
 
-/* ── TABLE (ARALIK DARALTILDI, PUNTOLAR BÜYÜTÜLDÜ VE KALINLAŞTIRILDI) ── */
+/* ── TABLE ── */
 .table-wrap { flex:1; overflow-y:auto; overflow-x:hidden; position:relative; }
 .table-wrap::-webkit-scrollbar { width:8px; }
 .table-wrap::-webkit-scrollbar-track { background:var(--bg3); }
@@ -132,11 +132,9 @@ table.main-table tbody td {
   overflow:hidden; 
   text-overflow:ellipsis; 
 }
-
-/* Sütun genişlikleri ayarlanarak aradaki devasa boşluk daraltıldı */
 .col-arrow { width:22px; }
 .col-kod { width:90px; }
-.col-unvan { width:450px; } /* Maksimum genişlik sınırı verilerek tutar sola yaklaştırıldı */
+.col-unvan { width:450px; } 
 .col-tutar { width:160px; text-align:right; font-family:'Roboto Mono',monospace; }
 
 .color-red { color:var(--cell-red)!important; }
@@ -196,7 +194,6 @@ table.main-table tbody td {
 .hizli-input:focus { border-color:var(--accent); }
 .hizli-input::placeholder { color:var(--text-muted); font-weight:400; }
 
-/* Dinamik Arama Sonuç Listesi */
 .hizli-arama-container { position: relative; }
 .hizli-arama-sonuclari {
   position: absolute; top: 100%; left: 0; right: 0;
@@ -491,7 +488,7 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
 <div class="modal-overlay" id="detayOverlay" onclick="detayOverlayClick(event)">
   <div class="detay-modal" id="detayModal">
     <div class="detay-titlebar">
-      <span class="detay-title" id="detayTitle">MÜŞTERİ</span>
+      <span class="detay-title" id="detayTitle">MÜŞTERI</span>
       <button class="detay-close" onclick="detayKapat()">✕</button>
     </div>
     
@@ -774,7 +771,7 @@ async function cariUnvanKeyDown(e) {
 }
 
 async function cariSil() {
-  if (!seciliCariKodlar.length) { toast('Önce en az bir cari seçin!',true); return; }
+  if (!seciliCariKodlar.length) { toast('Lütfen bir cari seçin!',true); return; }
   if (!confirm(`${seciliCariKodlar.length} adet cari kartı silinecektir. Onaylıyor musunuz?`)) return;
   loading(true,'Siliniyor...');
   try {
@@ -1151,7 +1148,7 @@ async function gunlukRaporHesaplaVeListele() {
 function raporKapat(){document.getElementById('raporOverlay').classList.remove('active');}
 
 // ═══════════════════════════════════════════════════════
-// F4 YEDEKLEME VE GERİ YÜKLEME PANELİ
+// F4 YEDEKLEME VE GERİ YÜKLEME PANELİ (FARKLİ KAYDET DESTEKLİ)
 // ═══════════════════════════════════════════════════════
 function yedekEkraniAc() {
   document.getElementById('raporTitle').textContent = "💾 YEDEKLEME VE GERİ YÜKLEME PANELİ (F4)";
@@ -1159,13 +1156,13 @@ function yedekEkraniAc() {
     <div class="yedek-panel-kutusu">
       <div class="yedek-kart">
         <div class="yedek-kart-baslik">1) Bulut Veritabanını Bilgisayara Yedekle</div>
-        <div class="yedek-kart-aciklama">Tüm müşteri ve hareket kayıtlarını tek tuşla indirir. ZIP dosyası içinde: <strong>JSON yedek</strong> (geri yükleme için) + <strong>her müşteri için ayrı HTML ekstre</strong> (tarayıcıda açıp Ctrl+P ile PDF yapabilirsiniz).</div>
-        <button class="btn btn-secondary" style="background:var(--green); color:#fff; margin-top:8px;" onclick="veritabaniYedekAl()">📦 YEDEĞİ ZIP OLARAK İNDİR</button>
+        <div class="yedek-kart-aciklama">Tüm müşteri ve hareket kayıtlarını tek tuşla indirir. ZIP dosyası içinde: <strong>JSON yedek</strong> (geri yükleme için) + <strong>her müşteri için ayrı HTML ekstre</strong> yer alır. <br><strong style="color:var(--blue-bright)">Kaydet butonuna bastığınızda dosyayı nereye kaydedeceğinizi seçebilirsiniz.</strong></div>
+        <button class="btn btn-secondary" style="background:var(--green); color:#fff; margin-top:8px;" onclick="veritabaniYedekAl()">📦 YEDEĞİ SEÇEREK KAYDET</button>
       </div>
       
       <div class="yedek-kart">
         <div class="yedek-kart-baslik">2) Bilgisayardaki Yedeği Geri Yükle</div>
-        <div class="yedek-kart-aciklama">Daha önce indirdiğiniz bir yedek dosyasını seçerek bulut veritabanına geri yükleyebilirsiniz. <span style="color:var(--red); font-weight:bold;">Dikkat! Mevcut veritabanı silinir ve yedek dosyası içeriği yazılır.</span></div>
+        <div class="yedek-kart-aciklama">Daha önce indirdiğiniz bir yedek dosyasını seçerek bulut veritabanına geri yükleyebilirsiniz. <span style="color:var(--red); font-weight:bold;">Dikkat! Mevcut veritabanı silinir og veriler yedeğe göre baştan yazılır.</span></div>
         <button class="btn btn-secondary" style="background:var(--red2); color:#fff; margin-top:8px;" onclick="veritabaniYedekYukleTetikle()">YEDEKTEN GERİ YÜKLE (.JSON SEÇ)</button>
       </div>
     </div>
@@ -1180,8 +1177,8 @@ async function veritabaniYedekAl() {
     const tumHareketler = await sbGet('hareketler', 'order=cari_kod.asc,id.asc');
     const d = new Date();
     const tarihStr = `${d.getDate()}_${d.getMonth()+1}_${d.getFullYear()}`;
+    const varsayilanDosyaAdi = `MMK_Yedek_${tarihStr}.zip`;
 
-    // JSZip kütüphanesini yükle
     loading(true, '📦 ZIP hazırlanıyor...');
     if (!window.JSZip) {
       await new Promise((res, rej) => {
@@ -1193,7 +1190,6 @@ async function veritabaniYedekAl() {
     }
     const zip = new JSZip();
 
-    // 1) JSON yedeği ekle
     const yedekData = {
       olusturmaTarihi: new Date().toLocaleString('tr-TR'),
       program: 'MMK Veresiye Web',
@@ -1202,7 +1198,6 @@ async function veritabaniYedekAl() {
     };
     zip.file(`mmk_veresiye_yedek_${tarihStr}.json`, JSON.stringify(yedekData, null, 2));
 
-    // 2) Her cari için ayrı HTML ekstre oluştur
     const klasor = zip.folder('Cari_Ekstreleri');
     const bugun = new Date().toLocaleDateString('tr-TR');
 
@@ -1211,7 +1206,6 @@ async function veritabaniYedekAl() {
       loading(true, `📄 Ekstre: ${cari.unvan} (${i+1}/${cariler.length})`);
       const cariHareketler = tumHareketler.filter(h => h.cari_kod == cari.kod);
       
-      // Bakiye hesapla
       let bakiye = 0;
       const satirlar = cariHareketler.map(r => {
         bakiye += Number(r.borc) - Number(r.tahsilat);
@@ -1284,7 +1278,6 @@ tfoot td{padding:8px 10px;font-weight:700;font-size:12px}
       klasor.file(`${String(cari.kod).padStart(3,'0')}_${temizAd}.html`, html);
     }
 
-    // 3) Özet TXT ekle
     let ozet = `MMK VERESİYE — YEDEK ÖZETİ\n${'='.repeat(45)}\n`;
     ozet += `Oluşturma: ${new Date().toLocaleString('tr-TR')}\n`;
     ozet += `Toplam Cari: ${cariler.length}  |  Toplam Hareket: ${tumHareketler.length}\n\n`;
@@ -1295,19 +1288,40 @@ tfoot td{padding:8px 10px;font-weight:700;font-size:12px}
       ozet += `[${String(c.kod).padStart(3,'0')}] ${c.unvan.padEnd(28)} ${b.toLocaleString('tr-TR',{minimumFractionDigits:2})} ₺  (${d})\n`;
     });
     ozet += `\n${'─'.repeat(45)}\nGENEL TOPLAM: ${cariler.reduce((t,c)=>t+Number(c.bakiye),0).toLocaleString('tr-TR',{minimumFractionDigits:2})} ₺\n`;
-    ozet += `\nNASIL KULLANILIR:\n`;
-    ozet += `• JSON dosyası → Programda F4 > Yedekten Geri Yükle ile kullanın\n`;
-    ozet += `• Cari_Ekstreleri klasörü → Her .html dosyasını tarayıcıda açıp Ctrl+P ile PDF yapın\n`;
     zip.file('OKUBENI.txt', ozet);
 
-    // 4) ZIP'i oluştur ve indir
-    loading(true, '📦 ZIP dosyası oluşturuluyor...');
+    loading(true, '📦 ZIP dosyası sıkıştırılıyor...');
     const zipBlob = await zip.generateAsync({ type:'blob', compression:'DEFLATE', compressionOptions:{level:6} });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(zipBlob);
-    a.download = `MMK_Yedek_${tarihStr}.zip`;
-    a.click();
-    toast(`✓ Yedek hazır! ${cariler.length} cari, ${tumHareketler.length} hareket → ZIP indirildi`);
+    
+    // ─── BURADA YER SEÇİMİ YAPTIRIYORUZ (FARKLİ KAYDET ALTYAPISI) ───
+    if (window.showSaveFilePicker) {
+      loading(false); // Pencere açılacağı için yükleniyor ekranını durduruyoruz
+      try {
+        const handle = await window.showSaveFilePicker({
+          suggestedName: varsayilanDosyaAdi,
+          types: [{
+            description: 'ZIP Arşivi',
+            accept: { 'application/zip': ['.zip'] }
+          }]
+        });
+        const writable = await handle.createWritable();
+        await writable.write(zipBlob);
+        await writable.close();
+        toast(`✓ Yedek istediğiniz klasöre başarıyla kaydedildi.`);
+      } catch (pickerErr) {
+        // Kullanıcı kaydetmekten vazgeçip pencereyi kapatırsa buraya düşer
+        if (pickerErr.name !== 'AbortError') {
+          throw pickerErr;
+        }
+      }
+    } else {
+      // Tarayıcı desteklemiyorsa otomatik indirmeye düşür
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(zipBlob);
+      a.download = varsayilanDosyaAdi;
+      a.click();
+      toast(`✓ Yedek hazır! Doğrudan indirilenler klasörüne aktarıldı.`);
+    }
   } catch(err) { toast('Yedek hatası: ' + err.message, true); console.error(err); }
   loading(false);
 }
@@ -1324,7 +1338,7 @@ function yedekDosyasiniOku(event) {
       const yedek = JSON.parse(e.target.result);
       if (!yedek.cariler || !yedek.hareketler) throw new Error('Dosya yapısı geçerli bir yedek dosyası değil.');
       
-      const onay = confirm(`DİKKAT!\n\nBu işlem Supabase üzerindeki tüm mevcut verilerinizi kalıcı olarak silecek ve bu yedeği yükleyecektir.\n\nDosyadaki ${yedek.cariler.length} müşteri kartı ve ${yedek.hareketler.length} işlem kaydı yüklensin mi?`);
+      const onay = confirm(`DİKKAT!\n\nBu işlem Supabase üzerindeki tüm mevcut verilerinizi kalıcı olarak silecek og bu yedeği yükleyecektir.\n\nDosyadaki ${yedek.cariler.length} müşteri kartı ve ${yedek.hareketler.length} işlem kaydı yüklensin mi?`);
       if (!onay) return;
 
       raporKapat();
@@ -1389,7 +1403,6 @@ function globalKeyDown(e){
   
   if(raporAcik){ if(e.key==='Escape') raporKapat(); return; }
 
-  // ANA EKRANDA OK TUŞLARI İLE CARİ SEÇİM YÖNETİMİ
   if(e.key === 'ArrowDown' || e.key === 'ArrowUp') {
     const focusEl = document.activeElement ? document.activeElement.id : '';
     if(focusEl === 'txtHizliCariAra' && document.getElementById('hizliAramaSonuclari').style.display === 'block') return;
