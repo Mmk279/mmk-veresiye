@@ -378,25 +378,56 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
 
 <!-- CARİ DÜZENLEME MODALI (F2) -->
 <div class="modal-overlay" id="cariDuzenleOverlay" onclick="if(event.target===this)cariDuzenleKapat()">
-  <div class="detay-modal" style="max-width:420px;">
+  <div class="detay-modal" style="max-width:460px;">
     <div class="detay-titlebar">
-      <span class="detay-title">✏️ CARİ DÜZENLE</span>
+      <span class="detay-title">✏️ CARİ DÜZENLE — F2</span>
       <button class="detay-close" onclick="cariDuzenleKapat()">✕</button>
     </div>
-    <div style="padding:20px;display:flex;flex-direction:column;gap:16px;">
+    <div style="padding:20px;display:flex;flex-direction:column;gap:14px;">
+
+      <!-- Mevcut bilgi -->
       <div style="background:rgba(33,150,243,.08);border:1px solid rgba(33,150,243,.2);border-radius:8px;padding:10px 14px;">
-        <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">SEÇİLİ CARİ</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:3px;">SEÇİLİ CARİ</div>
         <div id="cariDuzenleEskiAd" style="font-family:Oswald,sans-serif;font-size:17px;color:var(--blue-bright);font-weight:700;"></div>
         <div id="cariDuzenleKodBilgi" style="font-size:11px;color:var(--text-muted);margin-top:2px;"></div>
       </div>
+
+      <!-- Ünvan -->
       <div>
-        <div class="islem-field-label">Yeni Ünvan</div>
-        <input class="islem-input" id="cariDuzenleYeniAd" placeholder="Yeni müşteri adını girin..." onkeydown="if(event.key==='Enter')cariDuzenleKaydet();if(event.key==='Escape')cariDuzenleKapat()">
+        <div class="islem-field-label">Müşteri Ünvanı</div>
+        <input class="islem-input" id="cariDuzenleYeniAd" placeholder="Müşteri adı..." onkeydown="cariDuzenleKeyDown(event,'unvan')">
       </div>
+
+      <!-- Telefon + WhatsApp -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div>
+          <div class="islem-field-label">Telefon</div>
+          <input class="islem-input" id="cariDuzenleTelefon" placeholder="05XX XXX XX XX" type="tel" onkeydown="cariDuzenleKeyDown(event,'telefon')">
+        </div>
+        <div>
+          <div class="islem-field-label">WhatsApp (farklıysa)</div>
+          <input class="islem-input" id="cariDuzenleWhatsapp" placeholder="05XX XXX XX XX" type="tel" onkeydown="cariDuzenleKeyDown(event,'whatsapp')">
+        </div>
+      </div>
+
+      <!-- Adres -->
+      <div>
+        <div class="islem-field-label">Adres</div>
+        <input class="islem-input" id="cariDuzenleAdres" placeholder="Mahalle, sokak, no..." onkeydown="cariDuzenleKeyDown(event,'adres')">
+      </div>
+
+      <!-- Not -->
+      <div>
+        <div class="islem-field-label">Not</div>
+        <textarea class="islem-input" id="cariDuzenleNot" placeholder="Müşteri hakkında notlar..." rows="2" style="resize:vertical;font-family:inherit;"></textarea>
+      </div>
+
+      <!-- Butonlar -->
       <div style="display:flex;gap:10px;">
         <button class="btn" style="flex:1;background:var(--blue2);color:#fff;padding:12px;font-size:14px;" onclick="cariDuzenleKaydet()">💾 KAYDET (ENTER)</button>
         <button class="btn" style="background:var(--panel2);color:var(--text);border:1px solid var(--border2);padding:12px;" onclick="cariDuzenleKapat()">İPTAL</button>
       </div>
+
     </div>
   </div>
 </div>
@@ -1808,25 +1839,30 @@ document.addEventListener('click', function(e) {
 let cariDuzenleKod = null;
 
 function cariDuzenleAc() {
-  // Seçili satırı bul
   const seciliTr = document.querySelector('#tbodyMain tr.selected');
   if (!seciliTr) { toast('Önce listeden bir cari seçin!', true); return; }
-  
   const kod = seciliTr.dataset.kod;
   const c = cariListesi.find(x => x.kod == kod);
   if (!c) return;
 
   cariDuzenleKod = kod;
+
+  // Mevcut ünvan
   document.getElementById('cariDuzenleEskiAd').textContent = c.unvan;
   document.getElementById('cariDuzenleKodBilgi').textContent = `Cari Kod: ${c.kod}`;
   document.getElementById('cariDuzenleYeniAd').value = c.unvan;
+
+  // localStorage'dan iletişim bilgilerini yükle
+  const bilgi = JSON.parse(localStorage.getItem('mk_' + kod) || '{}');
+  document.getElementById('cariDuzenleTelefon').value = bilgi.telefon || '';
+  document.getElementById('cariDuzenleWhatsapp').value = bilgi.whatsapp || '';
+  document.getElementById('cariDuzenleAdres').value = bilgi.adres || '';
+  document.getElementById('cariDuzenleNot').value = bilgi.not || '';
+
   document.getElementById('cariDuzenleOverlay').classList.add('active');
-  
-  // Input'u seç — hızlıca değiştirsin
   setTimeout(() => {
     const inp = document.getElementById('cariDuzenleYeniAd');
-    inp.focus();
-    inp.select();
+    inp.focus(); inp.select();
   }, 100);
 }
 
@@ -1835,23 +1871,48 @@ function cariDuzenleKapat() {
   cariDuzenleKod = null;
 }
 
+// Enter ile alanlar arası geçiş
+function cariDuzenleKeyDown(e, alan) {
+  if (e.key === 'Escape') { cariDuzenleKapat(); return; }
+  if (e.key !== 'Enter') return;
+  e.preventDefault();
+  const sira = ['unvan','telefon','whatsapp','adres'];
+  const idx = sira.indexOf(alan);
+  if (idx < sira.length - 1) {
+    const idler = {unvan:'cariDuzenleYeniAd', telefon:'cariDuzenleTelefon', whatsapp:'cariDuzenleWhatsapp', adres:'cariDuzenleAdres'};
+    document.getElementById(idler[sira[idx+1]])?.focus();
+  } else {
+    cariDuzenleKaydet();
+  }
+}
+
 async function cariDuzenleKaydet() {
   const yeniAd = document.getElementById('cariDuzenleYeniAd').value.trim().toUpperCase();
-  if (!yeniAd) { toast('Lütfen bir isim girin!', true); return; }
+  if (!yeniAd) { toast('Müşteri adı boş olamaz!', true); document.getElementById('cariDuzenleYeniAd').focus(); return; }
   if (!cariDuzenleKod) return;
 
   const c = cariListesi.find(x => x.kod == cariDuzenleKod);
-  if (yeniAd === c.unvan) { cariDuzenleKapat(); return; } // Değişmedi
-
   loading(true, 'Güncelleniyor...');
   try {
-    await sbPatch('cariler', `kod=eq.${cariDuzenleKod}`, { unvan: yeniAd });
-    // Lokal listeyi de güncelle
-    const idx = cariListesi.findIndex(x => x.kod == cariDuzenleKod);
-    if (idx >= 0) cariListesi[idx].unvan = yeniAd;
+    // Supabase'de ünvanı güncelle
+    if (yeniAd !== c.unvan) {
+      await sbPatch('cariler', `kod=eq.${cariDuzenleKod}`, { unvan: yeniAd });
+      const idx = cariListesi.findIndex(x => x.kod == cariDuzenleKod);
+      if (idx >= 0) cariListesi[idx].unvan = yeniAd;
+    }
+
+    // İletişim bilgilerini localStorage'a kaydet
+    const bilgi = {
+      telefon: document.getElementById('cariDuzenleTelefon').value.trim(),
+      whatsapp: document.getElementById('cariDuzenleWhatsapp').value.trim(),
+      adres: document.getElementById('cariDuzenleAdres').value.trim(),
+      not: document.getElementById('cariDuzenleNot').value.trim()
+    };
+    localStorage.setItem('mk_' + cariDuzenleKod, JSON.stringify(bilgi));
+
     tabloYenile();
     cariDuzenleKapat();
-    toast(`✓ "${c.unvan}" → "${yeniAd}" olarak güncellendi`);
+    toast(`✓ "${c.unvan}" bilgileri güncellendi`);
   } catch(err) { toast('Güncelleme hatası: ' + err.message, true); }
   loading(false);
 }
