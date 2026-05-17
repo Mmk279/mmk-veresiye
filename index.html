@@ -396,6 +396,7 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
   <div class="menu-item" onclick="menuDosya()">Dosya</div>
   <div class="menu-item" onclick="menuAraclar()">Araçlar</div>
   <div class="menu-item" onclick="hakkinda()">Yardım</div>
+  <div class="menu-item" style="margin-left:auto;color:var(--blue-bright);font-weight:700;" onclick="dashboardAc()">📊 DASHBOARD</div>
 </div>
 
 <div class="app-body">
@@ -492,7 +493,10 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
   <div class="detay-modal" id="detayModal">
     <div class="detay-titlebar">
       <span class="detay-title" id="detayTitle">MÜŞTERİ</span>
-      <button class="detay-close" onclick="detayKapat()">✕</button>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="btn" style="background:var(--panel2);color:var(--blue-bright);border:1px solid var(--border2);font-size:12px;padding:4px 10px;" onclick="musteriKartiAc()">👤 MÜŞTERİ KARTI</button>
+        <button class="detay-close" onclick="detayKapat()">✕</button>
+      </div>
     </div>
     
     <div class="detay-main-layout">
@@ -545,11 +549,104 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
     <div class="detay-footer">
       <button class="btn btn-excel" onclick="detayExcel()">EXCEL AT</button>
       <button class="btn btn-pdf" onclick="detayPdf()">PDF AL</button>
+      <button class="btn" style="background:#075e54;color:#fff;" onclick="whatsappMesajAc()">📱 WHATSAPP</button>
+      <button class="btn" style="background:#6a1b9a;color:#fff;" onclick="makbuzYazdir()">🧾 MAKBUZ</button>
       <div class="detay-spacer"></div>
       <button class="btn btn-borc" onclick="borcPanelAc()">F5 Borç</button>
       <button class="btn btn-tahsilat" onclick="tahsilatPanelAc()">F6 Tahsilat</button>
       <button class="btn btn-sil-hareket" onclick="hareketSil()">SİL</button>
     </div>
+  </div>
+</div>
+
+<!-- MÜŞTERİ KARTI MODALI -->
+<div class="modal-overlay" id="musteriKartiOverlay" onclick="if(event.target===this)musteriKartiKapat()">
+  <div class="detay-modal" style="max-width:480px;">
+    <div class="detay-titlebar">
+      <span class="detay-title">👤 MÜŞTERİ KARTI</span>
+      <button class="detay-close" onclick="musteriKartiKapat()">✕</button>
+    </div>
+    <div style="padding:20px;display:flex;flex-direction:column;gap:14px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div>
+          <div class="islem-field-label">Telefon</div>
+          <input class="islem-input" id="mkTelefon" placeholder="05XX XXX XX XX" type="tel">
+        </div>
+        <div>
+          <div class="islem-field-label">WhatsApp (farklıysa)</div>
+          <input class="islem-input" id="mkWhatsapp" placeholder="05XX XXX XX XX" type="tel">
+        </div>
+      </div>
+      <div>
+        <div class="islem-field-label">Adres</div>
+        <input class="islem-input" id="mkAdres" placeholder="Mahalle, Sokak, No...">
+      </div>
+      <div>
+        <div class="islem-field-label">Not</div>
+        <textarea class="islem-input" id="mkNot" placeholder="Müşteri hakkında notlar..." rows="3" style="resize:vertical;font-family:inherit;"></textarea>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn" style="flex:1;background:var(--blue2);color:#fff;padding:12px;" onclick="musteriKartiKaydet()">💾 KAYDET</button>
+        <button class="btn" style="background:var(--panel2);color:var(--text);border:1px solid var(--border2);padding:12px;" onclick="musteriKartiKapat()">İPTAL</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WHATSAPP MESAJ MODALI -->
+<div class="modal-overlay" id="whatsappOverlay" onclick="if(event.target===this)document.getElementById('whatsappOverlay').classList.remove('active')">
+  <div class="detay-modal" style="max-width:500px;">
+    <div class="detay-titlebar" style="background:linear-gradient(90deg,#075e54,#128c7e);">
+      <span class="detay-title">📱 WHATSAPP MESAJI GÖNDER</span>
+      <button class="detay-close" onclick="document.getElementById('whatsappOverlay').classList.remove('active')">✕</button>
+    </div>
+    <div style="padding:20px;display:flex;flex-direction:column;gap:14px;">
+      <div>
+        <div class="islem-field-label">Telefon Numarası</div>
+        <input class="islem-input" id="waTelefon" placeholder="05XX XXX XX XX">
+      </div>
+      <div>
+        <div class="islem-field-label">Mesaj</div>
+        <textarea class="islem-input" id="waMesaj" rows="6" style="resize:vertical;font-family:inherit;font-size:13px;line-height:1.6;"></textarea>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn" style="flex:1;background:#075e54;color:#fff;padding:12px;font-size:14px;" onclick="whatsappGonder()">
+          📱 WHATSAPP'TA AÇ
+        </button>
+        <button class="btn" style="background:var(--panel2);color:var(--text);border:1px solid var(--border2);" onclick="waMesajYenile()">🔄 Yenile</button>
+      </div>
+      <div style="font-size:11px;color:var(--text-muted);text-align:center;">
+        Butona basınca WhatsApp açılacak, mesaj hazır gelecek, sadece Gönder'e basacaksın.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAKBUZ MODALI -->
+<div class="modal-overlay" id="makbuzOverlay" onclick="if(event.target===this)document.getElementById('makbuzOverlay').classList.remove('active')">
+  <div class="detay-modal" style="max-width:520px;">
+    <div class="detay-titlebar">
+      <span class="detay-title">🧾 BORÇ MAKBUZU</span>
+      <button class="detay-close" onclick="document.getElementById('makbuzOverlay').classList.remove('active')">✕</button>
+    </div>
+    <div style="padding:16px;display:flex;flex-direction:column;gap:12px;">
+      <div id="makbuzOnizleme" style="background:#fff;border-radius:8px;padding:20px;color:#2c3e50;font-family:Arial,sans-serif;"></div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn" style="flex:1;background:var(--blue2);color:#fff;padding:12px;" onclick="makbuzYazdir()">🖨️ YAZDIR / PDF</button>
+        <button class="btn" style="background:#075e54;color:#fff;padding:12px;" onclick="makbuzWhatsapp()">📱 WhatsApp</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD MODALI -->
+<div class="modal-overlay" id="dashboardOverlay" onclick="if(event.target===this)document.getElementById('dashboardOverlay').classList.remove('active')">
+  <div class="rapor-modal" style="max-width:960px;">
+    <div class="rapor-header">
+      <span class="rapor-title">📊 DASHBOARD — GENEL DURUM</span>
+      <button class="detay-close" onclick="document.getElementById('dashboardOverlay').classList.remove('active')">✕</button>
+    </div>
+    <div class="rapor-body" id="dashboardBody" style="padding:20px;"></div>
   </div>
 </div>
 
@@ -1665,6 +1762,348 @@ document.addEventListener('click', function(e) {
     document.getElementById('hizliAramaSonuclari').style.display = 'none';
   }
 });
+
+// ═══════════════════════════════════════════════════════
+// MÜŞTERİ KARTI
+// ═══════════════════════════════════════════════════════
+const DUKKAN_ADI = 'Gölbaşı Market';
+const DUKKAN_TEL = ''; // İstersen buraya telefon ekle
+const DUKKAN_ADRES = ''; // İstersen buraya adres ekle
+
+function musteriKartiAc() {
+  const c = cariListesi.find(x => x.kod == aktifDetayKod);
+  if (!c) return;
+  // localStorage'dan kayıtlı bilgileri yükle
+  const bilgi = JSON.parse(localStorage.getItem('mk_' + aktifDetayKod) || '{}');
+  document.getElementById('mkTelefon').value = bilgi.telefon || '';
+  document.getElementById('mkWhatsapp').value = bilgi.whatsapp || '';
+  document.getElementById('mkAdres').value = bilgi.adres || '';
+  document.getElementById('mkNot').value = bilgi.not || '';
+  document.getElementById('musteriKartiOverlay').classList.add('active');
+}
+
+function musteriKartiKapat() {
+  document.getElementById('musteriKartiOverlay').classList.remove('active');
+}
+
+function musteriKartiKaydet() {
+  const bilgi = {
+    telefon: document.getElementById('mkTelefon').value.trim(),
+    whatsapp: document.getElementById('mkWhatsapp').value.trim(),
+    adres: document.getElementById('mkAdres').value.trim(),
+    not: document.getElementById('mkNot').value.trim()
+  };
+  localStorage.setItem('mk_' + aktifDetayKod, JSON.stringify(bilgi));
+  musteriKartiKapat();
+  toast('✓ Müşteri kartı kaydedildi');
+}
+
+function musteriBilgisiAl(kod) {
+  return JSON.parse(localStorage.getItem('mk_' + kod) || '{}');
+}
+
+function telefoneFormatla(tel) {
+  // 05551234567 → 90 5551234567 (WhatsApp formatı)
+  if (!tel) return '';
+  tel = tel.replace(/\s/g, '').replace(/[^0-9]/g, '');
+  if (tel.startsWith('0')) tel = '90' + tel.substring(1);
+  if (!tel.startsWith('90')) tel = '90' + tel;
+  return tel;
+}
+
+// ═══════════════════════════════════════════════════════
+// WHATSAPP MESAJI
+// ═══════════════════════════════════════════════════════
+function whatsappMesajAc() {
+  const c = cariListesi.find(x => x.kod == aktifDetayKod);
+  if (!c) return;
+  const bilgi = musteriBilgisiAl(aktifDetayKod);
+  const tel = bilgi.whatsapp || bilgi.telefon || '';
+  document.getElementById('waTelefon').value = tel;
+  waMesajOlustur(c);
+  document.getElementById('whatsappOverlay').classList.add('active');
+}
+
+function waMesajOlustur(c) {
+  if (!c) c = cariListesi.find(x => x.kod == aktifDetayKod);
+  const bakiye = Number(c.bakiye);
+  const bugun = new Date().toLocaleDateString('tr-TR');
+  
+  // Son 3 hareketi al
+  const hareketler = JSON.parse(localStorage.getItem('son_hareketler_' + aktifDetayKod) || '[]');
+  
+  let mesaj = `🏪 *${DUKKAN_ADI}*\n`;
+  mesaj += `━━━━━━━━━━━━━━━━━\n`;
+  mesaj += `Sayın *${c.unvan}*,\n\n`;
+  
+  if (bakiye > 0) {
+    mesaj += `📋 Hesap özeti (${bugun}):\n`;
+    mesaj += `💳 Toplam borcunuz: *${Number(bakiye).toLocaleString('tr-TR', {minimumFractionDigits:2})} ₺*\n\n`;
+    mesaj += `Borcunuzu ödemenizi rica ederiz.\n`;
+  } else if (bakiye < 0) {
+    mesaj += `✅ Hesabınız incelendiğinde bizden *${Math.abs(bakiye).toLocaleString('tr-TR', {minimumFractionDigits:2})} ₺* alacağınız görülmektedir.\n`;
+  } else {
+    mesaj += `✅ Hesabınız sıfır bakiyede görünmektedir.\n`;
+  }
+  
+  mesaj += `\nDetaylı ekstre için lütfen iletişime geçin.\n`;
+  mesaj += `━━━━━━━━━━━━━━━━━\n`;
+  mesaj += `_Bu mesaj ${DUKKAN_ADI} tarafından otomatik oluşturulmuştur._`;
+  
+  document.getElementById('waMesaj').value = mesaj;
+}
+
+function waMesajYenile() {
+  const c = cariListesi.find(x => x.kod == aktifDetayKod);
+  waMesajOlustur(c);
+}
+
+function whatsappGonder() {
+  const tel = telefoneFormatla(document.getElementById('waTelefon').value);
+  if (!tel || tel.length < 10) { toast('Geçerli bir telefon numarası girin!', true); return; }
+  const mesaj = document.getElementById('waMesaj').value;
+  const url = `https://wa.me/${tel}?text=${encodeURIComponent(mesaj)}`;
+  window.open(url, '_blank');
+}
+
+// ═══════════════════════════════════════════════════════
+// BORÇ MAKBUZU
+// ═══════════════════════════════════════════════════════
+function makbuzIcerikOlustur(cari, hareketler, sadeceSon) {
+  const bugun = new Date().toLocaleString('tr-TR');
+  const bakiye = Number(cari.bakiye);
+  const bilgi = musteriBilgisiAl(cari.kod);
+  
+  // Sadece son hareketi veya tümünü göster
+  let satirlar = '';
+  const gosterilecek = sadeceSon ? hareketler.slice(0, 5) : hareketler;
+  let b = 0;
+  const tumHareketlerRev = [...hareketler].reverse();
+  tumHareketlerRev.forEach(r => { b += Number(r.borc) - Number(r.tahsilat); });
+  b = 0;
+  [...hareketler].reverse().forEach(r => {
+    b += Number(r.borc) - Number(r.tahsilat);
+  });
+  b = 0;
+  gosterilecek.forEach(r => {
+    const renk = Number(r.borc) > 0 ? '#c0392b' : '#27ae60';
+    satirlar += `<tr>
+      <td style="color:${renk};font-size:11px">${r.tarih}</td>
+      <td style="color:${renk}">${r.aciklama||''}</td>
+      <td style="text-align:right;color:#c0392b;font-weight:700">${Number(r.borc)>0?Number(r.borc).toLocaleString('tr-TR',{minimumFractionDigits:2}):'-'}</td>
+      <td style="text-align:right;color:#27ae60;font-weight:700">${Number(r.tahsilat)>0?Number(r.tahsilat).toLocaleString('tr-TR',{minimumFractionDigits:2}):'-'}</td>
+    </tr>`;
+  });
+
+  return `
+    <div style="border:2px solid #1a3358;border-radius:8px;overflow:hidden;font-family:Arial,sans-serif;font-size:13px;">
+      <!-- BAŞLIK -->
+      <div style="background:#1a3358;color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="font-size:18px;font-weight:700;letter-spacing:1px;">🏪 ${DUKKAN_ADI}</div>
+          <div style="font-size:11px;opacity:.8;margin-top:2px;">Veresiye Hesap Ekstresi</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:11px;opacity:.8;">Tarih</div>
+          <div style="font-weight:700;">${bugun}</div>
+        </div>
+      </div>
+      <!-- MÜŞTERİ BİLGİ -->
+      <div style="background:#f0f4f8;padding:12px 18px;display:flex;justify-content:space-between;border-bottom:1px solid #ddd;">
+        <div>
+          <div style="font-size:11px;color:#666;">Müşteri</div>
+          <div style="font-size:16px;font-weight:700;color:#1a3358;">${cari.unvan}</div>
+          ${bilgi.telefon ? `<div style="font-size:11px;color:#666;">📞 ${bilgi.telefon}</div>` : ''}
+          ${bilgi.adres ? `<div style="font-size:11px;color:#666;">📍 ${bilgi.adres}</div>` : ''}
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:11px;color:#666;">Güncel Bakiye</div>
+          <div style="font-size:22px;font-weight:700;color:${bakiye>0?'#c0392b':bakiye<0?'#2980b9':'#27ae60'};">${bakiye.toLocaleString('tr-TR',{minimumFractionDigits:2})} ₺</div>
+          <div style="font-size:11px;font-weight:700;color:${bakiye>0?'#c0392b':bakiye<0?'#2980b9':'#27ae60'};">${bakiye>0?'BORÇLU':bakiye<0?'ALACAKLI':'HESAP KAPALI'}</div>
+        </div>
+      </div>
+      <!-- HAREKETLER -->
+      <div style="padding:12px 18px;">
+        <div style="font-size:11px;font-weight:700;color:#666;margin-bottom:8px;letter-spacing:.5px;">
+          ${sadeceSon ? 'SON İŞLEMLER' : 'TÜM HAREKETLER'}
+        </div>
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <thead>
+            <tr style="background:#1a3358;color:#fff;">
+              <th style="padding:6px 8px;text-align:left;">Tarih</th>
+              <th style="padding:6px 8px;text-align:left;">Açıklama</th>
+              <th style="padding:6px 8px;text-align:right;">Borç</th>
+              <th style="padding:6px 8px;text-align:right;">Tahsilat</th>
+            </tr>
+          </thead>
+          <tbody>${satirlar}</tbody>
+        </table>
+      </div>
+      <!-- KAŞE -->
+      <div style="padding:12px 18px;border-top:2px dashed #ddd;display:flex;justify-content:space-between;align-items:flex-end;">
+        <div style="font-size:10px;color:#999;">
+          Bu belge ${DUKKAN_ADI} tarafından<br>
+          ${bugun} tarihinde düzenlenmiştir.
+        </div>
+        <div style="text-align:center;border:2px solid #1a3358;border-radius:50%;width:90px;height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+          <div style="font-size:9px;font-weight:700;color:#1a3358;text-align:center;line-height:1.3;">${DUKKAN_ADI}</div>
+          <div style="font-size:8px;color:#666;margin-top:2px;">KAŞE</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+let aktifMakbuzHareketler = [];
+
+async function makbuzYazdir() {
+  const c = cariListesi.find(x => x.kod == aktifDetayKod);
+  if (!c) return;
+  loading(true, 'Makbuz hazırlanıyor...');
+  try {
+    const hareketler = await sbGet('hareketler', `cari_kod=eq.${aktifDetayKod}&order=id.desc`);
+    aktifMakbuzHareketler = hareketler;
+    const icerik = makbuzIcerikOlustur(c, hareketler, true);
+    document.getElementById('makbuzOnizleme').innerHTML = icerik;
+    document.getElementById('makbuzOverlay').classList.add('active');
+  } catch(err) { toast('Makbuz hatası: ' + err.message, true); }
+  loading(false);
+}
+
+function makbuzYazdirTam() {
+  const c = cariListesi.find(x => x.kod == aktifDetayKod);
+  const icerik = makbuzIcerikOlustur(c, aktifMakbuzHareketler, false);
+  const w = window.open('', '_blank');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Makbuz - ${c.unvan}</title>
+    <style>body{margin:20px;font-family:Arial}@media print{body{margin:0}}</style></head>
+    <body>${icerik}<script>setTimeout(()=>window.print(),500)<\/script></body></html>`);
+  w.document.close();
+}
+
+function makbuzWhatsapp() {
+  const c = cariListesi.find(x => x.kod == aktifDetayKod);
+  const bilgi = musteriBilgisiAl(aktifDetayKod);
+  const tel = bilgi.whatsapp || bilgi.telefon || '';
+  if (!tel) { toast('Önce müşteri kartına telefon girin!', true); musteriKartiAc(); return; }
+  
+  const bakiye = Number(c.bakiye);
+  let mesaj = `🏪 *${DUKKAN_ADI}* — Hesap Ekstresi\n`;
+  mesaj += `━━━━━━━━━━━━━━━━━\n`;
+  mesaj += `Sayın *${c.unvan}*\n\n`;
+  mesaj += `💳 Güncel bakiyeniz: *${bakiye.toLocaleString('tr-TR',{minimumFractionDigits:2})} ₺* (${bakiye>0?'BORÇLU':bakiye<0?'ALACAKLI':'KAPALI'})\n\n`;
+  
+  aktifMakbuzHareketler.slice(0,5).forEach(r => {
+    const tip = Number(r.borc) > 0 ? '🔴' : '🟢';
+    const tutar = Number(r.borc) > 0 ? Number(r.borc) : Number(r.tahsilat);
+    mesaj += `${tip} ${r.tarih} — ${r.aciklama} — ${tutar.toLocaleString('tr-TR',{minimumFractionDigits:2})} ₺\n`;
+  });
+  
+  mesaj += `\n_${DUKKAN_ADI}_`;
+  
+  const telFormat = telefoneFormatla(tel);
+  window.open(`https://wa.me/${telFormat}?text=${encodeURIComponent(mesaj)}`, '_blank');
+}
+
+// ═══════════════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════════════
+async function dashboardAc() {
+  loading(true, 'Dashboard yükleniyor...');
+  try {
+    const cariler = cariListesi;
+    const tumHareketler = await sbGet('hareketler', 'order=id.desc');
+    
+    // İstatistikler
+    const toplamAlacak = cariler.reduce((t,c)=>t+Math.max(0,Number(c.bakiye)),0);
+    const toplamAlacakli = cariler.filter(c=>Number(c.bakiye)<0).reduce((t,c)=>t+Math.abs(Number(c.bakiye)),0);
+    const borcluSayisi = cariler.filter(c=>Number(c.bakiye)>0).length;
+    const temizSayisi = cariler.filter(c=>Number(c.bakiye)===0).length;
+    const alacakliSayisi = cariler.filter(c=>Number(c.bakiye)<0).length;
+    
+    // Bu ay hareketler
+    const simdi = new Date();
+    const buAy = `${String(simdi.getMonth()+1).padStart(2,'0')}.${simdi.getFullYear()}`;
+    const buAyHareketler = tumHareketler.filter(h => h.tarih && h.tarih.includes(`.${buAy.split('.')[1]}`));
+    const buAyBorc = buAyHareketler.reduce((t,h)=>t+Number(h.borc),0);
+    const buAyTahsilat = buAyHareketler.reduce((t,h)=>t+Number(h.tahsilat),0);
+    
+    // En çok borçlular (top 5)
+    const top5 = [...cariler].sort((a,b)=>Number(b.bakiye)-Number(a.bakiye)).slice(0,5);
+    
+    // Son 10 hareket
+    const son10 = tumHareketler.slice(0,10);
+
+    const f = v => Number(v).toLocaleString('tr-TR',{minimumFractionDigits:2});
+    
+    document.getElementById('dashboardBody').innerHTML = `
+      <!-- ÖZET KARTLAR -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
+        <div style="background:rgba(239,83,80,.1);border:1px solid rgba(239,83,80,.3);border-radius:10px;padding:16px;text-align:center;">
+          <div style="font-size:11px;color:#ef5350;font-weight:700;letter-spacing:1px;margin-bottom:6px;">TOPLAM ALACAK</div>
+          <div style="font-size:24px;font-weight:700;color:#ff4444;font-family:monospace;">${f(toplamAlacak)} ₺</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">${borcluSayisi} borçlu müşteri</div>
+        </div>
+        <div style="background:rgba(66,165,245,.1);border:1px solid rgba(66,165,245,.3);border-radius:10px;padding:16px;text-align:center;">
+          <div style="font-size:11px;color:var(--blue-bright);font-weight:700;letter-spacing:1px;margin-bottom:6px;">TOPLAM MÜŞTERİ</div>
+          <div style="font-size:24px;font-weight:700;color:var(--blue-bright);font-family:monospace;">${cariler.length}</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">${temizSayisi} temiz • ${alacakliSayisi} alacaklı</div>
+        </div>
+        <div style="background:rgba(67,160,71,.1);border:1px solid rgba(67,160,71,.3);border-radius:10px;padding:16px;text-align:center;">
+          <div style="font-size:11px;color:var(--green2);font-weight:700;letter-spacing:1px;margin-bottom:6px;">BU AY TAHSİLAT</div>
+          <div style="font-size:24px;font-weight:700;color:var(--green2);font-family:monospace;">${f(buAyTahsilat)} ₺</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">${buAyHareketler.filter(h=>Number(h.tahsilat)>0).length} ödeme alındı</div>
+        </div>
+        <div style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:10px;padding:16px;text-align:center;">
+          <div style="font-size:11px;color:#fbbf24;font-weight:700;letter-spacing:1px;margin-bottom:6px;">BU AY BORÇ</div>
+          <div style="font-size:24px;font-weight:700;color:#fbbf24;font-family:monospace;">${f(buAyBorc)} ₺</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">${buAyHareketler.filter(h=>Number(h.borc)>0).length} işlem girildi</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <!-- EN ÇOK BORÇLULAR -->
+        <div style="background:var(--card-bg, var(--bg2));border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+          <div style="background:var(--header-bg);padding:10px 14px;font-family:Oswald,sans-serif;font-size:13px;color:var(--red);letter-spacing:1px;">
+            🔴 EN ÇOK BORÇLULAR (TOP 5)
+          </div>
+          <div style="padding:8px;">
+            ${top5.filter(c=>Number(c.bakiye)>0).map((c,i) => `
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border-radius:6px;margin-bottom:4px;background:rgba(239,83,80,.06);cursor:pointer;" onclick="document.getElementById('dashboardOverlay').classList.remove('active');cariAc(${c.kod})">
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <span style="background:var(--red2);color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">${i+1}</span>
+                  <span style="font-weight:600;color:var(--white);">${c.unvan}</span>
+                </div>
+                <span style="color:#ff4444;font-weight:700;font-family:monospace;">${f(c.bakiye)} ₺</span>
+              </div>`).join('')}
+          </div>
+        </div>
+
+        <!-- SON HAREKETLER -->
+        <div style="background:var(--card-bg, var(--bg2));border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+          <div style="background:var(--header-bg);padding:10px 14px;font-family:Oswald,sans-serif;font-size:13px;color:var(--blue-bright);letter-spacing:1px;">
+            🕐 SON 10 HAREKET
+          </div>
+          <div style="padding:8px;max-height:280px;overflow-y:auto;">
+            ${son10.map(h => {
+              const c = cariler.find(x=>x.kod==h.cari_kod);
+              const isBorc = Number(h.borc)>0;
+              return `<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;border-radius:6px;margin-bottom:3px;background:rgba(255,255,255,.03);">
+                <div>
+                  <div style="font-size:12px;font-weight:600;color:var(--white);">${c?.unvan||'?'}</div>
+                  <div style="font-size:10px;color:var(--text-muted);">${h.tarih} — ${h.aciklama||''}</div>
+                </div>
+                <span style="color:${isBorc?'#ff4444':'#66bb6a'};font-weight:700;font-family:monospace;font-size:13px;">
+                  ${isBorc?'+':'-'}${f(isBorc?h.borc:h.tahsilat)} ₺
+                </span>
+              </div>`;
+            }).join('')}
+          </div>
+        </div>
+      </div>`;
+    
+    document.getElementById('dashboardOverlay').classList.add('active');
+  } catch(err) { toast('Dashboard hatası: ' + err.message, true); }
+  loading(false);
+}
 </script>
 </body>
 </html>
