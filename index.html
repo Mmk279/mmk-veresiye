@@ -376,6 +376,31 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
   <div class="loading-text" id="loadingText">Bağlanıyor...</div>
 </div>
 
+<!-- CARİ DÜZENLEME MODALI (F2) -->
+<div class="modal-overlay" id="cariDuzenleOverlay" onclick="if(event.target===this)cariDuzenleKapat()">
+  <div class="detay-modal" style="max-width:420px;">
+    <div class="detay-titlebar">
+      <span class="detay-title">✏️ CARİ DÜZENLE</span>
+      <button class="detay-close" onclick="cariDuzenleKapat()">✕</button>
+    </div>
+    <div style="padding:20px;display:flex;flex-direction:column;gap:16px;">
+      <div style="background:rgba(33,150,243,.08);border:1px solid rgba(33,150,243,.2);border-radius:8px;padding:10px 14px;">
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">SEÇİLİ CARİ</div>
+        <div id="cariDuzenleEskiAd" style="font-family:Oswald,sans-serif;font-size:17px;color:var(--blue-bright);font-weight:700;"></div>
+        <div id="cariDuzenleKodBilgi" style="font-size:11px;color:var(--text-muted);margin-top:2px;"></div>
+      </div>
+      <div>
+        <div class="islem-field-label">Yeni Ünvan</div>
+        <input class="islem-input" id="cariDuzenleYeniAd" placeholder="Yeni müşteri adını girin..." onkeydown="if(event.key==='Enter')cariDuzenleKaydet();if(event.key==='Escape')cariDuzenleKapat()">
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn" style="flex:1;background:var(--blue2);color:#fff;padding:12px;font-size:14px;" onclick="cariDuzenleKaydet()">💾 KAYDET (ENTER)</button>
+        <button class="btn" style="background:var(--panel2);color:var(--text);border:1px solid var(--border2);padding:12px;" onclick="cariDuzenleKapat()">İPTAL</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay active" id="loginOverlay">
   <div class="login-modal">
     <div class="login-logo">💳</div>
@@ -407,6 +432,7 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
       <input class="tb-input" id="txtCariUnvan" placeholder="Müşteri adı girin..." onkeydown="cariUnvanKeyDown(event)">
       <span class="toolbar-label" style="margin-left:8px">Müşteri Ara</span>
       <input class="tb-input" id="txtAra" placeholder="Ara..." oninput="araFilter()">
+      <button class="btn" style="background:var(--panel2);color:var(--blue-bright);border:1px solid var(--border2);" onclick="cariDuzenleAc()">✏️ F2 Düzenle</button>
       <button class="btn btn-danger" onclick="cariSil()">CARİ SİL</button>
     </div>
 
@@ -1710,12 +1736,21 @@ function globalKeyDown(e){
   const detayAcik=document.getElementById('detayOverlay').classList.contains('active');
   const raporAcik=document.getElementById('raporOverlay').classList.contains('active');
   const loginAcik=document.getElementById('loginOverlay').classList.contains('active');
-  
+  const duzenleAcik=document.getElementById('cariDuzenleOverlay').classList.contains('active');
+
   if(loginAcik) return;
+
+  // F2 — Cari Düzenle (detay kapalıyken)
+  if(e.key==='F2' && !detayAcik){ e.preventDefault(); cariDuzenleAc(); return; }
 
   if(e.key==='F3'){e.preventDefault(); gunlukRaporEkraniAc(); return;}
   if(e.key==='F4'){e.preventDefault(); yedekEkraniAc(); return;}
-  
+
+  // ESC — önce düzenleme panelini kapat
+  if(e.key==='Escape'){
+    if(duzenleAcik){ cariDuzenleKapat(); return; }
+  }
+
   if(detayAcik){
     if(e.key==='F5'){e.preventDefault();borcPanelAc();}
     if(e.key==='F6'){e.preventDefault();tahsilatPanelAc();}
@@ -1725,7 +1760,7 @@ function globalKeyDown(e){
     }
     return;
   }
-  
+
   if(raporAcik){ if(e.key==='Escape') raporKapat(); return; }
 
   // ANA EKRANDA OK TUŞLARI İLE CARİ SEÇİM YÖNETİMİ
@@ -1766,6 +1801,60 @@ document.addEventListener('click', function(e) {
     document.getElementById('hizliAramaSonuclari').style.display = 'none';
   }
 });
+
+// ═══════════════════════════════════════════════════════
+// F2 — CARİ DÜZENLE
+// ═══════════════════════════════════════════════════════
+let cariDuzenleKod = null;
+
+function cariDuzenleAc() {
+  // Seçili satırı bul
+  const seciliTr = document.querySelector('#tbodyMain tr.selected');
+  if (!seciliTr) { toast('Önce listeden bir cari seçin!', true); return; }
+  
+  const kod = seciliTr.dataset.kod;
+  const c = cariListesi.find(x => x.kod == kod);
+  if (!c) return;
+
+  cariDuzenleKod = kod;
+  document.getElementById('cariDuzenleEskiAd').textContent = c.unvan;
+  document.getElementById('cariDuzenleKodBilgi').textContent = `Cari Kod: ${c.kod}`;
+  document.getElementById('cariDuzenleYeniAd').value = c.unvan;
+  document.getElementById('cariDuzenleOverlay').classList.add('active');
+  
+  // Input'u seç — hızlıca değiştirsin
+  setTimeout(() => {
+    const inp = document.getElementById('cariDuzenleYeniAd');
+    inp.focus();
+    inp.select();
+  }, 100);
+}
+
+function cariDuzenleKapat() {
+  document.getElementById('cariDuzenleOverlay').classList.remove('active');
+  cariDuzenleKod = null;
+}
+
+async function cariDuzenleKaydet() {
+  const yeniAd = document.getElementById('cariDuzenleYeniAd').value.trim().toUpperCase();
+  if (!yeniAd) { toast('Lütfen bir isim girin!', true); return; }
+  if (!cariDuzenleKod) return;
+
+  const c = cariListesi.find(x => x.kod == cariDuzenleKod);
+  if (yeniAd === c.unvan) { cariDuzenleKapat(); return; } // Değişmedi
+
+  loading(true, 'Güncelleniyor...');
+  try {
+    await sbPatch('cariler', `kod=eq.${cariDuzenleKod}`, { unvan: yeniAd });
+    // Lokal listeyi de güncelle
+    const idx = cariListesi.findIndex(x => x.kod == cariDuzenleKod);
+    if (idx >= 0) cariListesi[idx].unvan = yeniAd;
+    tabloYenile();
+    cariDuzenleKapat();
+    toast(`✓ "${c.unvan}" → "${yeniAd}" olarak güncellendi`);
+  } catch(err) { toast('Güncelleme hatası: ' + err.message, true); }
+  loading(false);
+}
 
 // ═══════════════════════════════════════════════════════
 // MÜŞTERİ KARTI
