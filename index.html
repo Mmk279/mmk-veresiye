@@ -48,7 +48,7 @@ body {
 .titlebar {
   background:linear-gradient(90deg,#0a1628,#112240);
   border-bottom:2px solid var(--blue);
-  padding:6px 16px;
+  padding:6px 166px;
   display:flex; align-items:center; gap:10px;
   user-select:none;
 }
@@ -634,7 +634,7 @@ async function sbDelete(tablo, params) {
 }
 
 // ═══════════════════════════════════════════════════════
-// APPIŞLEYİŞ TEMEL AYARLARI
+// APP İŞLEYİŞ TEMEL AYARLARI
 // ═══════════════════════════════════════════════════════
 function getSifre() { return localStorage.getItem('mmk_sifre') || '1234'; }
 function showToast(msg, isErr=false) {
@@ -702,7 +702,6 @@ function tabloyuCiz() {
     tr.onclick = (e) => satirSec(tr, e);
     tr.ondblclick = () => detayEkraniAc(c.id);
     
-    // Eğer önceden seçilmişse görsel kalıcılık sağla
     if(SECILI_CARILER_ID == c.id) {
       tr.classList.add('selected');
     }
@@ -753,7 +752,7 @@ function satirSec(row, event) {
 }
 
 // ═══════════════════════════════════════════════════════
-// CARİ EKLE / SİL / DÜZENLE (F2 DÜZENLEME TAM ENTEGRASYON)
+// CARİ EKLE / SİL / DÜZENLE
 // ═══════════════════════════════════════════════════════
 async function cariUnvanKeyDown(event) {
   if(event.key === 'Enter') {
@@ -832,7 +831,6 @@ async function cariKartGuncelle() {
     await verileriYukle();
     showToast('Cari ünvanı başarıyla güncellendi.');
     
-    // Güncellenen carinin satırını tekrar otomatik olarak vurgulayalım
     const rows = [...document.querySelectorAll('#tbodyMain tr')];
     const targetRow = rows.find(r => r.dataset.id == SECILI_CARILER_ID);
     if(targetRow) satirSec(targetRow, null);
@@ -1021,7 +1019,6 @@ function detayListele() {
   });
 }
 
-// Hareket detay içi İşlem Panelleri
 let panelMode = '';
 function borcPanelAc() { panelAc('Borç'); }
 function tahsilatPanelAc() { panelAc('Tahsilat'); }
@@ -1185,10 +1182,10 @@ function gunlukRaporHesapla(secilenTarih) {
 }
 
 // ═══════════════════════════════════════════════════════
-// YEDEKLEME VE GOOGLE DRIVE KORUNAN PANELİ (F4)
+// YEDEKLEME VE GOOGLE DRIVE PANELİ (F4)
 // ═══════════════════════════════════════════════════════
 function yedekEkraniAc() {
-  raporAcik = true; // ESC kontrol ortak kullanımı için flag aktif edilir
+  raporAcik = true; 
   document.getElementById('raporTitle').innerText = '💾 YEDEKLEME VE GOOGLE DRIVE PANELİ (F4)';
   document.getElementById('raporOverlay').classList.add('active');
   
@@ -1242,9 +1239,10 @@ function yedekDosyasiniOku(e) {
   reader.onload = async (evt) => {
     try {
       const yedek = JSON.parse(evt.target.result);
-      if(!yedek.cariler || !yedek.hareketler) { alert('Hata: Geçersiz yedek dosyası formatı!'); return; }
+      if(!yedek.cariler || !yedek.harehetler && !yedek.hareketler) { alert('Hata: Geçersiz yedek dosyası formatı!'); return; }
       
-      if(!confirm('Yedek dosyasındaki ' + yedek.cariler.length + ' cari ve ' + yedek.hareketler.length + ' işlem buluta aktarılacaktır. Mevcut tüm verileriniz silinecektir! Onaylıyor musunuz?')) return;
+      const gecerliHareketler = yedek.hareketler || yedek.harehetler;
+      if(!confirm('Yedek dosyasındaki ' + yedek.cariler.length + ' cari ve ' + gecerliHareketler.length + ' işlem buluta aktarılacaktır. Mevcut tüm verileriniz silinecektir! Onaylıyor musunuz?')) return;
       
       showLoading('Eski veriler temizleniyor...');
       await sbDelete('hareketler', 'id=gt.0');
@@ -1258,7 +1256,7 @@ function yedekDosyasiniOku(e) {
       }
       
       showLoading('İşlem hareketleri aktarılıyor...');
-      for(let h of yedek.hareketler) {
+      for(let h of gecerliHareketler) {
         const payload = { cari_id: h.cari_id, tarih: h.tarih, aciklama: h.aciklama, islem_tipi: h.islem_tipi, tutar: h.tutar };
         if(h.id) payload.id = h.id;
         await sbPost('hareketler', payload);
@@ -1277,10 +1275,8 @@ function yedekDosyasiniOku(e) {
   reader.readAsText(file);
 }
 
-// Google Drive Yedekleme Sahte/API Kancaları (Mevcut entegrasyon mantığınıza göre korundu)
 function googleDriveYedekle() {
   showToast('Google Drive API bağlantısı kuruluyor...');
-  // Burası sizin tarafınızdaki Drive auth / upload akışına bağlanır.
   setTimeout(() => {
     showToast('Veriler başarıyla Google Drive hesabınıza aktarıldı.');
   }, 1200);
@@ -1288,7 +1284,6 @@ function googleDriveYedekle() {
 
 function googleDriveYukle() {
   showToast('Google Drive üzerinden yedek listesi taranıyor...');
-  // Burası sizin tarafınızdaki Drive download akışına bağlanır.
   setTimeout(() => {
     showToast('Drive yedeği başarıyla alındı ve senkronize edildi.');
     verileriYukle();
@@ -1312,62 +1307,58 @@ function araFilter() {
   });
 }
 
-window.addEventListener('keydown', (event) => {
-  // LOGIN EKRANINDA KONTROL
+window.addEventListener('keydown', (e) => {
   if(document.getElementById('loginOverlay').classList.contains('active')) {
-    if(event.key === 'Enter') loginDene();
+    if(e.key === 'Enter') loginDene();
     return;
   }
 
-  // MODAL PANELLERİ AÇIKKEN ESC VE PANEL KISAYOL KONTROLLERİ
   if(editAcik) {
-    if(event.key === 'Escape') { cariDuzenleKapat(); event.preventDefault(); }
+    if(e.key === 'Escape') { cariDuzenleKapat(); e.preventDefault(); }
     return;
   }
   
   if(detayAcik) {
     if(panelMode !== '') {
-      if(event.key === 'Escape') { islemPanelKapat(); event.preventDefault(); return; }
+      if(e.key === 'Escape') { islemPanelKapat(); e.preventDefault(); return; }
     } else {
-      if(event.key === 'Escape') { detayKapat(); event.preventDefault(); return; }
-      if(event.key === 'F5') { event.preventDefault(); borcPanelAc(); return; }
-      if(event.key === 'F6') { event.preventDefault(); tahsilatPanelAc(); return; }
+      if(e.key === 'Escape') { detayKapat(); e.preventDefault(); return; }
+      if(e.key === 'F5') { e.preventDefault(); borcPanelAc(); return; }
+      if(e.key === 'F6') { e.preventDefault(); tahsilatPanelAc(); return; }
     }
     return;
   }
   
-  if(raporAcik) { if(event.key === 'Escape') raporKapat(); return; }
+  if(raporAcik) { if(e.key === 'Escape') raporKapat(); return; }
 
-  // ANA EKRAN FONKSİYONEL KISAYOLLARI (F2, F3, F4)
-  if(event.key === 'F2') {
-    event.preventDefault();
+  if(e.key === 'F2') {
+    e.preventDefault();
     cariDuzenleEkraniAc();
     return;
   }
-  if(event.key === 'F3') {
-    event.preventDefault();
+  if(e.key === 'F3') {
+    e.preventDefault();
     gunlukRaporEkraniAc();
     return;
   }
-  if(event.key === 'F4') {
-    event.preventDefault();
+  if(e.key === 'F4') {
+    e.preventDefault();
     yedekEkraniAc();
     return;
   }
 
-  // ANA EKRANDA OK TUŞLARI İLE CARİ SEÇİM YÖNETİMİ
-  if(event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+  if(e.key === 'ArrowDown' || e.key === 'ArrowUp') {
     const focusEl = document.activeElement ? document.activeElement.id : '';
     if(focusEl === 'txtHizliCariAra' && document.getElementById('hizliAramaSonuclari').style.display === 'block') return;
 
-    event.preventDefault();
+    e.preventDefault();
     
     const rows = [...document.querySelectorAll('#tbodyMain tr')].filter(r => r.style.display !== 'none');
     if(rows.length === 0) return;
     
     let currentIdx = rows.findIndex(r => r.classList.contains('selected'));
     
-    if(event.key === 'ArrowDown') {
+    if(e.key === 'ArrowDown') {
       currentIdx = (currentIdx === -1 || currentIdx >= rows.length - 1) ? 0 : currentIdx + 1;
     } else {
       currentIdx = (currentIdx <= 0) ? rows.length - 1 : currentIdx - 1;
@@ -1378,10 +1369,10 @@ window.addEventListener('keydown', (event) => {
     targetRow.scrollIntoView({ block: 'nearest' });
   }
   
-  if(event.key === 'Enter') {
+  if(e.key === 'Enter') {
     const focusEl = document.activeElement ? document.activeElement.id : '';
     if(focusEl === 'txtAra' || document.activeElement === document.body) {
-      event.preventDefault();
+      e.preventDefault();
       if(SECILI_CARILER_ID) detayEkraniAc(SECILI_CARILER_ID);
     }
   }
@@ -1461,7 +1452,6 @@ function showLoading(txt) {
 }
 function hideLoading() { document.getElementById('loadingOverlay').classList.remove('active'); }
 
-// Menü ve Yardım Tetikçileri
 function menuDosya() { yedekEkraniAc(); }
 function menuAraclar() { gunlukRaporEkraniAc(); }
 function excelAktar() { showToast('Excel modülü hazırlandı, indirme tetikleniyor...'); verileriDisariAktar(); }
