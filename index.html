@@ -624,16 +624,20 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
 
 <!-- MAKBUZ MODALI -->
 <div class="modal-overlay" id="makbuzOverlay" onclick="if(event.target===this)document.getElementById('makbuzOverlay').classList.remove('active')">
-  <div class="detay-modal" style="max-width:520px;">
+  <div class="detay-modal" style="max-width:540px;">
     <div class="detay-titlebar">
       <span class="detay-title">🧾 BORÇ MAKBUZU</span>
       <button class="detay-close" onclick="document.getElementById('makbuzOverlay').classList.remove('active')">✕</button>
     </div>
     <div style="padding:16px;display:flex;flex-direction:column;gap:12px;">
-      <div id="makbuzOnizleme" style="background:#fff;border-radius:8px;padding:20px;color:#2c3e50;font-family:Arial,sans-serif;"></div>
+      <div id="makbuzOnizleme" style="background:#fff;border-radius:8px;padding:4px;color:#2c3e50;font-family:Arial,sans-serif;max-height:55vh;overflow-y:auto;"></div>
       <div style="display:flex;gap:8px;">
-        <button class="btn" style="flex:1;background:var(--blue2);color:#fff;padding:12px;" onclick="makbuzYazdir()">🖨️ YAZDIR / PDF</button>
-        <button class="btn" style="background:#075e54;color:#fff;padding:12px;" onclick="makbuzWhatsapp()">📱 WhatsApp</button>
+        <button class="btn" style="flex:1;background:var(--blue2);color:#fff;padding:12px;" onclick="makbuzYazdirTam()">🖨️ YAZDIR / PDF</button>
+        <button class="btn" style="flex:1;background:#075e54;color:#fff;padding:12px;" onclick="makbuzGorselIndir()">📱 WhatsApp Görseli</button>
+      </div>
+      <div style="font-size:11px;color:var(--text-muted);text-align:center;line-height:1.6;">
+        <b>Yazdır/PDF:</b> Yeni pencerede açılır, Ctrl+P ile PDF kaydedebilirsin.<br>
+        <b>WhatsApp Görseli:</b> Makbuz PNG olarak indirilir + WhatsApp açılır → görseli galeride bulup gönder.
       </div>
     </div>
   </div>
@@ -1971,36 +1975,80 @@ async function makbuzYazdir() {
 
 function makbuzYazdirTam() {
   const c = cariListesi.find(x => x.kod == aktifDetayKod);
+  if (!c) return;
   const icerik = makbuzIcerikOlustur(c, aktifMakbuzHareketler, false);
   const w = window.open('', '_blank');
-  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Makbuz - ${c.unvan}</title>
-    <style>body{margin:20px;font-family:Arial}@media print{body{margin:0}}</style></head>
-    <body>${icerik}<script>setTimeout(()=>window.print(),500)<\/script></body></html>`);
+  if (!w) { toast('Popup engelleyici aktif! Lütfen izin verin.', true); return; }
+  w.document.write(`<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Makbuz — ${c.unvan}</title>
+  <style>
+    body { margin: 20px; font-family: Arial, sans-serif; background:#fff; }
+    @media print { body { margin: 0; } @page { margin: 10mm; } }
+  </style>
+</head>
+<body>
+  ${icerik}
+  <script>
+    window.onload = function() { setTimeout(function(){ window.print(); }, 600); };
+  <\/script>
+</body>
+</html>`);
   w.document.close();
 }
 
-function makbuzWhatsapp() {
+async function makbuzGorselIndir() {
   const c = cariListesi.find(x => x.kod == aktifDetayKod);
   const bilgi = musteriBilgisiAl(aktifDetayKod);
   const tel = bilgi.whatsapp || bilgi.telefon || '';
-  if (!tel) { toast('Önce müşteri kartına telefon girin!', true); musteriKartiAc(); return; }
-  
-  const bakiye = Number(c.bakiye);
-  let mesaj = `🏪 *${DUKKAN_ADI}* — Hesap Ekstresi\n`;
-  mesaj += `━━━━━━━━━━━━━━━━━\n`;
-  mesaj += `Sayın *${c.unvan}*\n\n`;
-  mesaj += `💳 Güncel bakiyeniz: *${bakiye.toLocaleString('tr-TR',{minimumFractionDigits:2})} ₺* (${bakiye>0?'BORÇLU':bakiye<0?'ALACAKLI':'KAPALI'})\n\n`;
-  
-  aktifMakbuzHareketler.slice(0,5).forEach(r => {
-    const tip = Number(r.borc) > 0 ? '🔴' : '🟢';
-    const tutar = Number(r.borc) > 0 ? Number(r.borc) : Number(r.tahsilat);
-    mesaj += `${tip} ${r.tarih} — ${r.aciklama} — ${tutar.toLocaleString('tr-TR',{minimumFractionDigits:2})} ₺\n`;
-  });
-  
-  mesaj += `\n_${DUKKAN_ADI}_`;
-  
-  const telFormat = telefoneFormatla(tel);
-  window.open(`https://wa.me/${telFormat}?text=${encodeURIComponent(mesaj)}`, '_blank');
+
+  // html2canvas kütüphanesini yükle
+  if (!window.html2canvas) {
+    loading(true, '📦 Görsel kütüphanesi yükleniyor...');
+    await new Promise((res, rej) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+      s.onload = res; s.onerror = rej;
+      document.head.appendChild(s);
+    });
+    loading(false);
+  }
+
+  // Makbuz önizleme elementini canvas'a çevir
+  const el = document.getElementById('makbuzOnizleme');
+  toast('📸 Görsel hazırlanıyor...');
+
+  try {
+    const canvas = await html2canvas(el, {
+      scale: 2,
+      backgroundColor: '#ffffff',
+      useCORS: true,
+      logging: false
+    });
+
+    // PNG olarak indir
+    const link = document.createElement('a');
+    link.download = `Makbuz_${c.unvan}_${new Date().toLocaleDateString('tr-TR').replace(/\./g,'_')}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+
+    // Kısa bekle sonra WhatsApp aç
+    setTimeout(() => {
+      if (tel) {
+        const telFormat = telefoneFormatla(tel);
+        const mesaj = `🏪 *${DUKKAN_ADI}*\nSayın *${c.unvan}*, makbuzunuz ektedir.`;
+        window.open(`https://wa.me/${telFormat}?text=${encodeURIComponent(mesaj)}`, '_blank');
+        toast('✓ Görsel indirildi! WhatsApp açıldı — görseli galeride bulup gönder.');
+      } else {
+        toast('✓ Makbuz görseli indirildi! WhatsApp için önce müşteri kartına telefon gir.');
+      }
+    }, 800);
+
+  } catch(err) {
+    toast('Görsel oluşturma hatası: ' + err.message, true);
+  }
 }
 
 // ═══════════════════════════════════════════════════════
