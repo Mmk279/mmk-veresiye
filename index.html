@@ -455,6 +455,141 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
   </div>
 </div>
 
+<!-- ÜRÜN YÖNETİMİ SEKMESİ -->
+<div id="urunPane" style="display:none;height:calc(100vh - 100px);">
+  <div style="display:grid;grid-template-columns:1fr 320px;height:100%;overflow:hidden;">
+    <div style="display:flex;flex-direction:column;border-right:2px solid var(--border);">
+      <div style="background:var(--bg2);border-bottom:1px solid var(--border);padding:8px 12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <span style="font-family:Oswald,sans-serif;font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;">Ürün Adı</span>
+        <input class="tb-input" id="txtUrunAd" placeholder="Ürün adı..." style="width:150px" onkeydown="urunEkleKeyDown(event,'ad')">
+        <span style="font-family:Oswald,sans-serif;font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;">Barkod</span>
+        <input class="tb-input" id="txtUrunBarkod" placeholder="Barkod..." style="width:110px" onkeydown="urunEkleKeyDown(event,'barkod')">
+        <span style="font-family:Oswald,sans-serif;font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;">Fiyat ₺</span>
+        <input class="tb-input" id="txtUrunFiyat" placeholder="0.00" style="width:80px" type="number" onkeydown="urunEkleKeyDown(event,'fiyat')">
+        <span style="font-family:Oswald,sans-serif;font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;">Kategori</span>
+        <input class="tb-input" id="txtUrunKategori" placeholder="Genel..." style="width:90px" onkeydown="urunEkleKeyDown(event,'kategori')">
+        <button class="btn btn-primary" onclick="urunEkle()" style="background:var(--blue2);color:#fff;">+ EKLE</button>
+        <input class="tb-input" id="txtUrunAra" placeholder="Ara..." style="width:110px;margin-left:4px" oninput="urunAraFilter()">
+        <button class="btn btn-danger" onclick="urunSil()" style="margin-left:auto;">ÜRÜN SİL</button>
+      </div>
+      <div style="flex:1;overflow-y:auto;">
+        <table class="main-table" id="urunTable">
+          <thead>
+            <tr>
+              <th style="width:22px"></th>
+              <th style="width:55px">Kod</th>
+              <th>Ürün Adı</th>
+              <th style="width:110px">Barkod</th>
+              <th style="width:100px;text-align:right">Fiyat (₺)</th>
+              <th style="width:100px">Kategori</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyUrun"></tbody>
+        </table>
+      </div>
+      <div style="background:var(--bg3);border-top:1px solid var(--border);padding:6px 12px;display:flex;gap:8px;">
+        <button class="btn btn-secondary" onclick="urunExcel()">📊 Excel Aktar</button>
+        <button class="btn btn-secondary" onclick="urunDuzenleAc()">✏️ F2 Düzenle</button>
+        <span id="urunSayiBilgi" style="margin-left:auto;font-size:12px;color:var(--text-muted);align-self:center;"></span>
+      </div>
+    </div>
+
+    <!-- SAĞ: SATIŞ / BARKOD PANELİ -->
+    <div style="background:var(--bg2);display:flex;flex-direction:column;overflow-y:auto;">
+      <div style="border-bottom:1px solid var(--border);">
+        <div style="background:var(--header-bg);padding:8px 12px;">
+          <span style="font-family:Oswald,sans-serif;font-size:12px;font-weight:700;color:var(--blue-bright);letter-spacing:.8px;">MÜŞTERİ SEÇ</span>
+        </div>
+        <div style="padding:10px 12px;display:flex;flex-direction:column;gap:8px;">
+          <div class="autocomplete-wrap" id="satisAcWrap">
+            <input class="autocomplete-input" id="satisMusteri" placeholder="İsim yazın..." autocomplete="off"
+              oninput="satisAcGuncelle()" onkeydown="satisAcKeyDown(event)" onfocus="satisAcGuncelle()">
+            <input type="hidden" id="satisMusteriKod">
+            <div class="autocomplete-dropdown" id="satisDropdown"></div>
+          </div>
+          <div id="seciliMusteriInfo" style="display:none;background:rgba(33,150,243,.1);border:1px solid rgba(33,150,243,.3);border-radius:6px;padding:8px 10px;justify-content:space-between;align-items:center;">
+            <span id="seciliMusteriAd" style="font-size:13px;font-weight:700;color:var(--white);"></span>
+            <span id="seciliMusteriBakiye" style="font-size:12px;font-weight:700;font-family:monospace;color:var(--cell-red);"></span>
+          </div>
+        </div>
+      </div>
+
+      <div style="border-bottom:1px solid var(--border);">
+        <div style="background:var(--header-bg);padding:8px 12px;display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-family:Oswald,sans-serif;font-size:12px;font-weight:700;color:var(--blue-bright);letter-spacing:.8px;">BARKOD OKUT</span>
+          <span style="font-size:10px;color:var(--text-muted);">Kamera veya elle</span>
+        </div>
+        <div style="padding:10px 12px;display:flex;flex-direction:column;gap:8px;">
+          <div style="background:var(--input-bg);border:2px dashed var(--border2);border-radius:8px;padding:12px;text-align:center;">
+            <div id="kameraVideo" style="display:none;">
+              <video id="barkodVideo" style="width:100%;border-radius:6px;max-height:150px;object-fit:cover;" autoplay playsinline></video>
+              <button class="btn btn-danger" onclick="kameraKapat()" style="width:100%;margin-top:6px;padding:6px;">Kamerayı Kapat</button>
+            </div>
+            <div id="kameraAcBtn">
+              <div style="font-size:22px;margin-bottom:6px;">📷</div>
+              <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Ürün barkoduna tut</div>
+              <button class="btn btn-primary" onclick="kameraAc()" style="width:100%;padding:8px;background:var(--blue2);color:#fff;">Kamerayı Aç</button>
+            </div>
+          </div>
+          <div style="text-align:center;font-size:11px;color:var(--text-muted);">— veya elle gir —</div>
+          <div style="display:flex;gap:6px;">
+            <input class="hizli-input" id="txtBarkodGir" placeholder="Barkod no..." style="flex:1;font-family:monospace;" onkeydown="if(event.key==='Enter')barkodIleUrunEkle()">
+            <button class="btn btn-secondary" onclick="barkodIleUrunEkle()" style="padding:7px 12px;">Bul</button>
+          </div>
+          <div id="barkodSonuc" style="display:none;background:rgba(67,160,71,.1);border:1px solid rgba(67,160,71,.3);border-radius:6px;padding:8px 10px;font-size:13px;font-weight:700;color:var(--green2);"></div>
+        </div>
+      </div>
+
+      <div style="flex:1;border-bottom:1px solid var(--border);">
+        <div style="background:var(--header-bg);padding:8px 12px;display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-family:Oswald,sans-serif;font-size:12px;font-weight:700;color:var(--blue-bright);letter-spacing:.8px;">SEPET</span>
+          <span id="sepetSayisi" style="font-size:11px;color:var(--green2);font-weight:700;">0 ürün</span>
+        </div>
+        <div id="sepetListesi" style="padding:4px 12px;min-height:60px;"></div>
+        <div style="padding:8px 12px;border-top:2px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-family:Oswald,sans-serif;font-size:12px;font-weight:700;color:var(--text-muted);letter-spacing:.5px;">TOPLAM BORÇ</span>
+          <span id="sepetToplam" style="font-family:'Roboto Mono',monospace;font-size:20px;font-weight:700;color:var(--cell-red);">0,00 ₺</span>
+        </div>
+      </div>
+
+      <div style="padding:10px 12px;display:flex;flex-direction:column;gap:8px;">
+        <button class="btn" style="width:100%;padding:12px;background:var(--green);color:#fff;font-size:14px;font-family:Oswald,sans-serif;font-weight:700;letter-spacing:1px;border-radius:6px;" onclick="hesabaIsle()">✓ HESABA İŞLE</button>
+        <button class="btn" style="width:100%;padding:10px;background:var(--panel2);color:var(--text);border:1px solid var(--border2);font-size:13px;font-family:Oswald,sans-serif;font-weight:700;letter-spacing:.5px;border-radius:6px;" onclick="sepetTemizle()">🗑️ SEPETİ TEMİZLE</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ÜRÜN DÜZENLEME MODALI -->
+<div class="modal-overlay" id="urunDuzenleOverlay" onclick="if(event.target===this)urunDuzenleKapat()">
+  <div class="detay-modal" style="max-width:420px;">
+    <div class="detay-titlebar">
+      <span class="detay-title">✏️ ÜRÜN DÜZENLE</span>
+      <button class="detay-close" onclick="urunDuzenleKapat()">✕</button>
+    </div>
+    <div style="padding:20px;display:flex;flex-direction:column;gap:14px;">
+      <div style="background:rgba(33,150,243,.08);border:1px solid rgba(33,150,243,.2);border-radius:8px;padding:10px 14px;">
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:3px;">SEÇİLİ ÜRÜN</div>
+        <div id="urunDuzenleEskiAd" style="font-family:Oswald,sans-serif;font-size:17px;color:var(--blue-bright);font-weight:700;"></div>
+      </div>
+      <div><div class="islem-field-label">Ürün Adı</div>
+        <input class="islem-input" id="urunDuzenleAd" placeholder="Ürün adı..." onkeydown="if(event.key==='Enter')document.getElementById('urunDuzenleBarkod').focus();if(event.key==='Escape')urunDuzenleKapat()"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div><div class="islem-field-label">Barkod</div>
+          <input class="islem-input" id="urunDuzenleBarkod" placeholder="Barkod..." style="font-family:monospace" onkeydown="if(event.key==='Enter')document.getElementById('urunDuzenleFiyat').focus();if(event.key==='Escape')urunDuzenleKapat()"></div>
+        <div><div class="islem-field-label">Fiyat (₺)</div>
+          <input class="islem-input" id="urunDuzenleFiyat" type="number" placeholder="0.00" onkeydown="if(event.key==='Enter')document.getElementById('urunDuzenleKategori').focus();if(event.key==='Escape')urunDuzenleKapat()"></div>
+      </div>
+      <div><div class="islem-field-label">Kategori</div>
+        <input class="islem-input" id="urunDuzenleKategori" placeholder="Genel..." onkeydown="if(event.key==='Enter')urunDuzenleKaydet();if(event.key==='Escape')urunDuzenleKapat()"></div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn" style="flex:1;background:var(--blue2);color:#fff;padding:12px;" onclick="urunDuzenleKaydet()">💾 KAYDET</button>
+        <button class="btn" style="background:var(--panel2);color:var(--text);border:1px solid var(--border2);padding:12px;" onclick="urunDuzenleKapat()">İPTAL</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay active" id="loginOverlay">
   <div class="login-modal">
     <div class="login-logo">💳</div>
@@ -481,7 +616,13 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
   <div class="menu-item" style="margin-left:auto;color:var(--blue-bright);font-weight:700;" onclick="dashboardAc()">📊 DASHBOARD</div>
 </div>
 
-<div class="app-body">
+<!-- SEKMELER -->
+<div style="background:#0d1e33;border-bottom:2px solid var(--border);display:flex;gap:0;padding:0 12px;">
+  <div id="tabCari" onclick="sekmeAc('cari')" style="padding:9px 22px;font-size:14px;font-weight:700;color:#42a5f5;cursor:pointer;border-bottom:2px solid #42a5f5;margin-bottom:-2px;letter-spacing:.5px;">👥 CARİ LİSTESİ</div>
+  <div id="tabUrun" onclick="sekmeAc('urun')" style="padding:9px 22px;font-size:14px;font-weight:700;color:#6a8aaa;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;letter-spacing:.5px;">🛒 ÜRÜN YÖNETİMİ</div>
+</div>
+
+<div class="app-body" id="cariPane">
   <div class="left-pane">
     <div class="toolbar">
       <span class="toolbar-label">Cari Ünvan</span>
@@ -2344,6 +2485,391 @@ async function dashboardAc() {
     
     document.getElementById('dashboardOverlay').classList.add('active');
   } catch(err) { toast('Dashboard hatası: ' + err.message, true); }
+  loading(false);
+}
+
+// ═══════════════════════════════════════════════════════
+// SEKME SİSTEMİ
+// ═══════════════════════════════════════════════════════
+function sekmeAc(sekme) {
+  const cariPane = document.getElementById('cariPane');
+  const urunPane = document.getElementById('urunPane');
+  const tabCari = document.getElementById('tabCari');
+  const tabUrun = document.getElementById('tabUrun');
+
+  if (sekme === 'cari') {
+    cariPane.style.display = 'grid';
+    urunPane.style.display = 'none';
+    tabCari.style.color = '#42a5f5';
+    tabCari.style.borderBottom = '2px solid #42a5f5';
+    tabUrun.style.color = '#6a8aaa';
+    tabUrun.style.borderBottom = '2px solid transparent';
+  } else {
+    cariPane.style.display = 'none';
+    urunPane.style.display = 'block';
+    tabUrun.style.color = '#42a5f5';
+    tabUrun.style.borderBottom = '2px solid #42a5f5';
+    tabCari.style.color = '#6a8aaa';
+    tabCari.style.borderBottom = '2px solid transparent';
+    urunleriYukle();
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// ÜRÜN LİSTESİ — Supabase
+// ═══════════════════════════════════════════════════════
+let urunListesi = [];
+let seciliUrunKod = null;
+
+async function urunleriYukle() {
+  try {
+    urunListesi = await sbGet('urunler', 'order=kod.asc');
+    urunTabloYenile();
+  } catch(err) { toast('Ürün yükleme hatası: ' + err.message, true); }
+}
+
+function urunTabloYenile() {
+  const ara = document.getElementById('txtUrunAra')?.value.toLowerCase() || '';
+  const tbody = document.getElementById('tbodyUrun');
+  tbody.innerHTML = '';
+  const liste = urunListesi.filter(u => !ara || u.ad.toLowerCase().includes(ara) || (u.barkod||'').includes(ara) || (u.kategori||'').toLowerCase().includes(ara));
+  liste.forEach(u => {
+    const tr = document.createElement('tr');
+    tr.dataset.kod = u.kod;
+    tr.innerHTML = `
+      <td><span class="row-arrow" style="display:none;color:var(--blue-bright);font-size:10px">▶</span></td>
+      <td style="color:var(--blue-bright)">${u.kod}</td>
+      <td style="color:var(--white);font-weight:700">${u.ad}</td>
+      <td style="color:var(--text-muted);font-family:monospace;font-size:12px">${u.barkod||'—'}</td>
+      <td style="text-align:right;color:var(--green2);font-family:monospace;font-weight:700">${fmt(u.fiyat)} ₺</td>
+      <td><span style="background:rgba(33,150,243,.12);color:var(--blue-bright);border:1px solid rgba(33,150,243,.25);padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700">${u.kategori||'Genel'}</span></td>`;
+    tr.addEventListener('click', () => {
+      document.querySelectorAll('#tbodyUrun tr').forEach(r => { r.classList.remove('selected'); r.querySelector('.row-arrow').style.display='none'; });
+      tr.classList.add('selected');
+      tr.querySelector('.row-arrow').style.display = 'inline';
+      seciliUrunKod = u.kod;
+      // Sağ panele tıklanan ürünü sepete ekle butonu
+    });
+    tr.addEventListener('dblclick', () => sepeteUrunEkle(u));
+    tbody.appendChild(tr);
+  });
+  document.getElementById('urunSayiBilgi').textContent = `${liste.length} ürün`;
+}
+
+function urunAraFilter() { urunTabloYenile(); }
+
+function urunEkleKeyDown(e, alan) {
+  if (e.key !== 'Enter') return;
+  e.preventDefault();
+  const sira = { ad:'txtUrunBarkod', barkod:'txtUrunFiyat', fiyat:'txtUrunKategori', kategori:null };
+  if (sira[alan]) document.getElementById(sira[alan]).focus();
+  else urunEkle();
+}
+
+async function urunEkle() {
+  const ad = document.getElementById('txtUrunAd').value.trim().toUpperCase();
+  if (!ad) { toast('Ürün adı boş olamaz!', true); document.getElementById('txtUrunAd').focus(); return; }
+  const barkod = document.getElementById('txtUrunBarkod').value.trim();
+  const fiyat = parseFloat(document.getElementById('txtUrunFiyat').value) || 0;
+  const kategori = document.getElementById('txtUrunKategori').value.trim() || 'Genel';
+  const maxKod = urunListesi.reduce((m,u) => Math.max(m, u.kod), 0);
+  const kod = maxKod + 1;
+  loading(true, 'Ürün ekleniyor...');
+  try {
+    const res = await sbPost('urunler', { kod, ad, barkod: barkod||null, fiyat, kategori });
+    urunListesi.push(res[0]);
+    urunTabloYenile();
+    document.getElementById('txtUrunAd').value = '';
+    document.getElementById('txtUrunBarkod').value = '';
+    document.getElementById('txtUrunFiyat').value = '';
+    document.getElementById('txtUrunKategori').value = '';
+    document.getElementById('txtUrunAd').focus();
+    toast(`✓ ${ad} eklendi`);
+  } catch(err) { toast('Hata: ' + err.message, true); }
+  loading(false);
+}
+
+async function urunSil() {
+  if (!seciliUrunKod) { toast('Önce bir ürün seçin!', true); return; }
+  const u = urunListesi.find(x => x.kod == seciliUrunKod);
+  if (!confirm(`"${u.ad}" silinsin mi?`)) return;
+  loading(true, 'Siliniyor...');
+  try {
+    await sbDelete('urunler', `kod=eq.${seciliUrunKod}`);
+    urunListesi = urunListesi.filter(x => x.kod != seciliUrunKod);
+    seciliUrunKod = null;
+    urunTabloYenile();
+    toast('Ürün silindi');
+  } catch(err) { toast('Hata: ' + err.message, true); }
+  loading(false);
+}
+
+function urunExcel() {
+  let csv = 'Kod;Ürün Adı;Barkod;Fiyat;Kategori\n';
+  urunListesi.forEach(u => { csv += `${u.kod};${u.ad};${u.barkod||''};${fmt(u.fiyat)};${u.kategori||''}\n`; });
+  const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'UrunListesi.csv'; a.click();
+  toast('Excel indirildi');
+}
+
+// ── ÜRÜN DÜZENLE ──
+let duzenleUrunKod = null;
+
+function urunDuzenleAc() {
+  if (!seciliUrunKod) { toast('Önce bir ürün seçin!', true); return; }
+  const u = urunListesi.find(x => x.kod == seciliUrunKod);
+  duzenleUrunKod = u.kod;
+  document.getElementById('urunDuzenleEskiAd').textContent = u.ad;
+  document.getElementById('urunDuzenleAd').value = u.ad;
+  document.getElementById('urunDuzenleBarkod').value = u.barkod || '';
+  document.getElementById('urunDuzenleFiyat').value = u.fiyat;
+  document.getElementById('urunDuzenleKategori').value = u.kategori || '';
+  document.getElementById('urunDuzenleOverlay').classList.add('active');
+  setTimeout(() => { document.getElementById('urunDuzenleAd').focus(); document.getElementById('urunDuzenleAd').select(); }, 100);
+}
+
+function urunDuzenleKapat() {
+  document.getElementById('urunDuzenleOverlay').classList.remove('active');
+  duzenleUrunKod = null;
+}
+
+async function urunDuzenleKaydet() {
+  const ad = document.getElementById('urunDuzenleAd').value.trim().toUpperCase();
+  if (!ad) { toast('Ürün adı boş olamaz!', true); return; }
+  const barkod = document.getElementById('urunDuzenleBarkod').value.trim();
+  const fiyat = parseFloat(document.getElementById('urunDuzenleFiyat').value) || 0;
+  const kategori = document.getElementById('urunDuzenleKategori').value.trim() || 'Genel';
+  loading(true, 'Güncelleniyor...');
+  try {
+    await sbPatch('urunler', `kod=eq.${duzenleUrunKod}`, { ad, barkod: barkod||null, fiyat, kategori });
+    const idx = urunListesi.findIndex(x => x.kod == duzenleUrunKod);
+    if (idx >= 0) urunListesi[idx] = { ...urunListesi[idx], ad, barkod: barkod||null, fiyat, kategori };
+    urunTabloYenile();
+    urunDuzenleKapat();
+    toast(`✓ ${ad} güncellendi`);
+  } catch(err) { toast('Hata: ' + err.message, true); }
+  loading(false);
+}
+
+// ═══════════════════════════════════════════════════════
+// SATIŞ AUTOCOMPLETE (Müşteri seçimi - sağ panel)
+// ═══════════════════════════════════════════════════════
+let satisSeciliKod = null;
+
+function satisAcGuncelle() {
+  const ara = document.getElementById('satisMusteri').value.toLowerCase().trim();
+  const dropdown = document.getElementById('satisDropdown');
+  document.getElementById('satisMusteriKod').value = '';
+  satisSeciliKod = null;
+  document.getElementById('seciliMusteriInfo').style.display = 'none';
+
+  const eslesen = ara ? cariListesi.filter(c => c.unvan.toLowerCase().includes(ara)) : cariListesi;
+  if (!eslesen.length) { dropdown.innerHTML=''; dropdown.classList.remove('acik'); return; }
+
+  dropdown.innerHTML = eslesen.slice(0,20).map(c =>
+    `<div class="autocomplete-item" data-kod="${c.kod}" data-unvan="${c.unvan.replace(/'/g,"\\'")}}" onclick="satisMusSec(${c.kod},'${c.unvan.replace(/'/g,"\\'")}')">
+      <span class="ac-kod">${c.kod}</span>
+      <span class="ac-unvan">${c.unvan}</span>
+      <span style="margin-left:auto;font-size:11px;color:${Number(c.bakiye)>0?'#ff4444':'#66bb6a'};font-family:monospace">${fmt(c.bakiye)} ₺</span>
+    </div>`
+  ).join('');
+  dropdown.classList.add('acik');
+}
+
+function satisMusSec(kod, unvan) {
+  satisSeciliKod = kod;
+  document.getElementById('satisMusteri').value = unvan;
+  document.getElementById('satisMusteriKod').value = kod;
+  document.getElementById('satisDropdown').classList.remove('acik');
+  const c = cariListesi.find(x => x.kod == kod);
+  if (c) {
+    document.getElementById('seciliMusteriAd').textContent = c.unvan;
+    document.getElementById('seciliMusteriBakiye').textContent = fmt(c.bakiye) + ' ₺';
+    const info = document.getElementById('seciliMusteriInfo');
+    info.style.display = 'flex';
+  }
+  document.getElementById('txtBarkodGir').focus();
+}
+
+function satisAcKeyDown(e) {
+  const dropdown = document.getElementById('satisDropdown');
+  const items = [...dropdown.querySelectorAll('.autocomplete-item')];
+  if (!items.length) return;
+  let idx = items.findIndex(el => el.classList.contains('aktif'));
+  if (e.key === 'ArrowDown') { e.preventDefault(); idx = Math.min(idx+1, items.length-1); items.forEach((el,i) => el.classList.toggle('aktif', i===idx)); items[idx]?.scrollIntoView({block:'nearest'}); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); idx = Math.max(idx-1, 0); items.forEach((el,i) => el.classList.toggle('aktif', i===idx)); items[idx]?.scrollIntoView({block:'nearest'}); }
+  else if (e.key === 'Enter') { e.preventDefault(); const aktif = items[idx] || (items.length===1 ? items[0] : null); if(aktif) satisMusSec(aktif.dataset.kod, aktif.dataset.unvan); }
+  else if (e.key === 'Escape') dropdown.classList.remove('acik');
+}
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('#satisAcWrap')) document.getElementById('satisDropdown')?.classList.remove('acik');
+});
+
+// ═══════════════════════════════════════════════════════
+// BARKOD OKUYUCU (Kamera)
+// ═══════════════════════════════════════════════════════
+let kameraStream = null;
+let barkodInterval = null;
+
+async function kameraAc() {
+  try {
+    // ZXing kütüphanesini yükle
+    if (!window.ZXing) {
+      loading(true, '📦 Barkod kütüphanesi yükleniyor...');
+      await new Promise((res, rej) => {
+        const s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/@zxing/library@latest/umd/index.min.js';
+        s.onload = res; s.onerror = () => {
+          // Fallback: sadece kamera göster, manuel giriş yap
+          res();
+        };
+        document.head.appendChild(s);
+      });
+      loading(false);
+    }
+    kameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+    const video = document.getElementById('barkodVideo');
+    video.srcObject = kameraStream;
+    document.getElementById('kameraAcBtn').style.display = 'none';
+    document.getElementById('kameraVideo').style.display = 'block';
+
+    // ZXing ile barkod okuma
+    if (window.ZXing) {
+      const codeReader = new ZXing.BrowserMultiFormatReader();
+      codeReader.decodeFromVideoDevice(null, 'barkodVideo', (result, err) => {
+        if (result) {
+          const barkod = result.getText();
+          document.getElementById('txtBarkodGir').value = barkod;
+          kameraKapat();
+          barkodIleUrunEkle();
+        }
+      });
+    }
+    toast('Kamera açıldı — barkodu okutun');
+  } catch(err) {
+    loading(false);
+    toast('Kamera erişimi reddedildi. Elle barkod girebilirsiniz.', true);
+  }
+}
+
+function kameraKapat() {
+  if (kameraStream) { kameraStream.getTracks().forEach(t => t.stop()); kameraStream = null; }
+  document.getElementById('kameraAcBtn').style.display = 'block';
+  document.getElementById('kameraVideo').style.display = 'none';
+}
+
+// ═══════════════════════════════════════════════════════
+// BARKOD İLE ÜRÜN BULMA
+// ═══════════════════════════════════════════════════════
+function barkodIleUrunEkle() {
+  const barkod = document.getElementById('txtBarkodGir').value.trim();
+  if (!barkod) { toast('Barkod girin!', true); return; }
+  const urun = urunListesi.find(u => u.barkod === barkod);
+  if (!urun) {
+    document.getElementById('barkodSonuc').style.display = 'block';
+    document.getElementById('barkodSonuc').style.background = 'rgba(239,83,80,.1)';
+    document.getElementById('barkodSonuc').style.color = '#ff4444';
+    document.getElementById('barkodSonuc').style.borderColor = 'rgba(239,83,80,.3)';
+    document.getElementById('barkodSonuc').textContent = `❌ "${barkod}" barkoduna ürün bulunamadı`;
+    return;
+  }
+  document.getElementById('barkodSonuc').style.display = 'block';
+  document.getElementById('barkodSonuc').style.background = 'rgba(67,160,71,.1)';
+  document.getElementById('barkodSonuc').style.color = '#66bb6a';
+  document.getElementById('barkodSonuc').style.borderColor = 'rgba(67,160,71,.3)';
+  document.getElementById('barkodSonuc').textContent = `✓ ${urun.ad} — ${fmt(urun.fiyat)} ₺ bulundu, sepete eklendi`;
+  document.getElementById('txtBarkodGir').value = '';
+  sepeteUrunEkle(urun);
+  setTimeout(() => document.getElementById('barkodSonuc').style.display = 'none', 2500);
+}
+
+// ═══════════════════════════════════════════════════════
+// SEPET SİSTEMİ
+// ═══════════════════════════════════════════════════════
+let sepet = []; // [{urun, adet}]
+
+function sepeteUrunEkle(urun) {
+  const mevcut = sepet.find(s => s.urun.kod === urun.kod);
+  if (mevcut) { mevcut.adet++; }
+  else { sepet.push({ urun, adet: 1 }); }
+  sepetGuncelle();
+  toast(`✓ ${urun.ad} sepete eklendi`);
+}
+
+function sepettenCikar(urunKod) {
+  sepet = sepet.filter(s => s.urun.kod !== urunKod);
+  sepetGuncelle();
+}
+
+function sepetAdetDegistir(urunKod, delta) {
+  const idx = sepet.findIndex(s => s.urun.kod === urunKod);
+  if (idx < 0) return;
+  sepet[idx].adet += delta;
+  if (sepet[idx].adet <= 0) sepet.splice(idx, 1);
+  sepetGuncelle();
+}
+
+function sepetGuncelle() {
+  const liste = document.getElementById('sepetListesi');
+  const toplam = sepet.reduce((t,s) => t + s.urun.fiyat * s.adet, 0);
+  document.getElementById('sepetToplam').textContent = fmt(toplam) + ' ₺';
+  document.getElementById('sepetSayisi').textContent = sepet.length + ' ürün';
+
+  if (!sepet.length) {
+    liste.innerHTML = '<div style="text-align:center;color:var(--text-muted);font-size:12px;padding:16px;">Sepet boş</div>';
+    return;
+  }
+  liste.innerHTML = sepet.map(s => `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(30,58,95,.4);">
+      <div style="flex:1;">
+        <div style="font-size:13px;font-weight:700;color:var(--white);">${s.urun.ad}</div>
+        <div style="font-size:11px;color:var(--text-muted);">${fmt(s.urun.fiyat)} ₺ × ${s.adet} adet</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <span style="font-family:monospace;font-size:13px;font-weight:700;color:#66bb6a;">${fmt(s.urun.fiyat * s.adet)} ₺</span>
+        <div style="display:flex;gap:3px;">
+          <button onclick="sepetAdetDegistir(${s.urun.kod},-1)" style="width:22px;height:22px;background:var(--panel2);border:1px solid var(--border2);border-radius:4px;color:var(--text);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;">−</button>
+          <button onclick="sepetAdetDegistir(${s.urun.kod},1)" style="width:22px;height:22px;background:var(--panel2);border:1px solid var(--border2);border-radius:4px;color:var(--text);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;">+</button>
+          <button onclick="sepettenCikar(${s.urun.kod})" style="width:22px;height:22px;background:rgba(239,83,80,.15);border:1px solid rgba(239,83,80,.3);border-radius:4px;color:#ff4444;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;">✕</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function sepetTemizle() {
+  sepet = [];
+  sepetGuncelle();
+}
+
+async function hesabaIsle() {
+  const musteriKod = document.getElementById('satisMusteriKod').value;
+  if (!musteriKod) { toast('Önce müşteri seçin!', true); document.getElementById('satisMusteri').focus(); return; }
+  if (!sepet.length) { toast('Sepet boş!', true); return; }
+
+  const toplam = sepet.reduce((t,s) => t + s.urun.fiyat * s.adet, 0);
+  const musteriAd = cariListesi.find(c => c.kod == musteriKod)?.unvan || '';
+  const urunler = sepet.map(s => `${s.urun.ad}(${s.adet})`).join(', ');
+  const aciklama = urunler.length > 60 ? urunler.substring(0, 57) + '...' : urunler;
+
+  if (!confirm(`${musteriAd}\n${aciklama}\nToplam: ${fmt(toplam)} ₺\n\nHesaba işlensin mi?`)) return;
+
+  loading(true, 'Hesaba işleniyor...');
+  try {
+    const n = new Date(), f = d => String(d).padStart(2,'0');
+    const tarih = `${f(n.getDate())}.${f(n.getMonth()+1)}.${n.getFullYear()} ${f(n.getHours())}:${f(n.getMinutes())}`;
+    await sbPost('hareketler', { cari_kod: parseInt(musteriKod), tarih, aciklama, borc: toplam, tahsilat: 0 });
+    await bakiyeGuncelleDB(musteriKod);
+    carileritabloyaYukle();
+    genelBakiyeHesapla();
+    sepetTemizle();
+    document.getElementById('satisMusteri').value = '';
+    document.getElementById('satisMusteriKod').value = '';
+    document.getElementById('seciliMusteriInfo').style.display = 'none';
+    satisSeciliKod = null;
+    toast(`✓ ${fmt(toplam)} ₺ → ${musteriAd} hesabına işlendi!`);
+  } catch(err) { toast('Hata: ' + err.message, true); }
   loading(false);
 }
 </script>
