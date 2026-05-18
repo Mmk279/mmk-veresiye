@@ -35,12 +35,14 @@
   --input-border: #1e3a5f;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
+html, body {
+  height:100vh;
+  overflow:hidden;
+}
 body {
   font-family:'Exo 2',sans-serif;
   background:var(--bg);
   color:var(--text);
-  min-height:100vh;
-  overflow-x:hidden;
   font-size:15px;
 }
 
@@ -91,8 +93,15 @@ body {
 .app-body {
   display:grid;
   grid-template-columns:1fr 300px;
-  height:calc(100vh - 58px);
+  height:calc(100vh - 98px);
   overflow:hidden;
+}
+#urunPane {
+  height:calc(100vh - 98px);
+  overflow:hidden;
+}
+#urunPane > div {
+  height:100%;
 }
 
 /* ── LEFT ── */
@@ -469,6 +478,7 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
         <span style="font-family:Oswald,sans-serif;font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;">Kategori</span>
         <input class="tb-input" id="txtUrunKategori" placeholder="Genel..." style="width:90px" onkeydown="urunEkleKeyDown(event,'kategori')">
         <button class="btn btn-primary" onclick="urunEkle()" style="background:var(--blue2);color:#fff;">+ EKLE</button>
+        <button class="btn btn-secondary" onclick="urunBarkodKameraAc()" title="Kamera ile barkod tara">📷 Barkod Tara</button>
         <input class="tb-input" id="txtUrunAra" placeholder="Ara..." style="width:110px;margin-left:4px" oninput="urunAraFilter()">
         <button class="btn btn-danger" onclick="urunSil()" style="margin-left:auto;">ÜRÜN SİL</button>
       </div>
@@ -556,6 +566,30 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
         <button class="btn" style="width:100%;padding:12px;background:var(--green);color:#fff;font-size:14px;font-family:Oswald,sans-serif;font-weight:700;letter-spacing:1px;border-radius:6px;" onclick="hesabaIsle()">✓ HESABA İŞLE</button>
         <button class="btn" style="width:100%;padding:10px;background:var(--panel2);color:var(--text);border:1px solid var(--border2);font-size:13px;font-family:Oswald,sans-serif;font-weight:700;letter-spacing:.5px;border-radius:6px;" onclick="sepetTemizle()">🗑️ SEPETİ TEMİZLE</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ÜRÜN BARKOD KAMERA MODALI -->
+<div class="modal-overlay" id="urunBarkodOverlay" onclick="if(event.target===this)urunBarkodKapatModal()">
+  <div class="detay-modal" style="max-width:380px;">
+    <div class="detay-titlebar">
+      <span class="detay-title">📷 BARKOD OKU — ÜRÜN EKLE</span>
+      <button class="detay-close" onclick="urunBarkodKapatModal()">✕</button>
+    </div>
+    <div style="padding:16px;display:flex;flex-direction:column;gap:12px;">
+      <div style="background:var(--input-bg);border-radius:8px;overflow:hidden;">
+        <video id="urunBarkodVideo" style="width:100%;max-height:200px;object-fit:cover;" autoplay playsinline></video>
+      </div>
+      <div style="font-size:12px;color:var(--text-muted);text-align:center;">Barkodu kameraya göster, otomatik okunacak</div>
+      <div>
+        <div class="islem-field-label">Okunan Barkod</div>
+        <input class="islem-input" id="urunBarkodOkunan" placeholder="Barkod burada görünecek..." style="font-family:monospace;" readonly>
+      </div>
+      <div style="background:rgba(33,150,243,.08);border:1px solid rgba(33,150,243,.2);border-radius:6px;padding:10px;" id="urunBarkodBilgi" style="display:none;">
+        <div style="font-size:11px;color:var(--text-muted);">Bu barkod barkod alanına aktarıldı. Ürün adı ve fiyat girin.</div>
+      </div>
+      <button class="btn" style="width:100%;background:var(--blue2);color:#fff;padding:12px;" onclick="urunBarkodKapatModal()">✓ Tamam, Kapatın</button>
     </div>
   </div>
 </div>
@@ -680,29 +714,10 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
 
     <div class="hizli-box">
       <div class="hizli-header">
-        <span class="hizli-title">HIZLI İŞLEM</span>
-        <div class="radio-group">
-          <label class="radio-option radio-plus"><input type="radio" name="islemTip" id="rbArti" checked> + Borç</label>
-          <label class="radio-option radio-minus"><input type="radio" name="islemTip" id="rbEksi"> − Tahsilat</label>
-        </div>
+        <span class="hizli-title">📊 BORÇ DAĞILIMI</span>
       </div>
-      <div class="hizli-body">
-        <div>
-          <div class="hizli-label">Cari Ara (İsim Yazın)</div>
-          <div class="hizli-arama-container">
-            <input class="hizli-input" id="txtHizliCariAra" placeholder="Müşteri adı yazın..." oninput="hizliCariAraInput()" onkeydown="hizliCariAraKeyDown(event)">
-            <div class="hizli-arama-sonuclari" id="hizliAramaSonuclari"></div>
-          </div>
-        </div>
-        <div>
-          <div class="hizli-label">Açıklama</div>
-          <input class="hizli-input" id="txtHizliAciklama" placeholder="Açıklama..." onkeydown="hizliKeyDown(event,'aciklama')">
-        </div>
-        <div>
-          <div class="hizli-label">Tutar</div>
-          <input class="hizli-input" id="txtHizliTutar" type="number" placeholder="0.00" onkeydown="hizliKeyDown(event,'tutar')">
-        </div>
-        <button class="btn-hizli-kaydet" onclick="hizliIslemYap()">✓ KAYDET (ENTER)</button>
+      <div class="hizli-body" id="miniDashboard">
+        <div style="text-align:center;color:var(--text-muted);font-size:12px;padding:8px;">Yükleniyor...</div>
       </div>
     </div>
 
@@ -955,13 +970,13 @@ async function init() {
   try {
     await carileritabloyaYukle();
     genelBakiyeHesapla();
+    miniDashboardGuncelle();
     otomatikKodVer();
   } catch(e) {
     toast('Veritabanı bağlantı hatası: ' + e.message, true);
   }
   loading(false);
   document.addEventListener('keydown', globalKeyDown);
-  // Giriş sonrası otomatik yedek kontrolü (2 sn gecikmeyle)
   setTimeout(otomatikYedekKontrol, 2500);
 }
 
@@ -1050,6 +1065,59 @@ function tabloYenile() {
 function genelBakiyeHesapla() {
   const toplam = cariListesi.reduce((t,c)=>t+Number(c.bakiye),0);
   document.getElementById('lblGenelBakiye').textContent = fmt(toplam);
+  miniDashboardGuncelle();
+}
+
+function miniDashboardGuncelle() {
+  const el = document.getElementById('miniDashboard');
+  if (!el || !cariListesi.length) return;
+
+  const borclu = cariListesi.filter(c=>Number(c.bakiye)>0);
+  const temiz = cariListesi.filter(c=>Number(c.bakiye)===0);
+  const alacakli = cariListesi.filter(c=>Number(c.bakiye)<0);
+  const toplamAlacak = borclu.reduce((t,c)=>t+Number(c.bakiye),0);
+  const top3 = [...borclu].sort((a,b)=>Number(b.bakiye)-Number(a.bakiye)).slice(0,3);
+  const maxBakiye = top3.length ? Number(top3[0].bakiye) : 1;
+
+  el.innerHTML = `
+    <!-- Özet sayılar -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px;">
+      <div style="background:rgba(239,83,80,.1);border:1px solid rgba(239,83,80,.25);border-radius:6px;padding:7px;text-align:center;">
+        <div style="font-size:18px;font-weight:700;color:#ff4444;font-family:monospace;">${borclu.length}</div>
+        <div style="font-size:10px;color:var(--text-muted);">Borçlu</div>
+      </div>
+      <div style="background:rgba(67,160,71,.1);border:1px solid rgba(67,160,71,.25);border-radius:6px;padding:7px;text-align:center;">
+        <div style="font-size:18px;font-weight:700;color:#66bb6a;font-family:monospace;">${temiz.length}</div>
+        <div style="font-size:10px;color:var(--text-muted);">Temiz</div>
+      </div>
+      <div style="background:rgba(66,165,245,.1);border:1px solid rgba(66,165,245,.25);border-radius:6px;padding:7px;text-align:center;">
+        <div style="font-size:18px;font-weight:700;color:var(--blue-bright);font-family:monospace;">${alacakli.length}</div>
+        <div style="font-size:10px;color:var(--text-muted);">Alacaklı</div>
+      </div>
+    </div>
+
+    <!-- Toplam -->
+    <div style="background:rgba(239,83,80,.06);border:1px solid rgba(239,83,80,.2);border-radius:6px;padding:8px;text-align:center;margin-bottom:10px;">
+      <div style="font-size:10px;color:var(--text-muted);letter-spacing:.5px;margin-bottom:2px;">TOPLAM ALACAK</div>
+      <div style="font-size:20px;font-weight:700;color:#ff4444;font-family:monospace;">${fmt(toplamAlacak)} ₺</div>
+    </div>
+
+    <!-- Top 3 bar chart -->
+    <div style="font-size:10px;font-weight:700;color:var(--text-muted);letter-spacing:.8px;margin-bottom:6px;">EN FAZLA BORÇLULAR</div>
+    ${top3.map(c => {
+      const yuzde = Math.round((Number(c.bakiye)/maxBakiye)*100);
+      return `<div style="margin-bottom:8px;">
+        <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px;">
+          <span style="color:var(--white);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:140px;">${c.unvan}</span>
+          <span style="color:#ff4444;font-family:monospace;font-weight:700;flex-shrink:0;margin-left:4px;">${fmt(c.bakiye)} ₺</span>
+        </div>
+        <div style="background:rgba(255,255,255,.06);border-radius:3px;height:6px;overflow:hidden;">
+          <div style="background:linear-gradient(90deg,#e53935,#ef5350);height:100%;width:${yuzde}%;border-radius:3px;transition:width .6s ease;"></div>
+        </div>
+      </div>`;
+    }).join('')}
+    ${!top3.length ? '<div style="text-align:center;color:var(--text-muted);font-size:12px;padding:8px;">Borçlu müşteri yok 🎉</div>' : ''}
+  `;
 }
 
 function otomatikKodVer() {
@@ -1123,118 +1191,6 @@ async function bakiyeGuncelleDB(kod) {
   const idx = cariListesi.findIndex(c=>c.kod==kod);
   if(idx>=0) cariListesi[idx].bakiye=bakiye;
   return bakiye;
-}
-
-// ═══════════════════════════════════════════════════════
-// HIZLI İŞLEM DİNAMİK ARAMA VE ENTEGRASYON
-// ═══════════════════════════════════════════════════════
-let hizliSeciliCariKod = null;
-let hizliAramaAktifIndex = -1;
-
-function hizliCariAraInput() {
-  const txt = document.getElementById('txtHizliCariAra').value.toLowerCase().trim();
-  const box = document.getElementById('hizliAramaSonuclari');
-  box.innerHTML = '';
-  hizliSeciliCariKod = null;
-  hizliAramaAktifIndex = -1;
-
-  if(!txt) { box.style.display = 'none'; return; }
-
-  const filtrelenmis = cariListesi.filter(c => c.unvan.toLowerCase().includes(txt));
-  if(filtrelenmis.length === 0) {
-    box.style.display = 'none';
-    return;
-  }
-
-  filtrelenmis.forEach((c, index) => {
-    const div = document.createElement('div');
-    div.className = 'hizli-arama-item';
-    div.textContent = c.unvan;
-    div.dataset.kod = c.kod;
-    div.addEventListener('click', () => {
-      hizliCariSec(c.kod, c.unvan);
-    });
-    box.appendChild(div);
-  });
-  box.style.display = 'block';
-}
-
-function hizliCariSec(kod, unvan) {
-  document.getElementById('txtHizliCariAra').value = unvan;
-  hizliSeciliCariKod = kod;
-  document.getElementById('hizliAramaSonuclari').style.display = 'none';
-  document.getElementById('txtHizliAciklama').focus();
-}
-
-function hizliCariAraKeyDown(e) {
-  const box = document.getElementById('hizliAramaSonuclari');
-  const items = box.querySelectorAll('.hizli-arama-item');
-  
-  if (box.style.display === 'block' && items.length > 0) {
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      hizliAramaAktifIndex = (hizliAramaAktifIndex + 1) % items.length;
-      hizliAramaListeyiGorselle(items);
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      hizliAramaAktifIndex = (hizliAramaAktifIndex - 1 + items.length) % items.length;
-      hizliAramaListeyiGorselle(items);
-    } else if (e.key === 'Enter') {
-      e.preventDefault();
-      if (hizliAramaAktifIndex >= 0) {
-        const item = items[hizliAramaAktifIndex];
-        hizliCariSec(item.dataset.kod, item.textContent);
-      } else if(items.length > 0) {
-        hizliCariSec(items[0].dataset.kod, items[0].textContent);
-      }
-    }
-  } else if (e.key === 'Enter') {
-    e.preventDefault();
-    document.getElementById('txtHizliAciklama').focus();
-  }
-}
-
-function hizliAramaListeyiGorselle(items) {
-  items.forEach((item, idx) => {
-    if(idx === hizliAramaAktifIndex) {
-      item.classList.add('aktif');
-      item.scrollIntoView({ block: 'nearest' });
-    } else {
-      item.classList.remove('aktif');
-    }
-  });
-}
-
-function hizliKeyDown(e,alan){
-  if(e.key==='Enter') {
-    e.preventDefault();
-    if(alan==='aciklama') document.getElementById('txtHizliTutar').focus();
-    else if(alan==='tutar') hizliIslemYap();
-  }
-}
-
-async function hizliIslemYap() {
-  if(!hizliSeciliCariKod){toast('Lütfen geçerli bir cari seçin!',true); return;}
-  const tutar = parseFloat(document.getElementById('txtHizliTutar').value);
-  if(!tutar||tutar<=0){toast('Geçerli tutar girin!',true);return;}
-  const aciklama = document.getElementById('txtHizliAciklama').value.trim()||'Hızlı İşlem';
-  const isBorc = document.getElementById('rbArti').checked;
-  const n=new Date(),f=d=>String(d).padStart(2,'0');
-  const tarih=`${f(n.getDate())}.${f(n.getMonth()+1)}.${n.getFullYear()} ${f(n.getHours())}:${f(n.getMinutes())}`;
-  loading(true,'Kaydediliyor...');
-  try {
-    await sbPost('hareketler',{cari_kod:parseInt(hizliSeciliCariKod),tarih,aciklama,borc:isBorc?tutar:0,tahsilat:isBorc?0:tutar});
-    await bakiyeGuncelleDB(hizliSeciliCariKod);
-    tabloYenile(); genelBakiyeHesapla();
-    
-    document.getElementById('txtHizliTutar').value='';
-    document.getElementById('txtHizliAciklama').value='';
-    document.getElementById('txtHizliCariAra').value='';
-    hizliSeciliCariKod = null;
-    document.getElementById('txtHizliCariAra').focus();
-    toast('✓ Hızlı işlem kaydedildi.');
-  } catch(err){toast('Hata: '+err.message,true);}
-  loading(false);
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1935,17 +1891,25 @@ function globalKeyDown(e){
   const raporAcik=document.getElementById('raporOverlay').classList.contains('active');
   const loginAcik=document.getElementById('loginOverlay').classList.contains('active');
   const duzenleAcik=document.getElementById('cariDuzenleOverlay').classList.contains('active');
+  const urunDuzenleAcik=document.getElementById('urunDuzenleOverlay').classList.contains('active');
+  const urunSekmeAcik=document.getElementById('urunPane').style.display !== 'none';
 
   if(loginAcik) return;
 
-  // F2 — Cari Düzenle (detay kapalıyken)
-  if(e.key==='F2' && !detayAcik){ e.preventDefault(); cariDuzenleAc(); return; }
+  // F2 — Ürün sekmesindeyse ürün düzenle, değilse cari düzenle
+  if(e.key==='F2' && !detayAcik){
+    e.preventDefault();
+    if(urunSekmeAcik) urunDuzenleAc();
+    else cariDuzenleAc();
+    return;
+  }
 
   if(e.key==='F3'){e.preventDefault(); gunlukRaporEkraniAc(); return;}
   if(e.key==='F4'){e.preventDefault(); yedekEkraniAc(); return;}
 
-  // ESC — önce düzenleme panelini kapat
+  // ESC
   if(e.key==='Escape'){
+    if(urunDuzenleAcik){ urunDuzenleKapat(); return; }
     if(duzenleAcik){ cariDuzenleKapat(); return; }
   }
 
@@ -1961,10 +1925,27 @@ function globalKeyDown(e){
 
   if(raporAcik){ if(e.key==='Escape') raporKapat(); return; }
 
+  // ── ÜRÜN SEKMESİNDE OK TUŞLARI ──
+  if(urunSekmeAcik && (e.key==='ArrowDown'||e.key==='ArrowUp')){
+    const aktif = document.activeElement;
+    if(aktif && (aktif.tagName==='INPUT'||aktif.tagName==='TEXTAREA')) return;
+    e.preventDefault();
+    const rows = [...document.querySelectorAll('#tbodyUrun tr')].filter(r=>r.style.display!=='none');
+    if(!rows.length) return;
+    let idx = rows.findIndex(r=>r.classList.contains('selected'));
+    if(e.key==='ArrowDown') idx = (idx===-1||idx>=rows.length-1)?0:idx+1;
+    else idx = idx<=0?rows.length-1:idx-1;
+    rows.forEach(r=>{r.classList.remove('selected');r.querySelector('.row-arrow').style.display='none';});
+    rows[idx].classList.add('selected');
+    rows[idx].querySelector('.row-arrow').style.display='inline';
+    seciliUrunKod = parseInt(rows[idx].dataset.kod);
+    rows[idx].scrollIntoView({block:'nearest'});
+    return;
+  }
+
   // ANA EKRANDA OK TUŞLARI İLE CARİ SEÇİM YÖNETİMİ
   if(e.key === 'ArrowDown' || e.key === 'ArrowUp') {
     const focusEl = document.activeElement ? document.activeElement.id : '';
-    if(focusEl === 'txtHizliCariAra' && document.getElementById('hizliAramaSonuclari').style.display === 'block') return;
 
     e.preventDefault();
     
@@ -1995,8 +1976,8 @@ function globalKeyDown(e){
 }
 
 document.addEventListener('click', function(e) {
-  if(!e.target.closest('.hizli-arama-container')) {
-    document.getElementById('hizliAramaSonuclari').style.display = 'none';
+  if(!e.target.closest('.autocomplete-wrap')) {
+    document.getElementById('satisDropdown')?.classList.remove('acik');
   }
 });
 
@@ -2629,6 +2610,57 @@ function urunDuzenleAc() {
   setTimeout(() => { document.getElementById('urunDuzenleAd').focus(); document.getElementById('urunDuzenleAd').select(); }, 100);
 }
 
+// ── ÜRÜN EKLEME İÇİN BARKOD KAMERA ──
+let urunBarkodStream = null;
+
+async function urunBarkodKameraAc() {
+  try {
+    if (!window.ZXing) {
+      loading(true, '📦 Barkod kütüphanesi yükleniyor...');
+      await new Promise((res, rej) => {
+        const s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/@zxing/library@latest/umd/index.min.js';
+        s.onload = res; s.onerror = res; // hata olsa da devam et
+        document.head.appendChild(s);
+      });
+      loading(false);
+    }
+    urunBarkodStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+    const video = document.getElementById('urunBarkodVideo');
+    video.srcObject = urunBarkodStream;
+    document.getElementById('urunBarkodOverlay').classList.add('active');
+
+    if (window.ZXing) {
+      const codeReader = new ZXing.BrowserMultiFormatReader();
+      codeReader.decodeFromVideoDevice(null, 'urunBarkodVideo', (result, err) => {
+        if (result) {
+          const barkod = result.getText();
+          document.getElementById('urunBarkodOkunan').value = barkod;
+          document.getElementById('txtUrunBarkod').value = barkod;
+          document.getElementById('urunBarkodBilgi').style.display = 'block';
+          urunBarkodKapatStream();
+          toast(`✓ Barkod okundu: ${barkod}`);
+          setTimeout(() => document.getElementById('txtUrunAd').focus(), 300);
+        }
+      });
+    }
+  } catch(err) {
+    loading(false);
+    toast('Kamera erişimi reddedildi. Elle barkod girebilirsiniz.', true);
+  }
+}
+
+function urunBarkodKapatStream() {
+  if (urunBarkodStream) { urunBarkodStream.getTracks().forEach(t => t.stop()); urunBarkodStream = null; }
+}
+
+function urunBarkodKapatModal() {
+  urunBarkodKapatStream();
+  document.getElementById('urunBarkodOverlay').classList.remove('active');
+  document.getElementById('urunBarkodOkunan').value = '';
+  document.getElementById('urunBarkodBilgi').style.display = 'none';
+}
+
 function urunDuzenleKapat() {
   document.getElementById('urunDuzenleOverlay').classList.remove('active');
   duzenleUrunKod = null;
@@ -2668,7 +2700,7 @@ function satisAcGuncelle() {
   if (!eslesen.length) { dropdown.innerHTML=''; dropdown.classList.remove('acik'); return; }
 
   dropdown.innerHTML = eslesen.slice(0,20).map(c =>
-    `<div class="autocomplete-item" data-kod="${c.kod}" data-unvan="${c.unvan.replace(/'/g,"\\'")}}" onclick="satisMusSec(${c.kod},'${c.unvan.replace(/'/g,"\\'")}')">
+    `<div class="autocomplete-item" data-kod="${c.kod}" data-unvan="${c.unvan.replace(/'/g,"\\'")}" onclick="satisMusSec(${c.kod},'${c.unvan.replace(/'/g,"\\'")}')">
       <span class="ac-kod">${c.kod}</span>
       <span class="ac-unvan">${c.unvan}</span>
       <span style="margin-left:auto;font-size:11px;color:${Number(c.bakiye)>0?'#ff4444':'#66bb6a'};font-family:monospace">${fmt(c.bakiye)} ₺</span>
