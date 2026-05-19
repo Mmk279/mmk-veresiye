@@ -2918,6 +2918,7 @@ function sepetGuncelle() {
     liste.innerHTML = '<div style="text-align:center;color:var(--text-muted);font-size:13px;padding:20px;">Sepet boş</div>';
     return;
   }
+  
   liste.innerHTML = sepet.map(s => `
     <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(30,58,95,.4);">
       <div style="flex:1;min-width:0;">
@@ -2927,9 +2928,9 @@ function sepetGuncelle() {
       <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;margin-left:8px;">
         <span style="font-family:monospace;font-size:15px;font-weight:700;color:#66bb6a;min-width:70px;text-align:right;">${fmt(s.urun.fiyat * s.adet)} ₺</span>
         <div style="display:flex;gap:3px;">
-          <button onclick="sepetAdetDegistir(${s.urun.kod},-1)" style="width:26px;height:26px;background:var(--panel2);border:1px solid var(--border2);border-radius:4px;color:var(--text);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;font-weight:700;">−</button>
-          <button onclick="sepetAdetDegistir(${s.urun.kod},1)" style="width:26px;height:26px;background:var(--panel2);border:1px solid var(--border2);border-radius:4px;color:var(--text);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;font-weight:700;">+</button>
-          <button onclick="sepettenCikar(${s.urun.kod})" style="width:26px;height:26px;background:rgba(239,83,80,.15);border:1px solid rgba(239,83,80,.3);border-radius:4px;color:#ff4444;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;">✕</button>
+          <button onclick="sepetAdetDegistir('${s.urun.kod}', -1)" style="width:26px;height:26px;background:var(--panel2);border:1px solid var(--border2);border-radius:4px;color:var(--text);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;font-weight:700;">−</button>
+          <button onclick="sepetAdetDegistir('${s.urun.kod}', 1)" style="width:26px;height:26px;background:var(--panel2);border:1px solid var(--border2);border-radius:4px;color:var(--text);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;font-weight:700;">+</button>
+          <button onclick="sepettenCikar('${s.urun.kod}')" style="width:26px;height:26px;background:rgba(239,83,80,.15);border:1px solid rgba(239,83,80,.3);border-radius:4px;color:#ff4444;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;">✕</button>
         </div>
       </div>
     </div>`).join('');
@@ -2963,8 +2964,9 @@ async function hesabaIsle() {
     toast(`✓ ${fmt(toplam)} ₺ → ${musteriAd} hesabına işlendi!`);
   } catch(err) { toast('Hata: '+err.message, true); }
   loading(false);
+}
 
-// ── YENİ VE GÜVENLİ SEKME GEÇİŞ FONKSİYONUMUZ ──
+// ── YENİ VE GÜVENLİ SEKME GEÇİŞ FONKSiyonumuz ──
 function sekmeAc(sekmeAdi) {
   const cariGövde = document.querySelector('.app-body');
   const urunPane = document.getElementById('urunPane');
