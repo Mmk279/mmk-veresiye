@@ -107,7 +107,7 @@ body {
 /* ── LEFT ── */
 .left-pane { display:flex; flex-direction:column; border-right:2px solid var(--border); overflow:hidden; }
 
-/* ── TOOLBAR (PUNTOLAR BÜYÜTÜLDÜ VE BEYAZ YAPILDI) ── */
+/* ── TOOLBAR ── */
 .toolbar {
   background:var(--bg2);
   border-bottom:1px solid var(--border);
@@ -140,14 +140,8 @@ body {
 .btn-secondary { background:var(--panel2); color:var(--text); border:1px solid var(--border2); }
 .btn-secondary:hover { background:var(--border2); }
 
-/* ── TABLE (SABİTLENDİ VE ALT KISIMDAN TAŞMASI ENGELLENDİ) ── */
-.table-wrap { 
-  flex:1; 
-  max-height: calc(100vh - 145px); /* Ekran yüksekliğine göre alt barın üstünde kalacak şekilde sınırlandı */
-  overflow-y:auto; 
-  overflow-x:hidden; 
-  position:relative; 
-}
+/* ── TABLE ── */
+.table-wrap { flex:1; overflow-y:auto; overflow-x:hidden; position:relative; }
 .table-wrap::-webkit-scrollbar { width:8px; }
 .table-wrap::-webkit-scrollbar-track { background:var(--bg3); }
 .table-wrap::-webkit-scrollbar-thumb { background:var(--panel2); border-radius:4px; }
@@ -171,10 +165,9 @@ table.main-table tbody td {
   text-overflow:ellipsis; 
 }
 
-/* Sütun genişlikleri ayarlanarak aradaki devasa boşluk daraltıldı */
 .col-arrow { width:22px; }
 .col-kod { width:90px; }
-.col-unvan { width:450px; } /* Maksimum genişlik sınırı verilerek tutar sola yaklaştırıldı */
+.col-unvan { width:450px; } 
 .col-tutar { width:160px; text-align:right; font-family:'Roboto Mono',monospace; }
 
 .color-red { color:var(--cell-red)!important; }
@@ -235,7 +228,6 @@ table.main-table tbody td {
 .hizli-input:focus { border-color:var(--accent); }
 .hizli-input::placeholder { color:var(--text-muted); font-weight:400; }
 
-/* Dinamik Arama Sonuç Listesi */
 .hizli-arama-container { position: relative; }
 .hizli-arama-sonuclari {
   position: absolute; top: 100%; left: 0; right: 0;
@@ -312,7 +304,7 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
 .islem-panel.active { display:flex; }
 .islem-panel.borc-mode { border: 2.5px solid var(--red); box-shadow: 0 0 14px rgba(239,83,80,0.3); }
 .islem-panel.tahsilat-mode { border: 2.5px solid var(--green); box-shadow: 0 0 14px rgba(67,160,71,0.3); }
-.islem-panel-header { padding:10px 14px; display:flex; align-items:center; justify-content:between; border-bottom:1px solid var(--border); background:rgba(25, 42, 74, 0.4); }
+.islem-panel-header { padding:10px 14px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border); background:rgba(25, 42, 74, 0.4); }
 .islem-panel-title { font-family:'Oswald',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; text-transform:uppercase; }
 .borc-mode .islem-panel-title { color:var(--red); }
 .tahsilat-mode .islem-panel-title { color:var(--green2); }
@@ -436,18 +428,15 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
       <button class="detay-close" onclick="cariDuzenleKapat()">✕</button>
     </div>
     <div style="padding:20px;display:flex;flex-direction:column;gap:14px;">
-
       <div style="background:rgba(33,150,243,.08);border:1px solid rgba(33,150,243,.2);border-radius:8px;padding:10px 14px;">
         <div style="font-size:11px;color:var(--text-muted);margin-bottom:3px;">SEÇİLİ CARİ</div>
         <div id="cariDuzenleEskiAd" style="font-family:Oswald,sans-serif;font-size:17px;color:var(--blue-bright);font-weight:700;"></div>
         <div id="cariDuzenleKodBilgi" style="font-size:11px;color:var(--text-muted);margin-top:2px;"></div>
       </div>
-
       <div>
         <div class="islem-field-label">Müşteri Ünvanı</div>
         <input class="islem-input" id="cariDuzenleYeniAd" placeholder="Müşteri adı..." onkeydown="cariDuzenleKeyDown(event,'unvan')">
       </div>
-
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
         <div>
           <div class="islem-field-label">Telefon</div>
@@ -458,22 +447,18 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
           <input class="islem-input" id="cariDuzenleWhatsapp" placeholder="05XX XXX XX XX" type="tel" onkeydown="cariDuzenleKeyDown(event,'whatsapp')">
         </div>
       </div>
-
       <div>
         <div class="islem-field-label">Adres</div>
         <input class="islem-input" id="cariDuzenleAdres" placeholder="Mahalle, sokak, no..." onkeydown="cariDuzenleKeyDown(event,'adres')">
       </div>
-
       <div>
         <div class="islem-field-label">Not</div>
         <textarea class="islem-input" id="cariDuzenleNot" placeholder="Müşteri hakkında notlar..." rows="2" style="resize:vertical;font-family:inherit;"></textarea>
       </div>
-
       <div style="display:flex;gap:10px;">
         <button class="btn" style="flex:1;background:var(--blue2);color:#fff;padding:12px;font-size:14px;" onclick="cariDuzenleKaydet()">💾 KAYDET (ENTER)</button>
         <button class="btn" style="background:var(--panel2);color:var(--text);border:1px solid var(--border2);padding:12px;" onclick="cariDuzenleKapat()">İPTAL</button>
       </div>
-
     </div>
   </div>
 </div>
@@ -518,16 +503,13 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
     </div>
 
     <div style="background:var(--bg2);display:flex;flex-direction:column;overflow:hidden;height:100%;">
-
       <div style="border-bottom:1px solid var(--border);flex-shrink:0;">
         <div style="background:var(--header-bg);padding:8px 12px;">
           <span style="font-family:Oswald,sans-serif;font-size:13px;font-weight:700;color:var(--blue-bright);letter-spacing:.8px;">👤 MÜŞTERİ SEÇ</span>
         </div>
         <div style="padding:10px 12px;display:flex;flex-direction:column;gap:8px;">
           <div class="hizli-arama-container" style="position:relative;">
-            <input class="hizli-input" id="satisMusteri" placeholder="İsim yazın..." autocomplete="off"
-              oninput="satisAraInput()" onkeydown="satisAraKeyDown(event)"
-              style="width:100%;font-size:15px;padding:9px 12px;">
+            <input class="hizli-input" id="satisMusteri" placeholder="İsim yazın..." autocomplete="off" oninput="satisAraInput()" onkeydown="satisAraKeyDown(event)" style="width:100%;font-size:15px;padding:9px 12px;">
             <div id="satisAramaSonuclari" style="display:none;position:absolute;top:100%;left:0;right:0;background:#0d1e33;border:1px solid var(--accent);border-radius:6px;max-height:180px;overflow-y:auto;z-index:500;box-shadow:0 8px 24px rgba(0,0,0,.5);"></div>
           </div>
           <div id="seciliMusteriInfo" style="display:none;background:rgba(33,150,243,.1);border:1px solid rgba(33,150,243,.3);border-radius:6px;padding:8px 12px;flex-direction:column;gap:2px;">
@@ -536,40 +518,251 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
           </div>
         </div>
       </div>
-
       <div style="border-bottom:1px solid var(--border);flex-shrink:0;">
         <div style="background:var(--header-bg);padding:8px 12px;">
           <span style="font-family:Oswald,sans-serif;font-size:13px;font-weight:700;color:var(--blue-bright);letter-spacing:.8px;">🛍️ ÜRÜN EKLE</span>
         </div>
         <div style="padding:10px 12px;display:flex;flex-direction:column;gap:8px;">
           <div class="hizli-arama-container" style="position:relative;">
-            <input class="hizli-input" id="satisUrunAra" placeholder="Ürün adı yazın..." autocomplete="off"
-              oninput="satisUrunAraInput()" onkeydown="satisUrunAraKeyDown(event)"
-              style="width:100%;font-size:15px;padding:9px 12px;">
+            <input class="hizli-input" id="satisUrunAra" placeholder="Ürün adı yazın..." autocomplete="off" oninput="satisUrunAraInput()" onkeydown="satisUrunAraKeyDown(event)" style="width:100%;font-size:15px;padding:9px 12px;">
             <div id="satisUrunSonuclari" style="display:none;position:absolute;top:100%;left:0;right:0;background:#0d1e33;border:1px solid var(--accent);border-radius:6px;max-height:200px;overflow-y:auto;z-index:500;box-shadow:0 8px 24px rgba(0,0,0,.5);"></div>
           </div>
         </div>
       </div>
-
       <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
         <div style="background:var(--header-bg);padding:8px 12px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
           <span style="font-family:Oswald,sans-serif;font-size:13px;font-weight:700;color:var(--blue-bright);letter-spacing:.8px;">🛒 SEPET</span>
-          <span id="sepetSayisi" style="font-size:12px;color:var(--green2);font-weight:700;">0 ürün</span>
+          <button class="btn" style="background:rgba(239,83,80,0.2);color:var(--red);padding:2px 8px;font-size:11px;" onclick="sepetTemizle()">Temizle</button>
         </div>
-        <div id="sepetListesi" style="flex:1;overflow-y:auto;padding:4px 12px;">
-          <div style="text-align:center;color:var(--text-muted);font-size:13px;padding:20px;">Sepet boş</div>
-        </div>
-        <div style="padding:10px 12px;border-top:2px solid var(--border);flex-shrink:0;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-            <span style="font-family:Oswald,sans-serif;font-size:14px;font-weight:700;color:var(--text-muted);letter-spacing:.5px;">TOPLAM</span>
-            <span id="sepetToplam" style="font-family:'Roboto Mono',monospace;font-size:24px;font-weight:700;color:var(--cell-red);">0,00 ₺</span>
+        <div id="satisSepetList" style="flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:6px;"></div>
+        <div style="background:var(--bg3);padding:12px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px;flex-shrink:0;">
+          <div style="display:flex;justify-content:space-between;font-family:Oswald,sans-serif;font-size:18px;font-weight:700;">
+            <span>TOPLAM:</span>
+            <span id="satisSepetToplam" style="color:var(--green2);">0.00 ₺</span>
           </div>
-          <button onclick="hesabaIsle()" style="width:100%;padding:13px;background:var(--green);color:#fff;border:none;border-radius:6px;font-family:Oswald,sans-serif;font-size:16px;font-weight:700;letter-spacing:1px;cursor:pointer;margin-bottom:6px;">✓ HESABA İŞLE</button>
-          <button onclick="sepetTemizle()" style="width:100%;padding:9px;background:var(--panel2);color:var(--text);border:1px solid var(--border2);border-radius:6px;font-family:Oswald,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">🗑️ SEPETİ TEMİZLE</button>
+          <button class="btn-hizli-kaydet" style="padding:11px;" onclick="hesabaIsle()">💾 HESABA İŞLE (ENTER)</button>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<div class="modal-overlay" id="urunBar">
+<div class="app-body" id="mainPane">
+  <div class="left-pane">
+    <div class="toolbar">
+      <span class="toolbar-label">Müşteri Cari Listesi</span>
+      <input class="tb-input" id="txtCariKod" placeholder="Kod" type="number" onkeydown="cariEkleKeyDown(event,'kod')">
+      <input class="tb-input" id="txtCariUnvan" placeholder="Müşteri Ünvanı / Adı Soyadı..." onkeydown="cariEkleKeyDown(event,'unvan')">
+      <button class="btn btn-secondary" onclick="cariEkle()" style="background:var(--blue2);color:#fff;">+ Yeni Müşteri</button>
+      <input class="tb-input" id="txtAra" placeholder="Cari Listesinde Ara..." oninput="cariAraFilter()" style="margin-left:14px;">
+      <button class="btn btn-danger" onclick="cariSil()" style="margin-left:auto;">Müşteri Sil</button>
+    </div>
+    <div class="table-wrap">
+      <table class="main-table" id="cariTable">
+        <thead>
+          <tr>
+            <th class="col-arrow"></th>
+            <th class="col-kod">Cari Kod</th>
+            <th class="col-unvan">Müşteri Ünvanı</th>
+            <th class="col-tutar">Toplam Bakiye</th>
+          </tr>
+        </thead>
+        <tbody id="tbodyCari"></tbody>
+      </table>
+    </div>
+    <div class="bottom-bar">
+      <button class="btn btn-secondary" onclick="tabDegis('cari')">👤 Müşteriler</button>
+      <button class="btn btn-secondary" onclick="tabDegis('urun')">📦 Ürün Yönetimi & Satış</button>
+      <button class="btn btn-secondary" onclick="raporPaneliAc()">📊 Raporlar</button>
+      <button class="btn btn-secondary" onclick="yedekPaneliAc()">⚙️ Yedekleme & Ayarlar</button>
+    </div>
+  </div>
+
+  <div class="right-pane">
+    <div class="saat-box">
+      <div id="lblCanliSaat">00:00:00</div>
+    </div>
+    <div class="takvim-box">
+      <div class="takvim-header">
+        <button class="takvim-nav" onclick="takvimAyDegis(-1)">◀</button>
+        <span id="takvimAyYil">Mayıs 2026</span>
+        <button class="takvim-nav" onclick="takvimAyDegis(1)">▶</button>
+      </div>
+      <div class="takvim-grid">
+        <div class="takvim-days">
+          <div class="takvim-day-label">Pt</div><div class="takvim-day-label">Sa</div>
+          <div class="takvim-day-label">Ça</div><div class="takvim-day-label">Pe</div>
+          <div class="takvim-day-label">Cu</div><div class="takvim-day-label">Ct</div>
+          <div class="takvim-day-label">Pz</div>
+        </div>
+        <div class="takvim-cells" id="takvimGunler"></div>
+      </div>
+      <div class="takvim-today-label" id="takvimBugunLabel">19.05.2026 Salı</div>
+    </div>
+    <div class="hizli-box">
+      <div class="hizli-header">
+        <span class="hizli-title">Hızlı Hareket Ekle</span>
+        <div class="radio-group">
+          <label class="radio-option radio-minus"><input type="radio" name="hizliTip" value="borc" checked> Borç</label>
+          <label class="radio-option radio-plus"><input type="radio" name="hizliTip" value="tahsilat"> Tahsilat</label>
+        </div>
+      </div>
+      <div class="hizli-body">
+        <div class="hizli-arama-container">
+          <div class="hizli-label">Müşteri Seç</div>
+          <input class="hizli-input" id="txtHizliCari" placeholder="Müşteri adı yazın..." autocomplete="off" oninput="hizliAraInput()" onkeydown="hizliAraKeyDown(event)">
+          <div class="hizli-arama-sonuclari" id="hizliAramaSonuclari"></div>
+        </div>
+        <div>
+          <div class="hizli-label">Tutar (₺)</div>
+          <input class="hizli-input" id="txtHizliTutar" placeholder="0.00" type="number" step="any" onkeydown="if(event.key==='Enter')hizliKaydet()">
+        </div>
+        <div>
+          <div class="hizli-label">Açıklama</div>
+          <input class="hizli-input" id="txtHizliAciklama" placeholder="İsteğe bağlı..." onkeydown="if(event.key==='Enter')hizliKaydet()">
+        </div>
+        <button class="btn-hizli-kaydet" onclick="hizliKaydet()" style="margin-top:4px;">💾 HAREKETİ KAYDET</button>
+      </div>
+    </div>
+    <div class="bakiye-box">
+      <div class="bakiye-label">Toplam Pazar Alacağı</div>
+      <div id="lblGenelBakiye">0,00 ₺</div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="detayOverlay" onclick="if(event.target===this)detayKapat()">
+  <div class="detay-modal">
+    <div class="detay-titlebar">
+      <span class="detay-title" id="detayBaslik">Müşteri Detay</span>
+      <button class="detay-close" onclick="detayKapat()">✕</button>
+    </div>
+    <div class="detay-main-layout">
+      <div class="detay-left-pane">
+        <div class="detay-table-wrap">
+          <table class="detay-table" id="detayTable">
+            <thead>
+              <tr>
+                <th class="dcol-arrow"></th>
+                <th class="dcol-tarih">Tarih</th>
+                <th class="dcol-aciklama">Açıklama</th>
+                <th class="dcol-borc">Borç (Alınan)</th>
+                <th class="dcol-tahsilat">Tahsilat (Ödenen)</th>
+                <th class="dcol-bakiye">Kalan Bakiye</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyDetay"></tbody>
+          </table>
+        </div>
+        <div class="detay-footer">
+          <button class="btn btn-excel" onclick="detayExcel()">📊 Excel'e Aktar</button>
+          <button class="btn btn-pdf" onclick="detayPdf()">📄 PDF Çıktı</button>
+          <button class="btn btn-sil-hareket" onclick="hareketSil()">Seçili Hareketi Sil</button>
+          <div class="detay-spacer"></div>
+          <button class="btn btn-borc" onclick="islemPanelAc('borc')">+ BORÇ EKLE (F2)</button>
+          <button class="btn btn-tahsilat" onclick="islemPanelAc('tahsilat')">✓ TAHSİLAT EKLE (F4)</button>
+        </div>
+      </div>
+      <div class="detay-right-pane" id="detayMusteriKart"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+let cariListesi = [];
+let urunListesi = [];
+let sepet = [];
+let seciliCariKod = null;
+let satisSeciliKod = null;
+let hizliSeciliKod = null;
+let detaySeciliId = null;
+
+// Mock Fonksiyonlar ve Servis İstekleri Yapısı
+function toast(msg, isErr=false) {
+  alert(msg);
+}
+function loading(show, text='') {
+  const overlay = document.getElementById('loadingOverlay');
+  if(overlay) {
+    overlay.className = show ? "loading-overlay active" : "loading-overlay";
+    document.getElementById('loadingText').innerText = text;
+  }
+}
+function fmt(val) {
+  return parseFloat(val || 0).toLocaleString('tr-TR', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+
+// Sekme Değiştirme
+function tabDegis(tab) {
+  const main = document.getElementById('mainPane');
+  const urun = document.getElementById('urunPane');
+  if(tab === 'urun') {
+    main.style.display = 'none';
+    urun.style.display = 'block';
+  } else {
+    main.style.display = 'grid';
+    urun.style.display = 'none';
+  }
+}
+
+// Sepet Mantığı
+function sepetGuncelle() {
+  const list = document.getElementById('satisSepetList');
+  const totalLbl = document.getElementById('satisSepetToplam');
+  if(!list) return;
+  
+  list.innerHTML = sepet.map((item, idx) => `
+    <div style="background:var(--bg3);border:1px solid var(--border);padding:8px;border-radius:4px;display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <div style="font-weight:bold;color:var(--white);">${item.urun.ad}</div>
+        <div style="font-size:12px;color:var(--text-muted);">${fmt(item.urun.fiyat)} ₺ x ${item.adet}</div>
+      </div>
+      <div style="display:flex;gap:4px;align-items:center;">
+        <button class="btn" style="padding:2px 8px;background:var(--panel2);" onclick="sepetAdetDegis(${idx},-1)">-</button>
+        <span style="font-weight:bold;width:24px;text-align:center;">${item.adet}</span>
+        <button class="btn" style="padding:2px 8px;background:var(--panel2);" onclick="sepetAdetDegis(${idx},1)">+</button>
+        <button class="btn" style="padding:2px 6px;background:var(--red2);margin-left:6px;" onclick="sepetCikar(${idx})">✕</button>
+      </div>
+    </div>
+  `).join('');
+
+  const toplam = sepet.reduce((t, s) => t + (s.urun.fiyat * s.adet), 0);
+  totalLbl.innerText = fmt(toplam) + " ₺";
+}
+
+function sepetAdetDegis(idx, diff) {
+  sepet[idx].adet += diff;
+  if(sepet[idx].adet <= 0) sepet.splice(idx, 1);
+  sepetGuncelle();
+}
+
+function sepetCikar(idx) {
+  sepet.splice(idx, 1);
+  sepetGuncelle();
+}
+
+function sepetTemizle() {
+  sepet = [];
+  sepetGuncelle();
+}
+
+function hesabaIsle() {
+  toast('Sepet hesaba işlendi!');
+  sepetTemizle();
+}
+
+// Saat ve Zamanlayıcı
+setInterval(() => {
+  const n = new Date();
+  const f = d => String(d).padStart(2, '0');
+  const lbl = document.getElementById('lblCanliSaat');
+  if(lbl) lbl.innerText = `${f(n.getHours())}:${f(n.getMinutes())}:${f(n.getSeconds())}`;
+}, 1000);
+
+// Pencere Yüklenince Siyah Ekranı Kaldır
+window.onload = function() {
+  loading(false);
+};
+</script>
+</body>
+</html>
