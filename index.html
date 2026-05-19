@@ -659,10 +659,15 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
 </div>
 
 <!-- SEKMELER -->
+<div class="menubar"> ... </div>
+
 <div style="background:#0d1e33;border-bottom:2px solid var(--border);display:flex;gap:0;padding:0 12px;">
   <div id="tabCari" onclick="sekmeAc('cari')" style="padding:9px 22px;font-size:14px;font-weight:700;color:#42a5f5;cursor:pointer;border-bottom:2px solid #42a5f5;margin-bottom:-2px;letter-spacing:.5px;">👥 CARİ LİSTESİ</div>
   <div id="tabUrun" onclick="sekmeAc('urun')" style="padding:9px 22px;font-size:14px;font-weight:700;color:#6a8aaa;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;letter-spacing:.5px;">🛒 ÜRÜN YÖNETİMİ</div>
 </div>
+
+<div class="app-body"> ... Cari Tablonuz vs. ... </div>
+<div id="urunPane" style="display:none; height:calc(100vh - 100px);"> ... Ürün Yönetimi vs. ... </div>
 
 <div class="app-body" id="cariPane">
   <div class="left-pane">
@@ -2958,20 +2963,48 @@ async function hesabaIsle() {
     toast(`✓ ${fmt(toplam)} ₺ → ${musteriAd} hesabına işlendi!`);
   } catch(err) { toast('Hata: '+err.message, true); }
   loading(false);
-}function sekmeDegistir(sekmeAdi) {
-  const cariSolPane = document.querySelector('.left-pane');
+
+// ── YENİ VE GÜVENLİ SEKME GEÇİŞ FONKSİYONUMUZ ──
+function sekmeAc(sekmeAdi) {
+  const cariGövde = document.querySelector('.app-body');
   const urunPane = document.getElementById('urunPane');
+  const tabCari = document.getElementById('tabCari');
+  const tabUrun = document.getElementById('tabUrun');
 
   if (sekmeAdi === 'cari') {
-    // Cari Takip Ekranını Göster
-    if (cariSolPane) cariSolPane.style.display = 'flex';
-    if (urunPane) urunPane.style.display = 'none';
+    // 1. Ekranları göster/gizle
+    if (urunPane) urunPane.style.setProperty('display', 'none', 'important');
+    if (cariGövde) cariGövde.style.setProperty('display', 'grid', 'important');
+    
+    // 2. Cari sekmesini mavi ve parlak yap
+    if (tabCari) {
+      tabCari.style.color = '#42a5f5';
+      tabCari.style.borderBottom = '2px solid #42a5f5';
+    }
+    // Ürün sekmesini sönük yap
+    if (tabUrun) {
+      tabUrun.style.color = '#6a8aaa';
+      tabUrun.style.borderBottom = '2px solid transparent';
+    }
+    
   } else if (sekmeAdi === 'urun') {
-    // Ürün Yönetimi Ekranını Göster
-    if (cariSolPane) cariSolPane.style.display = 'none';
-    if (urunPane) urunPane.style.display = 'block';
+    // 1. Ekranları göster/gizle
+    if (cariGövde) cariGövde.style.setProperty('display', 'none', 'important');
+    if (urunPane) urunPane.style.setProperty('display', 'block', 'important');
+    
+    // 2. Ürün sekmesini mavi ve parlak yap
+    if (tabUrun) {
+      tabUrun.style.color = '#42a5f5';
+      tabUrun.style.borderBottom = '2px solid #42a5f5';
+    }
+    // Cari sekmesini sönük yap
+    if (tabCari) {
+      tabCari.style.color = '#6a8aaa';
+      tabCari.style.borderBottom = '2px solid transparent';
+    }
   }
 }
+
 </script>
 </body>
 </html>
