@@ -73,7 +73,7 @@ body {
 }
 .titlebar-title {
   font-family:'Exo 2',sans-serif;
-  font-size:11px; font-weight:150;
+  font-size:11px; font-weight:400;
   color:var(--text-muted);
   letter-spacing:1px;
   margin-top:2px;
@@ -83,7 +83,7 @@ body {
 .menubar {
   background:#0d1e33;
   border-bottom:1px solid var(--border);
-  padding:2px 4px;
+  padding:2px 8px;
   display:flex; gap:2px;
 }
 .menu-item { padding:4px 12px; font-size:12px; color:var(--text); cursor:pointer; border-radius:3px; transition:background .15s; }
@@ -92,8 +92,8 @@ body {
 /* ── LAYOUT ── */
 .app-body {
   display:grid;
-  grid-template-columns:1fr 460px;
-  height:calc(95vh - 98px);
+  grid-template-columns:1fr 260px;
+  height:calc(100vh - 98px);
   overflow:hidden;
 }
 #urunPane {
@@ -149,7 +149,7 @@ table.main-table { width:100%; border-collapse:collapse; table-layout:fixed; }
 table.main-table thead { position:sticky; top:0; z-index:10; }
 table.main-table thead th {
   background:var(--header-bg); border:1px solid var(--border);
-  padding:7px 12px; text-align:left; font-family:'Oswald',sans-serif;
+  padding:10px 12px; text-align:left; font-family:'Oswald',sans-serif;
   font-size:15px; font-weight:700; color:var(--blue-bright); letter-spacing:.8px; text-transform:uppercase; user-select:none;
 }
 table.main-table tbody tr { border-bottom:1px solid rgba(30,58,95,.5); cursor:pointer; transition:background .1s; }
@@ -167,8 +167,8 @@ table.main-table tbody td {
 
 /* Sütun genişlikleri ayarlanarak aradaki devasa boşluk daraltıldı */
 .col-arrow { width:22px; }
-.col-kod { width:30px; }
-.col-unvan { width:250px; } /* Maksimum genişlik sınırı verilerek tutar sola yaklaştırıldı */
+.col-kod { width:90px; }
+.col-unvan { width:450px; } /* Maksimum genişlik sınırı verilerek tutar sola yaklaştırıldı */
 .col-tutar { width:160px; text-align:right; font-family:'Roboto Mono',monospace; }
 
 .color-red { color:var(--cell-red)!important; }
@@ -658,17 +658,11 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
   <div class="menu-item" style="margin-left:auto;color:var(--blue-bright);font-weight:700;" onclick="dashboardAc()">📊 DASHBOARD</div>
 </div>
 
+<!-- SEKMELER -->
 <div style="background:#0d1e33;border-bottom:2px solid var(--border);display:flex;gap:0;padding:0 12px;">
   <div id="tabCari" onclick="sekmeAc('cari')" style="padding:9px 22px;font-size:14px;font-weight:700;color:#42a5f5;cursor:pointer;border-bottom:2px solid #42a5f5;margin-bottom:-2px;letter-spacing:.5px;">👥 CARİ LİSTESİ</div>
   <div id="tabUrun" onclick="sekmeAc('urun')" style="padding:9px 22px;font-size:14px;font-weight:700;color:#6a8aaa;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;letter-spacing:.5px;">🛒 ÜRÜN YÖNETİMİ</div>
 </div>
-
-<div class="app-body" id="cariPane" style="display: grid;"> 
-  ... Cari Tablonuz, Butonlarınız vs. ... 
-</div>
-
-<div id="urunPane" style="display:none; height:calc(100vh - 140px); background: var(--bg); overflow: auto;"> 
-  ... Ürün Yönetimi İçeriği vs. ...
 
 <div class="app-body" id="cariPane">
   <div class="left-pane">
@@ -2919,7 +2913,6 @@ function sepetGuncelle() {
     liste.innerHTML = '<div style="text-align:center;color:var(--text-muted);font-size:13px;padding:20px;">Sepet boş</div>';
     return;
   }
-  
   liste.innerHTML = sepet.map(s => `
     <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(30,58,95,.4);">
       <div style="flex:1;min-width:0;">
@@ -2929,9 +2922,9 @@ function sepetGuncelle() {
       <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;margin-left:8px;">
         <span style="font-family:monospace;font-size:15px;font-weight:700;color:#66bb6a;min-width:70px;text-align:right;">${fmt(s.urun.fiyat * s.adet)} ₺</span>
         <div style="display:flex;gap:3px;">
-          <button onclick="sepetAdetDegistir('${s.urun.kod}', -1)" style="width:26px;height:26px;background:var(--panel2);border:1px solid var(--border2);border-radius:4px;color:var(--text);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;font-weight:700;">−</button>
-          <button onclick="sepetAdetDegistir('${s.urun.kod}', 1)" style="width:26px;height:26px;background:var(--panel2);border:1px solid var(--border2);border-radius:4px;color:var(--text);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;font-weight:700;">+</button>
-          <button onclick="sepettenCikar('${s.urun.kod}')" style="width:26px;height:26px;background:rgba(239,83,80,.15);border:1px solid rgba(239,83,80,.3);border-radius:4px;color:#ff4444;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;">✕</button>
+          <button onclick="sepetAdetDegistir(${s.urun.kod},-1)" style="width:26px;height:26px;background:var(--panel2);border:1px solid var(--border2);border-radius:4px;color:var(--text);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;font-weight:700;">−</button>
+          <button onclick="sepetAdetDegistir(${s.urun.kod},1)" style="width:26px;height:26px;background:var(--panel2);border:1px solid var(--border2);border-radius:4px;color:var(--text);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;font-weight:700;">+</button>
+          <button onclick="sepettenCikar(${s.urun.kod})" style="width:26px;height:26px;background:rgba(239,83,80,.15);border:1px solid rgba(239,83,80,.3);border-radius:4px;color:#ff4444;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;">✕</button>
         </div>
       </div>
     </div>`).join('');
@@ -2966,47 +2959,6 @@ async function hesabaIsle() {
   } catch(err) { toast('Hata: '+err.message, true); }
   loading(false);
 }
-
-// ── YENİ VE GÜVENLİ SEKME GEÇİŞ FONKSiyonumuz ──
-function sekmeAc(sekmeAdi) {
-  // Seçicileri id bazlı yaparak kesin olarak birbirinden ayırdık
-  const cariPane = document.getElementById('cariPane');
-  const urunPane = document.getElementById('urunPane');
-  const tabCari = document.getElementById('tabCari');
-  const tabUrun = document.getElementById('tabUrun');
-
-  if (sekmeAdi === 'cari') {
-    // 1. Ekranları göster/gizle (Cariyi aç, Ürünü kapat)
-    if (urunPane) urunPane.style.setProperty('display', 'none', 'important');
-    if (cariPane) cariPane.style.setProperty('display', 'grid', 'important');
-    
-    // 2. Cari sekmesini aktif (mavi) yap, ürün sekmesini pasif yap
-    if (tabCari) {
-      tabCari.style.color = '#42a5f5';
-      tabCari.style.borderBottom = '2px solid #42a5f5';
-    }
-    if (tabUrun) {
-      tabUrun.style.color = '#6a8aaa';
-      tabUrun.style.borderBottom = '2px solid transparent';
-    }
-    
-  } else if (sekmeAdi === 'urun') {
-    // 1. Ekranları göster/gizle (Cariyi kapat, Ürünü aç)
-    if (cariPane) cariPane.style.setProperty('display', 'none', 'important');
-    if (urunPane) urunPane.style.setProperty('display', 'block', 'important');
-    
-    // 2. Ürün sekmesini aktif (mavi) yap, cari sekmesini pasif yap
-    if (tabUrun) {
-      tabUrun.style.color = '#42a5f5';
-      tabUrun.style.borderBottom = '2px solid #42a5f5';
-    }
-    if (tabCari) {
-      tabCari.style.color = '#6a8aaa';
-      tabCari.style.borderBottom = '2px solid transparent';
-    }
-  }
-}
-
 </script>
 </body>
 </html>
