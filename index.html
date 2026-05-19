@@ -2958,6 +2958,19 @@ async function hesabaIsle() {
     toast(`✓ ${fmt(toplam)} ₺ → ${musteriAd} hesabına işlendi!`);
   } catch(err) { toast('Hata: '+err.message, true); }
   loading(false);
+}function sekmeDegistir(sekmeAdi) {
+  const cariSolPane = document.querySelector('.left-pane');
+  const urunPane = document.getElementById('urunPane');
+
+  if (sekmeAdi === 'cari') {
+    // Cari Takip Ekranını Göster
+    if (cariSolPane) cariSolPane.style.display = 'flex';
+    if (urunPane) urunPane.style.display = 'none';
+  } else if (sekmeAdi === 'urun') {
+    // Ürün Yönetimi Ekranını Göster
+    if (cariSolPane) cariSolPane.style.display = 'none';
+    if (urunPane) urunPane.style.display = 'block';
+  }
 }
 </script>
 </body>
