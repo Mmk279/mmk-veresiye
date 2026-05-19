@@ -659,9 +659,13 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
 </div>
 
 <!-- SEKMELER -->
-<div style="background:#0d1e33;border-bottom:2px solid var(--border);display:flex;gap:0;padding:0 12px;">
-  <div id="tabCari" onclick="sekmeAc('cari')" style="padding:9px 22px;font-size:14px;font-weight:700;color:#42a5f5;cursor:pointer;border-bottom:2px solid #42a5f5;margin-bottom:-2px;letter-spacing:.5px;">👥 CARİ LİSTESİ</div>
-  <div id="tabUrun" onclick="sekmeAc('urun')" style="padding:9px 22px;font-size:14px;font-weight:700;color:#6a8aaa;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;letter-spacing:.5px;">🛒 ÜRÜN YÖNETİMİ</div>
+<div class="menu-tabs-container" style="background:#0d1e33;border-bottom:2px solid var(--border);display:flex;gap:0;padding:0 12px;"> 
+  <div class="menu-tab-item active" id="tabCari" onclick="sekmeAc('cari')" style="padding:9px 22px;font-size:14px;font-weight:700;color:#42a5f5;cursor:pointer;border-bottom:2px solid #42a5f5;margin-bottom:-2px;letter-spacing:.5px;">
+    👥 CARİ LİSTESİ
+  </div>
+  <div class="menu-tab-item" id="tabUrun" onclick="sekmeAc('urun')" style="padding:9px 22px;font-size:14px;font-weight:700;color:#6a8aaa;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;letter-spacing:.5px;">
+    🛒 ÜRÜN YÖNETİMİ
+  </div>
 </div>
 
 <div class="app-body" id="cariPane">
@@ -2480,27 +2484,51 @@ async function dashboardAc() {
 // ═══════════════════════════════════════════════════════
 // SEKME SİSTEMİ
 // ═══════════════════════════════════════════════════════
-function sekmeAc(sekme) {
+function sekmeAc(sekmeAdi) {
+  // Seçimleri tamamen garantiye almak için class yerine doğrudan ID'leri kullanıyoruz abi
   const cariPane = document.getElementById('cariPane');
   const urunPane = document.getElementById('urunPane');
   const tabCari = document.getElementById('tabCari');
   const tabUrun = document.getElementById('tabUrun');
 
-  if (sekme === 'cari') {
-    cariPane.style.display = 'grid';
-    urunPane.style.display = 'none';
-    tabCari.style.color = '#42a5f5';
-    tabCari.style.borderBottom = '2px solid #42a5f5';
-    tabUrun.style.color = '#6a8aaa';
-    tabUrun.style.borderBottom = '2px solid transparent';
-  } else {
-    cariPane.style.display = 'none';
-    urunPane.style.display = 'block';
-    tabUrun.style.color = '#42a5f5';
-    tabUrun.style.borderBottom = '2px solid #42a5f5';
-    tabCari.style.color = '#6a8aaa';
-    tabCari.style.borderBottom = '2px solid transparent';
-    urunleriYukle();
+  if (sekmeAdi === 'cari') {
+    // 1. Ekranları Ayarla (Cariyi Aç, Ürünü Kapat)
+    if (urunPane) urunPane.style.setProperty('display', 'none', 'important');
+    if (cariPane) cariPane.style.setProperty('display', 'grid', 'important');
+    
+    // 2. Sekme Çizgilerini ve Renklerini Ayarla (Cari Aktif)
+    if (tabCari) {
+      tabCari.classList.add('active');
+      tabCari.style.color = '#42a5f5';
+      tabCari.style.borderBottom = '2px solid #42a5f5';
+    }
+    if (tabUrun) {
+      tabUrun.classList.remove('active');
+      tabUrun.style.color = '#6a8aaa';
+      tabUrun.style.borderBottom = '2px solid transparent';
+    }
+    
+  } else if (sekmeAdi === 'urun') {
+    // 1. Ekranları Ayarla (Cariyi Kapat, Ürünü Aç)
+    if (cariPane) cariPane.style.setProperty('display', 'none', 'important');
+    if (urunPane) urunPane.style.setProperty('display', 'block', 'important');
+    
+    // 2. Sekme Çizgilerini ve Renklerini Ayarla (Ürün Aktif)
+    if (tabUrun) {
+      tabUrun.classList.add('active');
+      tabUrun.style.color = '#42a5f5';
+      tabUrun.style.borderBottom = '2px solid #42a5f5';
+    }
+    if (tabCari) {
+      tabCari.classList.remove('active');
+      tabCari.style.color = '#6a8aaa';
+      tabCari.style.borderBottom = '2px solid transparent';
+    }
+    
+    // Eğer ürün listesini yenileyen bir fonksiyonun varsa onu da tetikleyelim abi:
+    if (typeof urunleriYukle === "function") {
+      urunleriYukle();
+    }
   }
 }
 
