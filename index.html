@@ -2482,21 +2482,20 @@ async function dashboardAc() {
 }
 
 // ═══════════════════════════════════════════════════════
-// SEKME SİSTEMİ
+// SEKME SİSTEMİ (KESİN ÇÖZÜM)
 // ═══════════════════════════════════════════════════════
 function sekmeAc(sekmeAdi) {
-  // Seçimleri tamamen garantiye almak için class yerine doğrudan ID'leri kullanıyoruz abi
   const cariPane = document.getElementById('cariPane');
   const urunPane = document.getElementById('urunPane');
   const tabCari = document.getElementById('tabCari');
   const tabUrun = document.getElementById('tabUrun');
 
   if (sekmeAdi === 'cari') {
-    // 1. Ekranları Ayarla (Cariyi Aç, Ürünü Kapat)
+    // 1. Ekranları Ayarla (Cari Paneli Aç, Ürün Panelini Gizle)
     if (urunPane) urunPane.style.setProperty('display', 'none', 'important');
     if (cariPane) cariPane.style.setProperty('display', 'grid', 'important');
     
-    // 2. Sekme Çizgilerini ve Renklerini Ayarla (Cari Aktif)
+    // 2. Sekme Butonlarının Görünümünü Ayarla (Cari Aktif)
     if (tabCari) {
       tabCari.classList.add('active');
       tabCari.style.color = '#42a5f5';
@@ -2509,11 +2508,11 @@ function sekmeAc(sekmeAdi) {
     }
     
   } else if (sekmeAdi === 'urun') {
-    // 1. Ekranları Ayarla (Cariyi Kapat, Ürünü Aç)
+    // 1. Ekranları Ayarla (Cari Paneli Gizle, Ürün Panelini Aç)
     if (cariPane) cariPane.style.setProperty('display', 'none', 'important');
     if (urunPane) urunPane.style.setProperty('display', 'block', 'important');
     
-    // 2. Sekme Çizgilerini ve Renklerini Ayarla (Ürün Aktif)
+    // 2. Sekme Butonlarının Görünümünü Ayarla (Ürün Aktif)
     if (tabUrun) {
       tabUrun.classList.add('active');
       tabUrun.style.color = '#42a5f5';
@@ -2525,7 +2524,7 @@ function sekmeAc(sekmeAdi) {
       tabCari.style.borderBottom = '2px solid transparent';
     }
     
-    // Eğer ürün listesini yenileyen bir fonksiyonun varsa onu da tetikleyelim abi:
+    // Ürün listesini Supabase'den temizce çekip yükle
     if (typeof urunleriYukle === "function") {
       urunleriYukle();
     }
