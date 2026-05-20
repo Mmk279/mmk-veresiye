@@ -457,18 +457,6 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
   .detay-modal{width:99vw;height:96vh;}
   #txtCariUnvan{width:130px;}
   #txtAra{width:110px;}
-  /* ÜRÜN TOOLBAR MOBİL */
-  #txtUrunAd{width:100px !important;font-size:12px;}
-  #txtUrunBarkod{width:80px !important;font-size:12px;}
-  #txtUrunFiyat{width:60px !important;font-size:12px;}
-  #txtUrunKategori{width:70px !important;font-size:12px;}
-  #txtUrunAra{width:100px !important;font-size:12px;}
-  #urunPane {
-    flex-direction:column;
-  }
-  #urunPane > div {
-    grid-template-columns:1fr;
-  }
 }
 </style>
 </head>
@@ -550,12 +538,10 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
         <input class="tb-input" id="txtUrunKategori" placeholder="Kategori..." style="width:80px" onkeydown="urunEkleKeyDown(event,'kategori')">
         <button class="btn btn-primary" onclick="urunEkle()" style="background:var(--blue2);color:#fff;">+ EKLE</button>
         <input class="tb-input" id="txtUrunAra" placeholder="🔍 Ara..." style="width:120px" oninput="urunAraFilter()" onkeydown="urunAraKeyDown(event)">
-        <button class="btn btn-secondary" onclick="urunTabloDikeyKaydir('sol')" title="Sola kaydır" style="padding:6px 10px;font-size:14px;">◀</button>
-        <button class="btn btn-secondary" onclick="urunTabloDikeyKaydir('sag')" title="Sağa kaydır" style="padding:6px 10px;font-size:14px;">▶</button>
         <button class="btn btn-danger" onclick="urunSil()" style="margin-left:auto;">SİL</button>
       </div>
-      <div style="flex:1;overflow-y:auto;overflow-x:auto;">
-        <table class="main-table" id="urunTable" style="table-layout:fixed;width:100%;min-width:600px;">
+      <div style="flex:1;overflow-y:auto;overflow-x:hidden;">
+        <table class="main-table" id="urunTable" style="table-layout:fixed;width:100%;">
           <thead>
             <tr>
               <th style="width:20px;"></th>
@@ -2671,17 +2657,6 @@ function urunTabloYenile() {
 }
 
 function urunAraFilter() { urunTabloYenile(); }
-
-function urunTabloDikeyKaydir(yon) {
-  const container = document.querySelector('#urunPane div[style*="overflow-y"]');
-  if (!container) return;
-  const scrollAmount = 200;
-  if (yon === 'sag') {
-    container.scrollLeft += scrollAmount;
-  } else {
-    container.scrollLeft -= scrollAmount;
-  }
-}
 
 function urunAraKeyDown(e) {
   const rows = [...document.querySelectorAll('#tbodyUrun tr')].filter(r=>r.style.display!=='none');
