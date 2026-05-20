@@ -89,16 +89,46 @@ body {
 .menu-item { padding:4px 12px; font-size:12px; color:var(--text); cursor:pointer; border-radius:3px; transition:background .15s; }
 .menu-item:hover { background:var(--panel); }
 
+/* ── SEKMELER ── */
+.tab-bar {
+  background:#0d1e33;
+  border-bottom:2px solid var(--border);
+  display:flex;
+  gap:0;
+  padding:0 12px;
+  height:40px;
+  flex-shrink:0;
+}
+.tab-btn {
+  padding:8px 20px;
+  font-size:14px;
+  font-weight:700;
+  color:#6a8aaa;
+  cursor:pointer;
+  border-bottom:2px solid transparent;
+  margin-bottom:-2px;
+  letter-spacing:.5px;
+  transition:all .2s;
+  white-space:nowrap;
+}
+.tab-btn.active {
+  color:#42a5f5;
+  border-bottom:2px solid #42a5f5;
+}
+
 /* ── LAYOUT ── */
-.app-body {
+.app-body,
+#urunPane {
   display:grid;
   grid-template-columns:1fr 460px;
-  height:calc(95vh - 98px);
+  height:calc(100vh - 138px);
   overflow:hidden;
 }
+.app-body {
+  grid-template-columns:1fr 460px;
+}
 #urunPane {
-  height:calc(95vh - 98px);
-  overflow:hidden;
+  grid-template-columns:1fr 360px;
 }
 #urunPane > div {
   height:100%;
@@ -480,7 +510,7 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
 </div>
 
 <!-- ÜRÜN YÖNETİMİ SEKMESİ -->
-<div id="urunPane" style="display:none;height:calc(100vh - 98px);overflow:hidden;">
+<div id="urunPane" style="display:none;">
   <div style="display:grid;grid-template-columns:1fr 360px;height:100%;overflow:hidden;">
 
     <!-- SOL: ÜRÜN LİSTESİ -->
@@ -636,9 +666,9 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
 </div>
 
 <!-- SEKMELER -->
-<div style="background:#0d1e33;border-bottom:2px solid var(--border);display:flex;gap:0;padding:0 12px;">
-  <div id="tabCari" onclick="sekmeAc('cari')" style="padding:9px 22px;font-size:14px;font-weight:700;color:#42a5f5;cursor:pointer;border-bottom:2px solid #42a5f5;margin-bottom:-2px;letter-spacing:.5px;">👥 CARİ LİSTESİ</div>
-  <div id="tabUrun" onclick="sekmeAc('urun')" style="padding:9px 22px;font-size:14px;font-weight:700;color:#6a8aaa;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;letter-spacing:.5px;">🛒 ÜRÜN YÖNETİMİ</div>
+<div class="tab-bar">
+  <div id="tabCari" class="tab-btn active" onclick="sekmeAc('cari')">👥 CARİ LİSTESİ</div>
+  <div id="tabUrun" class="tab-btn" onclick="sekmeAc('urun')">🛒 ÜRÜN YÖNETİMİ</div>
 </div>
 
 <div class="app-body" id="cariPane">
@@ -2466,17 +2496,13 @@ function sekmeAc(sekme) {
   if (sekme === 'cari') {
     cariPane.style.display = 'grid';
     urunPane.style.display = 'none';
-    tabCari.style.color = '#42a5f5';
-    tabCari.style.borderBottom = '2px solid #42a5f5';
-    tabUrun.style.color = '#6a8aaa';
-    tabUrun.style.borderBottom = '2px solid transparent';
+    tabCari.classList.add('active');
+    tabUrun.classList.remove('active');
   } else {
     cariPane.style.display = 'none';
-    urunPane.style.display = 'block';
-    tabUrun.style.color = '#42a5f5';
-    tabUrun.style.borderBottom = '2px solid #42a5f5';
-    tabCari.style.color = '#6a8aaa';
-    tabCari.style.borderBottom = '2px solid transparent';
+    urunPane.style.display = 'grid';
+    tabUrun.classList.add('active');
+    tabCari.classList.remove('active');
     urunleriYukle();
   }
 }
