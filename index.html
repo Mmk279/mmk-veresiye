@@ -478,7 +478,6 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
         <span style="font-family:Oswald,sans-serif;font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;">Kategori</span>
         <input class="tb-input" id="txtUrunKategori" placeholder="Genel..." style="width:90px" onkeydown="urunEkleKeyDown(event,'kategori')">
         <button class="btn btn-primary" onclick="urunEkle()" style="background:var(--blue2);color:#fff;">+ EKLE</button>
-        <button class="btn btn-secondary" onclick="urunBarkodKameraAc()" title="Kamera ile barkod tara">📷 Barkod Tara</button>
         <input class="tb-input" id="txtUrunAra" placeholder="Ara..." style="width:110px;margin-left:4px" oninput="urunAraFilter()">
         <button class="btn btn-danger" onclick="urunSil()" style="margin-left:auto;">ÜRÜN SİL</button>
       </div>
@@ -524,32 +523,6 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
         </div>
       </div>
 
-      <div style="border-bottom:1px solid var(--border);">
-        <div style="background:var(--header-bg);padding:8px 12px;display:flex;align-items:center;justify-content:space-between;">
-          <span style="font-family:Oswald,sans-serif;font-size:12px;font-weight:700;color:var(--blue-bright);letter-spacing:.8px;">BARKOD OKUT</span>
-          <span style="font-size:10px;color:var(--text-muted);">Kamera veya elle</span>
-        </div>
-        <div style="padding:10px 12px;display:flex;flex-direction:column;gap:8px;">
-          <div style="background:var(--input-bg);border:2px dashed var(--border2);border-radius:8px;padding:12px;text-align:center;">
-            <div id="kameraVideo" style="display:none;">
-              <video id="barkodVideo" style="width:100%;border-radius:6px;max-height:150px;object-fit:cover;" autoplay playsinline></video>
-              <button class="btn btn-danger" onclick="kameraKapat()" style="width:100%;margin-top:6px;padding:6px;">Kamerayı Kapat</button>
-            </div>
-            <div id="kameraAcBtn">
-              <div style="font-size:22px;margin-bottom:6px;">📷</div>
-              <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Ürün barkoduna tut</div>
-              <button class="btn btn-primary" onclick="kameraAc()" style="width:100%;padding:8px;background:var(--blue2);color:#fff;">Kamerayı Aç</button>
-            </div>
-          </div>
-          <div style="text-align:center;font-size:11px;color:var(--text-muted);">— veya elle gir —</div>
-          <div style="display:flex;gap:6px;">
-            <input class="hizli-input" id="txtBarkodGir" placeholder="Barkod no..." style="flex:1;font-family:monospace;" onkeydown="if(event.key==='Enter')barkodIleUrunEkle()">
-            <button class="btn btn-secondary" onclick="barkodIleUrunEkle()" style="padding:7px 12px;">Bul</button>
-          </div>
-          <div id="barkodSonuc" style="display:none;background:rgba(67,160,71,.1);border:1px solid rgba(67,160,71,.3);border-radius:6px;padding:8px 10px;font-size:13px;font-weight:700;color:var(--green2);"></div>
-        </div>
-      </div>
-
       <div style="flex:1;border-bottom:1px solid var(--border);">
         <div style="background:var(--header-bg);padding:8px 12px;display:flex;align-items:center;justify-content:space-between;">
           <span style="font-family:Oswald,sans-serif;font-size:12px;font-weight:700;color:var(--blue-bright);letter-spacing:.8px;">SEPET</span>
@@ -566,30 +539,6 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
         <button class="btn" style="width:100%;padding:12px;background:var(--green);color:#fff;font-size:14px;font-family:Oswald,sans-serif;font-weight:700;letter-spacing:1px;border-radius:6px;" onclick="hesabaIsle()">✓ HESABA İŞLE</button>
         <button class="btn" style="width:100%;padding:10px;background:var(--panel2);color:var(--text);border:1px solid var(--border2);font-size:13px;font-family:Oswald,sans-serif;font-weight:700;letter-spacing:.5px;border-radius:6px;" onclick="sepetTemizle()">🗑️ SEPETİ TEMİZLE</button>
       </div>
-    </div>
-  </div>
-</div>
-
-<!-- ÜRÜN BARKOD KAMERA MODALI -->
-<div class="modal-overlay" id="urunBarkodOverlay" onclick="if(event.target===this)urunBarkodKapatModal()">
-  <div class="detay-modal" style="max-width:380px;">
-    <div class="detay-titlebar">
-      <span class="detay-title">📷 BARKOD OKU — ÜRÜN EKLE</span>
-      <button class="detay-close" onclick="urunBarkodKapatModal()">✕</button>
-    </div>
-    <div style="padding:16px;display:flex;flex-direction:column;gap:12px;">
-      <div style="background:var(--input-bg);border-radius:8px;overflow:hidden;">
-        <video id="urunBarkodVideo" style="width:100%;max-height:200px;object-fit:cover;" autoplay playsinline></video>
-      </div>
-      <div style="font-size:12px;color:var(--text-muted);text-align:center;">Barkodu kameraya göster, otomatik okunacak</div>
-      <div>
-        <div class="islem-field-label">Okunan Barkod</div>
-        <input class="islem-input" id="urunBarkodOkunan" placeholder="Barkod burada görünecek..." style="font-family:monospace;" readonly>
-      </div>
-      <div style="background:rgba(33,150,243,.08);border:1px solid rgba(33,150,243,.2);border-radius:6px;padding:10px;" id="urunBarkodBilgi" style="display:none;">
-        <div style="font-size:11px;color:var(--text-muted);">Bu barkod barkod alanına aktarıldı. Ürün adı ve fiyat girin.</div>
-      </div>
-      <button class="btn" style="width:100%;background:var(--blue2);color:#fff;padding:12px;" onclick="urunBarkodKapatModal()">✓ Tamam, Kapatın</button>
     </div>
   </div>
 </div>
@@ -2596,71 +2545,6 @@ function urunExcel() {
 
 // ── ÜRÜN DÜZENLE ──
 let duzenleUrunKod = null;
-
-function urunDuzenleAc() {
-  if (!seciliUrunKod) { toast('Önce bir ürün seçin!', true); return; }
-  const u = urunListesi.find(x => x.kod == seciliUrunKod);
-  duzenleUrunKod = u.kod;
-  document.getElementById('urunDuzenleEskiAd').textContent = u.ad;
-  document.getElementById('urunDuzenleAd').value = u.ad;
-  document.getElementById('urunDuzenleBarkod').value = u.barkod || '';
-  document.getElementById('urunDuzenleFiyat').value = u.fiyat;
-  document.getElementById('urunDuzenleKategori').value = u.kategori || '';
-  document.getElementById('urunDuzenleOverlay').classList.add('active');
-  setTimeout(() => { document.getElementById('urunDuzenleAd').focus(); document.getElementById('urunDuzenleAd').select(); }, 100);
-}
-
-// ── ÜRÜN EKLEME İÇİN BARKOD KAMERA ──
-let urunBarkodStream = null;
-
-async function urunBarkodKameraAc() {
-  try {
-    if (!window.ZXing) {
-      loading(true, '📦 Barkod kütüphanesi yükleniyor...');
-      await new Promise((res, rej) => {
-        const s = document.createElement('script');
-        s.src = 'https://cdn.jsdelivr.net/npm/@zxing/library@latest/umd/index.min.js';
-        s.onload = res; s.onerror = res; // hata olsa da devam et
-        document.head.appendChild(s);
-      });
-      loading(false);
-    }
-    urunBarkodStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-    const video = document.getElementById('urunBarkodVideo');
-    video.srcObject = urunBarkodStream;
-    document.getElementById('urunBarkodOverlay').classList.add('active');
-
-    if (window.ZXing) {
-      const codeReader = new ZXing.BrowserMultiFormatReader();
-      codeReader.decodeFromVideoDevice(null, 'urunBarkodVideo', (result, err) => {
-        if (result) {
-          const barkod = result.getText();
-          document.getElementById('urunBarkodOkunan').value = barkod;
-          document.getElementById('txtUrunBarkod').value = barkod;
-          document.getElementById('urunBarkodBilgi').style.display = 'block';
-          urunBarkodKapatStream();
-          toast(`✓ Barkod okundu: ${barkod}`);
-          setTimeout(() => document.getElementById('txtUrunAd').focus(), 300);
-        }
-      });
-    }
-  } catch(err) {
-    loading(false);
-    toast('Kamera erişimi reddedildi. Elle barkod girebilirsiniz.', true);
-  }
-}
-
-function urunBarkodKapatStream() {
-  if (urunBarkodStream) { urunBarkodStream.getTracks().forEach(t => t.stop()); urunBarkodStream = null; }
-}
-
-function urunBarkodKapatModal() {
-  urunBarkodKapatStream();
-  document.getElementById('urunBarkodOverlay').classList.remove('active');
-  document.getElementById('urunBarkodOkunan').value = '';
-  document.getElementById('urunBarkodBilgi').style.display = 'none';
-}
-
 function urunDuzenleKapat() {
   document.getElementById('urunDuzenleOverlay').classList.remove('active');
   duzenleUrunKod = null;
@@ -2738,90 +2622,6 @@ function satisAcKeyDown(e) {
 document.addEventListener('click', e => {
   if (!e.target.closest('#satisAcWrap')) document.getElementById('satisDropdown')?.classList.remove('acik');
 });
-
-// ═══════════════════════════════════════════════════════
-// BARKOD OKUYUCU (Kamera)
-// ═══════════════════════════════════════════════════════
-let kameraStream = null;
-let barkodInterval = null;
-
-async function kameraAc() {
-  try {
-    // ZXing kütüphanesini yükle
-    if (!window.ZXing) {
-      loading(true, '📦 Barkod kütüphanesi yükleniyor...');
-      await new Promise((res, rej) => {
-        const s = document.createElement('script');
-        s.src = 'https://cdn.jsdelivr.net/npm/@zxing/library@latest/umd/index.min.js';
-        s.onload = res; s.onerror = () => {
-          // Fallback: sadece kamera göster, manuel giriş yap
-          res();
-        };
-        document.head.appendChild(s);
-      });
-      loading(false);
-    }
-    kameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-    const video = document.getElementById('barkodVideo');
-    video.srcObject = kameraStream;
-    document.getElementById('kameraAcBtn').style.display = 'none';
-    document.getElementById('kameraVideo').style.display = 'block';
-
-    // ZXing ile barkod okuma
-    if (window.ZXing) {
-      const codeReader = new ZXing.BrowserMultiFormatReader();
-      codeReader.decodeFromVideoDevice(null, 'barkodVideo', (result, err) => {
-        if (result) {
-          const barkod = result.getText();
-          document.getElementById('txtBarkodGir').value = barkod;
-          kameraKapat();
-          barkodIleUrunEkle();
-        }
-      });
-    }
-    toast('Kamera açıldı — barkodu okutun');
-  } catch(err) {
-    loading(false);
-    toast('Kamera erişimi reddedildi. Elle barkod girebilirsiniz.', true);
-  }
-}
-
-function kameraKapat() {
-  if (kameraStream) { kameraStream.getTracks().forEach(t => t.stop()); kameraStream = null; }
-  document.getElementById('kameraAcBtn').style.display = 'block';
-  document.getElementById('kameraVideo').style.display = 'none';
-}
-
-// ═══════════════════════════════════════════════════════
-// BARKOD İLE ÜRÜN BULMA
-// ═══════════════════════════════════════════════════════
-function barkodIleUrunEkle() {
-  const barkod = document.getElementById('txtBarkodGir').value.trim();
-  if (!barkod) { toast('Barkod girin!', true); return; }
-  const urun = urunListesi.find(u => u.barkod === barkod);
-  if (!urun) {
-    document.getElementById('barkodSonuc').style.display = 'block';
-    document.getElementById('barkodSonuc').style.background = 'rgba(239,83,80,.1)';
-    document.getElementById('barkodSonuc').style.color = '#ff4444';
-    document.getElementById('barkodSonuc').style.borderColor = 'rgba(239,83,80,.3)';
-    document.getElementById('barkodSonuc').textContent = `❌ "${barkod}" barkoduna ürün bulunamadı`;
-    return;
-  }
-  document.getElementById('barkodSonuc').style.display = 'block';
-  document.getElementById('barkodSonuc').style.background = 'rgba(67,160,71,.1)';
-  document.getElementById('barkodSonuc').style.color = '#66bb6a';
-  document.getElementById('barkodSonuc').style.borderColor = 'rgba(67,160,71,.3)';
-  document.getElementById('barkodSonuc').textContent = `✓ ${urun.ad} — ${fmt(urun.fiyat)} ₺ bulundu, sepete eklendi`;
-  document.getElementById('txtBarkodGir').value = '';
-  sepeteUrunEkle(urun);
-  setTimeout(() => document.getElementById('barkodSonuc').style.display = 'none', 2500);
-}
-
-// ═══════════════════════════════════════════════════════
-// SEPET SİSTEMİ
-// ═══════════════════════════════════════════════════════
-let sepet = []; // [{urun, adet}]
-
 function sepeteUrunEkle(urun) {
   const mevcut = sepet.find(s => s.urun.kod === urun.kod);
   if (mevcut) { mevcut.adet++; }
