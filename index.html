@@ -527,10 +527,10 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
 
 <!-- ÜRÜN YÖNETİMİ SEKMESİ -->
 <div id="urunPane" style="display:none;">
-  <div style="display:grid;grid-template-columns:1fr 460px;height:100%;overflow:hidden;">
+  <div style="display:flex;height:100%;overflow:hidden;gap:0;">
 
     <!-- SOL: ÜRÜN LİSTESİ -->
-    <div style="display:flex;flex-direction:column;height:100%;border-right:2px solid var(--border);overflow:hidden;">
+    <div style="display:flex;flex-direction:column;flex:1;min-width:0;border-right:2px solid var(--border);overflow:hidden;">
       <div style="background:var(--bg2);border-bottom:1px solid var(--border);padding:8px 12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;flex-shrink:0;">
         <input class="tb-input" id="txtUrunAd" placeholder="Ürün adı..." style="width:140px" onkeydown="urunEkleKeyDown(event,'ad')">
         <input class="tb-input" id="txtUrunBarkod" placeholder="Barkod..." style="width:95px" onkeydown="urunEkleKeyDown(event,'barkod')">
@@ -563,7 +563,7 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
     </div>
 
     <!-- SAĞ: SATIŞ PANELİ -->
-    <div style="background:var(--bg2);display:flex;flex-direction:column;height:100%;overflow:hidden;">
+    <div style="background:var(--bg2);display:flex;flex-direction:column;width:460px;flex-shrink:0;height:100%;overflow:hidden;">
       <div style="border-bottom:1px solid var(--border);flex-shrink:0;">
         <div style="background:var(--header-bg);padding:8px 14px;">
           <span style="font-family:Oswald,sans-serif;font-size:14px;font-weight:700;color:var(--blue-bright);letter-spacing:1px;">👤 MÜŞTERİ SEÇ</span>
@@ -825,6 +825,40 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
       <button class="btn btn-borc" onclick="borcPanelAc()">F5 Borç</button>
       <button class="btn btn-tahsilat" onclick="tahsilatPanelAc()">F6 Tahsilat</button>
       <button class="btn btn-sil-hareket" onclick="hareketSil()">SİL</button>
+    </div>
+  </div>
+</div>
+
+<!-- HAREKET DÜZENLEME MODALI -->
+<div class="modal-overlay" id="hareketDuzenleOverlay" onclick="if(event.target===this)hareketDuzenleKapat()">
+  <div class="detay-modal" style="max-width:450px;">
+    <div class="detay-titlebar">
+      <span class="detay-title">✏️ HAREKET DÜZENLE</span>
+      <button class="detay-close" onclick="hareketDuzenleKapat()">✕</button>
+    </div>
+    <div style="padding:20px;display:flex;flex-direction:column;gap:14px;">
+      <div style="background:rgba(33,150,243,.08);border:1px solid rgba(33,150,243,.2);border-radius:8px;padding:10px 14px;">
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:3px;">SEÇİLİ HAREKET</div>
+        <div id="hareketDuzenleInfo" style="font-family:Oswald,sans-serif;font-size:14px;color:var(--white);font-weight:700;"></div>
+      </div>
+      <div>
+        <div class="islem-field-label">Açıklama</div>
+        <input class="islem-input" id="hareketDuzenleAciklama" placeholder="Açıklama..." onkeydown="if(event.key==='Enter')document.getElementById('hareketDuzenleTutar').focus();if(event.key==='Escape')hareketDuzenleKapat()">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div>
+          <div class="islem-field-label">Borç (₺)</div>
+          <input class="islem-input" id="hareketDuzenleBorc" type="number" placeholder="0.00" onkeydown="if(event.key==='Enter')document.getElementById('hareketDuzenleTahsilat').focus();if(event.key==='Escape')hareketDuzenleKapat()">
+        </div>
+        <div>
+          <div class="islem-field-label">Tahsilat (₺)</div>
+          <input class="islem-input" id="hareketDuzenleTahsilat" type="number" placeholder="0.00" onkeydown="if(event.key==='Enter')hareketDuzenleKaydet();if(event.key==='Escape')hareketDuzenleKapat()">
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn" style="flex:1;background:var(--blue2);color:#fff;padding:12px;" onclick="hareketDuzenleKaydet()">💾 KAYDET (ENTER)</button>
+        <button class="btn" style="background:var(--panel2);color:var(--text);border:1px solid var(--border2);padding:12px;" onclick="hareketDuzenleKapat()">İPTAL</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1254,6 +1288,10 @@ async function detayYukle() {
       const rId = parseInt(r.id);
       const tr=document.createElement('tr');
       tr.dataset.id = rId;
+      tr.dataset.aciklama = r.aciklama || '';
+      tr.dataset.borc = r.borc;
+      tr.dataset.tahsilat = r.tahsilat;
+      tr.dataset.tarih = r.tarih;
       const isBorc=Number(r.borc)>0;
       const renk=isBorc?'#ff4444':'#66bb6a';
       tr.innerHTML=`
@@ -1927,11 +1965,17 @@ function globalKeyDown(e){
 
   if(loginAcik) return;
 
-  // F2 — Ürün sekmesindeyse ürün düzenle, değilse cari düzenle
+  // F2 — Ürün sekmesindeyse ürün düzenle, detayda hareket düzenle, değilse cari düzenle
   if(e.key==='F2' && !detayAcik){
     e.preventDefault();
     if(urunSekmeAcik) urunDuzenleAc();
     else cariDuzenleAc();
+    return;
+  }
+  
+  if(e.key==='F2' && detayAcik){
+    e.preventDefault();
+    hareketDuzenleAc();
     return;
   }
 
@@ -2097,7 +2141,55 @@ async function cariDuzenleKaydet() {
 }
 
 // ═══════════════════════════════════════════════════════
-// MÜŞTERİ KARTI
+// HAREKET DÜZENLEME (F2 - Detayda)
+// ═══════════════════════════════════════════════════════
+let duzenleHareketId = null;
+
+function hareketDuzenleAc() {
+  const seciliTr = document.querySelector('#detayTbody tr.selected');
+  if (!seciliTr) { toast('Önce bir hareket seçin!', true); return; }
+  
+  const id = seciliTr.dataset.id;
+  const aciklama = seciliTr.dataset.aciklama || '';
+  const borc = seciliTr.dataset.borc || '0';
+  const tahsilat = seciliTr.dataset.tahsilat || '0';
+  const tarih = seciliTr.dataset.tarih || '';
+  
+  duzenleHareketId = parseInt(id);
+  document.getElementById('hareketDuzenleInfo').textContent = `${tarih} — ${aciklama || '(Boş)'}`;
+  document.getElementById('hareketDuzenleAciklama').value = aciklama;
+  document.getElementById('hareketDuzenleBorc').value = borc;
+  document.getElementById('hareketDuzenleTahsilat').value = tahsilat;
+  document.getElementById('hareketDuzenleOverlay').classList.add('active');
+  
+  setTimeout(() => document.getElementById('hareketDuzenleAciklama').focus(), 100);
+}
+
+function hareketDuzenleKapat() {
+  document.getElementById('hareketDuzenleOverlay').classList.remove('active');
+  duzenleHareketId = null;
+}
+
+async function hareketDuzenleKaydet() {
+  const aciklama = document.getElementById('hareketDuzenleAciklama').value.trim();
+  const borc = parseFloat(document.getElementById('hareketDuzenleBorc').value) || 0;
+  const tahsilat = parseFloat(document.getElementById('hareketDuzenleTahsilat').value) || 0;
+  
+  if (borc < 0 || tahsilat < 0) { toast('Negatif tutar girilemez!', true); return; }
+  if (borc > 0 && tahsilat > 0) { toast('Borç ve tahsilat aynı anda olamaz!', true); return; }
+  if (borc === 0 && tahsilat === 0) { toast('En az bir tutar giriniz!', true); return; }
+  
+  loading(true, 'Güncelleniyor...');
+  try {
+    await sbPatch('hareketler', `id=eq.${duzenleHareketId}`, { aciklama, borc, tahsilat });
+    await bakiyeGuncelleDB(aktifDetayKod);
+    genelBakiyeHesapla();
+    cariAc(aktifDetayKod); // Detayı yenile
+    hareketDuzenleKapat();
+    toast('✓ Hareket güncellendi');
+  } catch(err) { toast('Hata: ' + err.message, true); }
+  loading(false);
+}
 // ═══════════════════════════════════════════════════════
 const DUKKAN_ADI = 'Gölbaşı Market';
 const DUKKAN_TEL = ''; // İstersen buraya telefon ekle
@@ -2973,17 +3065,17 @@ function sepetGuncelle() {
     return;
   }
   liste.innerHTML = sepet.map(s => `
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(30,58,95,.4);">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid rgba(30,58,95,.5);">
       <div style="flex:1;min-width:0;">
-        <div style="font-size:15px;font-weight:700;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${s.urun.ad}</div>
-        <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">${fmt(s.urun.fiyat)} ₺ × ${s.adet} adet</div>
+        <div style="font-size:17px;font-weight:700;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${s.urun.ad}</div>
+        <div style="font-size:13px;color:var(--text-muted);margin-top:3px;">${fmt(s.urun.fiyat)} ₺ × <span style="font-weight:700;color:var(--white);">${s.adet}</span> adet</div>
       </div>
-      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;margin-left:8px;">
-        <span style="font-family:monospace;font-size:15px;font-weight:700;color:#66bb6a;min-width:70px;text-align:right;">${fmt(s.urun.fiyat * s.adet)} ₺</span>
-        <div style="display:flex;gap:3px;">
-          <button onclick="sepetAdetDegistir(${s.urun.kod},-1)" style="width:26px;height:26px;background:var(--panel2);border:1px solid var(--border2);border-radius:4px;color:var(--text);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;font-weight:700;">−</button>
-          <button onclick="sepetAdetDegistir(${s.urun.kod},1)" style="width:26px;height:26px;background:var(--panel2);border:1px solid var(--border2);border-radius:4px;color:var(--text);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;font-weight:700;">+</button>
-          <button onclick="sepettenCikar(${s.urun.kod})" style="width:26px;height:26px;background:rgba(239,83,80,.15);border:1px solid rgba(239,83,80,.3);border-radius:4px;color:#ff4444;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;">✕</button>
+      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;margin-left:8px;">
+        <span style="font-family:monospace;font-size:18px;font-weight:700;color:#66bb6a;min-width:75px;text-align:right;">${fmt(s.urun.fiyat * s.adet)}</span>
+        <div style="display:flex;gap:4px;">
+          <button onclick="sepetAdetDegistir(${s.urun.kod},-1)" style="width:32px;height:32px;background:var(--panel2);border:1px solid var(--border2);border-radius:4px;color:var(--text);cursor:pointer;font-size:18px;font-weight:700;display:flex;align-items:center;justify-content:center;">−</button>
+          <button onclick="sepetAdetDegistir(${s.urun.kod},1)" style="width:32px;height:32px;background:var(--panel2);border:1px solid var(--border2);border-radius:4px;color:var(--text);cursor:pointer;font-size:18px;font-weight:700;display:flex;align-items:center;justify-content:center;">+</button>
+          <button onclick="sepettenCikar(${s.urun.kod})" style="width:32px;height:32px;background:rgba(239,83,80,.15);border:1px solid rgba(239,83,80,.3);border-radius:4px;color:#ff4444;cursor:pointer;font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;">✕</button>
         </div>
       </div>
     </div>`).join('');
