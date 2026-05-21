@@ -123,8 +123,7 @@ body {
 }
 
 /* ── LAYOUT ── */
-.app-body,
-#urunPane {
+.app-body{
   display:grid;
   grid-template-columns:1fr 460px;
   height:100%;
@@ -143,25 +142,14 @@ body > #urunPane {
 .app-body {
   grid-template-columns:1fr 460px;
 }
-#urunPane {
-  grid-template-columns:1fr 360px;
-}
+#urunPane { height:100%; overflow:hidden; }
 #urunPane > div {
   height:100%;
   overflow:hidden;
 }
 
-#toptanciPane {
-  display:grid;
-  grid-template-columns:1fr 380px;
-  height:100%;
-  min-height:calc(100vh - 138px);
-  overflow:hidden;
-}
-#toptanciPane > div {
-  height:100%;
-  overflow:hidden;
-}
+#toptanciPane { height:100%; overflow:hidden; }
+#toptanciPane > div { height:100%; overflow:hidden; }
 body > #toptanciPane {
   position:absolute;
   top:138px;
@@ -930,6 +918,104 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
       <!-- ÖDEME BUTONU -->
       <div style="padding:10px 14px;flex-shrink:0;background:var(--bg3);">
         <button style="width:100%;padding:11px;background:var(--green);color:#fff;font-size:13px;font-family:Oswald,sans-serif;font-weight:700;border:0;border-radius:6px;cursor:pointer;letter-spacing:.5px;" onclick="toptanciOdemeAc()">💰 ÖDEME EKLE</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOPTANCI DETAY MODALI -->
+<div class="modal-overlay" id="toptanciDetayOverlay" onclick="if(event.target===this)toptanciDetayKapat()">
+  <div class="detay-modal" style="max-width:1100px;">
+    <div class="detay-titlebar">
+      <span class="detay-title" id="toptanciDetayTitle">TOPTANCI</span>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="btn btn-danger" style="padding:6px 12px;font-size:12px;" onclick="toptanciHareketSilSecili()">SİL</button>
+        <button class="detay-close" onclick="toptanciDetayKapat()">✕</button>
+      </div>
+    </div>
+
+    <div class="detay-body">
+      <div class="detay-main-layout">
+        <!-- SOL: HAREKETLER -->
+        <div class="detay-left-pane">
+          <div class="detay-table-wrap">
+            <table class="main-table">
+              <thead>
+                <tr>
+                  <th style="width:22px;"></th>
+                  <th style="width:130px;">TARİH</th>
+                  <th>AÇIKLAMA</th>
+                  <th style="width:120px;text-align:right;">BORÇ</th>
+                  <th style="width:120px;text-align:right;">ÖDEME</th>
+                  <th style="width:120px;text-align:right;">BAKİYE</th>
+                </tr>
+              </thead>
+              <tbody id="toptanciDetayTbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- SAĞ: BORÇ / TAHSİLAT -->
+        <div class="detay-right-pane">
+          <div style="display:flex;gap:8px;padding:12px;border-bottom:1px solid var(--border);background:var(--bg2);">
+            <button class="btn btn-borc" style="flex:1;" onclick="toptanciBorcPanelAc()">F5 Borç</button>
+            <button class="btn btn-tahsilat" style="flex:1;" onclick="toptanciTahsilatPanelAc()">F6 Tahsilat</button>
+          </div>
+
+          <div style="padding:14px;">
+            <div id="toptanciBorcPanel" style="display:none;">
+              <div class="islem-field-label">Açıklama</div>
+              <input class="islem-input" id="txtToptanciBorcAciklama" placeholder="Fatura / açıklama..." onkeydown="if(event.key==='Enter')document.getElementById('txtToptanciBorcTutar').focus();if(event.key==='Escape')toptanciDetayKapat()">
+              <div style="height:10px;"></div>
+              <div class="islem-field-label">Tutar (₺)</div>
+              <input class="islem-input" id="txtToptanciBorcTutar" type="number" placeholder="0.00" onkeydown="if(event.key==='Enter')toptanciBorcKaydet();if(event.key==='Escape')toptanciDetayKapat()">
+              <div style="height:12px;"></div>
+              <button class="btn" style="width:100%;background:var(--red2);color:#fff;padding:12px;" onclick="toptanciBorcKaydet()">✓ BORÇ EKLE</button>
+            </div>
+
+            <div id="toptanciTahsilatPanel" style="display:none;">
+              <div class="islem-field-label">Açıklama</div>
+              <input class="islem-input" id="txtToptanciTahsilatAciklama" placeholder="Ödeme / açıklama..." onkeydown="if(event.key==='Enter')document.getElementById('txtToptanciTahsilatTutar').focus();if(event.key==='Escape')toptanciDetayKapat()">
+              <div style="height:10px;"></div>
+              <div class="islem-field-label">Tutar (₺)</div>
+              <input class="islem-input" id="txtToptanciTahsilatTutar" type="number" placeholder="0.00" onkeydown="if(event.key==='Enter')toptanciTahsilatKaydet();if(event.key==='Escape')toptanciDetayKapat()">
+              <div style="height:12px;"></div>
+              <button class="btn" style="width:100%;background:var(--green);color:#fff;padding:12px;" onclick="toptanciTahsilatKaydet()">✓ ÖDEME EKLE</button>
+            </div>
+
+            <div style="margin-top:14px;font-size:12px;color:var(--text-muted);line-height:1.6;background:rgba(0,0,0,0.2);padding:10px;border-radius:6px;border:1px dashed var(--border);">
+              <strong>Kısayollar:</strong><br>
+              • <span style="color:var(--red)">F5</span>: Borç paneli<br>
+              • <span style="color:var(--green2)">F6</span>: Ödeme paneli<br>
+              • <strong>ESC</strong>: Kapat
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOPTANCI DÜZENLEME MODALI (F2) -->
+<div class="modal-overlay" id="toptanciDuzenleOverlay" onclick="if(event.target===this)toptanciDuzenleKapat()">
+  <div class="detay-modal" style="max-width:460px;">
+    <div class="detay-titlebar">
+      <span class="detay-title">✏️ TOPTANCI DÜZENLE — F2</span>
+      <button class="detay-close" onclick="toptanciDuzenleKapat()">✕</button>
+    </div>
+    <div style="padding:18px;display:flex;flex-direction:column;gap:12px;">
+      <div style="background:rgba(33,150,243,.08);border:1px solid rgba(33,150,243,.2);border-radius:8px;padding:10px 14px;">
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:3px;">SEÇİLİ TOPTANCI</div>
+        <div id="toptanciDuzenleEskiAd" style="font-family:Oswald,sans-serif;font-size:15px;color:var(--white);font-weight:700;"></div>
+        <div id="toptanciDuzenleKodBilgi" style="font-size:11px;color:var(--text-muted);margin-top:3px;"></div>
+      </div>
+      <div>
+        <div class="islem-field-label">Toptancı Adı</div>
+        <input class="islem-input" id="toptanciDuzenleYeniAd" placeholder="TOPTANCI ADI" onkeydown="if(event.key==='Enter')toptanciDuzenleKaydet();if(event.key==='Escape')toptanciDuzenleKapat()">
+      </div>
+      <div style="display:flex;gap:10px;margin-top:4px;">
+        <button class="btn" style="flex:1;background:var(--blue2);color:#fff;padding:12px;" onclick="toptanciDuzenleKaydet()">✓ KAYDET</button>
+        <button class="btn" style="background:var(--panel2);color:var(--text);border:1px solid var(--border2);padding:12px;" onclick="toptanciDuzenleKapat()">İPTAL</button>
       </div>
     </div>
   </div>
@@ -2094,15 +2180,19 @@ function globalKeyDown(e){
   const raporAcik=document.getElementById('raporOverlay').classList.contains('active');
   const loginAcik=document.getElementById('loginOverlay').classList.contains('active');
   const duzenleAcik=document.getElementById('cariDuzenleOverlay').classList.contains('active');
+  const toptanciDuzenleAcik=document.getElementById('toptanciDuzenleOverlay')?.classList.contains('active');
   const urunDuzenleAcik=document.getElementById('urunDuzenleOverlay').classList.contains('active');
   const urunSekmeAcik=document.getElementById('urunPane').style.display !== 'none';
+  const toptanciSekmeAcik=document.getElementById('toptanciPane').style.display !== 'none';
+  const toptanciDetayAcik=document.getElementById('toptanciDetayOverlay')?.classList.contains('active');
 
   if(loginAcik) return;
 
-  // F2 — Ürün sekmesindeyse ürün düzenle, detayda hareket düzenle, değilse cari düzenle
-  if(e.key==='F2' && !detayAcik){
+  // F2 — Ürün sekmesindeyse ürün düzenle, toptancı sekmesindeyse toptancı düzenle, değilse cari düzenle
+  if(e.key==='F2' && !detayAcik && !toptanciDetayAcik){
     e.preventDefault();
     if(urunSekmeAcik) urunDuzenleAc();
+    else if(toptanciSekmeAcik) toptanciDuzenleAc();
     else cariDuzenleAc();
     return;
   }
@@ -2119,7 +2209,22 @@ function globalKeyDown(e){
   // ESC
   if(e.key==='Escape'){
     if(urunDuzenleAcik){ urunDuzenleKapat(); return; }
+    if(toptanciDuzenleAcik){ toptanciDuzenleKapat(); return; }
     if(duzenleAcik){ cariDuzenleKapat(); return; }
+  }
+
+  // TOPTANCI DETAY KISAYOLLARI
+  if(toptanciDetayAcik){
+    if(e.key==='F5'){e.preventDefault();toptanciBorcPanelAc(); return;}
+    if(e.key==='F6'){e.preventDefault();toptanciTahsilatPanelAc(); return;}
+    if(e.key==='Escape'){toptanciDetayKapat(); return;}
+    return;
+  }
+
+  // TOPTANCI SEKMESİNDE (DETAY AÇIK DEĞİLKEN) F5/F6 ile borç/ödeme girişi
+  if(toptanciSekmeAcik){
+    if(e.key==='F5'){e.preventDefault();toptanciDetayAc(); setTimeout(toptanciBorcPanelAc, 0); return;}
+    if(e.key==='F6'){e.preventDefault();toptanciDetayAc(); setTimeout(toptanciTahsilatPanelAc, 0); return;}
   }
 
   if(detayAcik){
@@ -2271,6 +2376,57 @@ async function cariDuzenleKaydet() {
     cariDuzenleKapat();
     toast(`✓ "${c.unvan}" bilgileri güncellendi`);
   } catch(err) { toast('Güncelleme hatası: ' + err.message, true); }
+  loading(false);
+}
+
+// ═══════════════════════════════════════════════════════
+// F2 — TOPTANCI DÜZENLE
+// ═══════════════════════════════════════════════════════
+let toptanciDuzenleKod = null;
+
+function toptanciDuzenleAc() {
+  const seciliTr = document.querySelector('#toptanciTbody tr.selected');
+  if (!seciliTr) { toast('Önce listeden bir toptancı seçin!', true); return; }
+  const kod = parseInt(seciliTr.dataset.kod);
+  const t = toptanciListesi.find(x => x.kod === kod);
+  if (!t) return;
+
+  toptanciDuzenleKod = kod;
+  document.getElementById('toptanciDuzenleEskiAd').textContent = t.unvan;
+  document.getElementById('toptanciDuzenleKodBilgi').textContent = `Toptancı Kod: ${t.kod}`;
+  const inp = document.getElementById('toptanciDuzenleYeniAd');
+  inp.value = t.unvan;
+
+  document.getElementById('toptanciDuzenleOverlay').classList.add('active');
+  setTimeout(() => { inp.focus(); inp.select(); }, 100);
+}
+
+function toptanciDuzenleKapat() {
+  document.getElementById('toptanciDuzenleOverlay').classList.remove('active');
+  toptanciDuzenleKod = null;
+}
+
+async function toptanciDuzenleKaydet() {
+  const yeniAd = document.getElementById('toptanciDuzenleYeniAd').value.trim().toUpperCase();
+  if (!yeniAd) { toast('Toptancı adı boş olamaz!', true); document.getElementById('toptanciDuzenleYeniAd').focus(); return; }
+  if (!toptanciDuzenleKod) return;
+
+  const t = toptanciListesi.find(x => x.kod === toptanciDuzenleKod);
+  loading(true, 'Güncelleniyor...');
+  try {
+    if (t && yeniAd !== t.unvan) {
+      await sbPatch('toptanciler', `kod=eq.${toptanciDuzenleKod}`, { unvan: yeniAd });
+      const idx = toptanciListesi.findIndex(x => x.kod === toptanciDuzenleKod);
+      if (idx >= 0) toptanciListesi[idx].unvan = yeniAd;
+      // Detay açıksa başlığı güncelle
+      if (aktivToptanciKod === toptanciDuzenleKod) {
+        document.getElementById('toptanciDetayTitle').textContent = yeniAd;
+      }
+    }
+    toptanciTableYukle();
+    toptanciDuzenleKapat();
+    toast('✓ Toptancı güncellendi');
+  } catch (err) { toast('Güncelleme hatası: ' + err.message, true); }
   loading(false);
 }
 
@@ -2750,11 +2906,11 @@ function sekmeAc(sekme) {
     cariPane.style.display = 'grid';
     tabCari.classList.add('active');
   } else if (sekme === 'urun') {
-    urunPane.style.display = 'grid';
+    urunPane.style.display = 'block';
     tabUrun.classList.add('active');
     urunleriYukle();
   } else if (sekme === 'toptanci') {
-    toptanciPane.style.display = 'grid';
+    toptanciPane.style.display = 'block';
     tabToptanci.classList.add('active');
     toptanciYukle();
   }
@@ -3279,6 +3435,7 @@ async function hesabaIsle() {
 let toptanciListesi = [];
 let toptanciSeciliKodlar = [];
 let aktivToptanciKod = null;
+let toptanciSeciliDetayIds = [];
 
 async function toptanciYukle() {
   try {
@@ -3351,16 +3508,26 @@ function toptanciTableYukle() {
     
     tr.addEventListener('dblclick', () => toptanciDetayAc(t.kod));
     
-    let bakiye = 0; // Supabase'ten çektiğinde hesaplanacak
+    const bakiye = Number(t.bakiye || 0);
+    const renk = bakiye > 0 ? '#ff4444' : bakiye < 0 ? 'var(--blue-bright)' : '#dce8f5';
     tr.innerHTML = `
       <td><span class="row-arrow" style="display:none">▶</span></td>
       <td style="font-weight:700">${t.unvan}</td>
-      <td style="text-align:right;color:#66bb6a;font-weight:700;font-family:monospace">${fmt(bakiye)} ₺</td>`;
+      <td style="text-align:right;color:${renk};font-weight:800;font-family:monospace">${fmt(bakiye)} ₺</td>`;
     
     tbody.appendChild(tr);
   });
   
   document.getElementById('toptanciSayiBilgi').textContent = `${filtrelenmis.length} toptancı`;
+}
+
+async function toptanciBakiyeGuncelleDB(kod) {
+  const hareketler = await sbGet('toptanci_hareketleri', `toptanci_kod=eq.${kod}`);
+  const bakiye = hareketler.reduce((t,h)=>t+(Number(h.borc||0)-Number(h.tahsilat||0)),0);
+  await sbPatch('toptanciler', `kod=eq.${kod}`, { bakiye });
+  const idx = toptanciListesi.findIndex(x => x.kod === kod);
+  if (idx >= 0) toptanciListesi[idx].bakiye = bakiye;
+  return bakiye;
 }
 
 async function toptanciSilSecili() {
@@ -3409,6 +3576,7 @@ function toptanciDetayAc(kod) {
   if (!kod) { toast('Toptancı seçin!', true); return; }
   
   aktivToptanciKod = kod;
+  toptanciSeciliDetayIds = [];
   const t = toptanciListesi.find(x => x.kod === kod);
   document.getElementById('toptanciDetayTitle').textContent = t.unvan;
   toptanciHareketleriGoster(kod);
@@ -3426,21 +3594,73 @@ async function toptanciHareketleriGoster(kod) {
     const hareketler = await sbGet('toptanci_hareketleri', `toptanci_kod=eq.${kod}&order=id.desc`);
     const tbody = document.getElementById('toptanciDetayTbody');
     tbody.innerHTML = '';
+    toptanciSeciliDetayIds = [];
     
     let bakiye = 0;
     hareketler.reverse().forEach(h => {
       bakiye += (h.borc || 0) - (h.tahsilat || 0);
       const tr = document.createElement('tr');
+      tr.dataset.id = h.id;
+      tr.dataset.tarih = h.tarih || '';
+      tr.dataset.aciklama = h.aciklama || '';
+      tr.dataset.borc = h.borc || 0;
+      tr.dataset.tahsilat = h.tahsilat || 0;
+      tr.style.cursor = 'pointer';
       tr.innerHTML = `
-        <td></td>
+        <td><span class="row-arrow" style="display:none">▶</span></td>
         <td style="font-size:12px;">${h.tarih}</td>
         <td>${h.aciklama}</td>
         <td style="text-align:right;color:${h.borc>0?'#ff4444':'#999'};font-weight:700;font-family:monospace">${fmt(h.borc || 0)}</td>
         <td style="text-align:right;color:${h.tahsilat>0?'#66bb6a':'#999'};font-weight:700;font-family:monospace">${fmt(h.tahsilat || 0)}</td>
         <td style="text-align:right;color:${bakiye>0?'#ff4444':'#66bb6a'};font-weight:700;font-family:monospace">${fmt(bakiye)}</td>`;
+
+      tr.addEventListener('click', (ev) => {
+        const id = parseInt(tr.dataset.id);
+        const ok = tr.querySelector('.row-arrow');
+
+        if (ev && (ev.ctrlKey || ev.metaKey)) {
+          if (toptanciSeciliDetayIds.includes(id)) {
+            toptanciSeciliDetayIds = toptanciSeciliDetayIds.filter(x => x !== id);
+            tr.classList.remove('selected');
+            ok.style.display = 'none';
+          } else {
+            toptanciSeciliDetayIds.push(id);
+            tr.classList.add('selected');
+            ok.style.display = 'inline';
+          }
+        } else {
+          document.querySelectorAll('#toptanciDetayTbody tr').forEach(r => {
+            r.classList.remove('selected');
+            r.querySelector('.row-arrow').style.display = 'none';
+          });
+          tr.classList.add('selected');
+          ok.style.display = 'inline';
+          toptanciSeciliDetayIds = [id];
+        }
+      });
+
       tbody.appendChild(tr);
     });
   } catch(err) { console.log('Hareketler:', err); }
+}
+
+async function toptanciHareketSilSecili() {
+  if (!aktivToptanciKod) { toast('Önce bir toptancı açın!', true); return; }
+  if (!toptanciSeciliDetayIds.length) { toast('Önce silmek için hareket(ler) seçin! (Ctrl ile çoklu)', true); return; }
+  if (!confirm(`${toptanciSeciliDetayIds.length} adet hareket silinecek. Onaylıyor musunuz?`)) return;
+
+  loading(true, 'Siliniyor...');
+  try {
+    await sbDelete('toptanci_hareketleri', `id=in.(${toptanciSeciliDetayIds.join(',')})`);
+    toptanciSeciliDetayIds = [];
+    await toptanciBakiyeGuncelleDB(aktivToptanciKod);
+    await toptanciHareketleriGoster(aktivToptanciKod);
+    toptanciTableYukle();
+    toast('✓ Seçili hareketler silindi');
+  } catch (err) {
+    toast('Silme hatası: ' + err.message, true);
+  }
+  loading(false);
 }
 
 function toptanciBorcPanelAc() {
@@ -3468,6 +3688,8 @@ async function toptanciBorcKaydet() {
     await sbPost('toptanci_hareketleri', { toptanci_kod: aktivToptanciKod, tarih, aciklama: aciklama || '-', borc: tutar, tahsilat: 0 });
     
     toptanciHareketleriGoster(aktivToptanciKod);
+    await toptanciBakiyeGuncelleDB(aktivToptanciKod);
+    toptanciTableYukle();
     document.getElementById('txtToptanciBorcAciklama').value = '';
     document.getElementById('txtToptanciBorcTutar').value = '';
     toast('✓ Borç eklendi');
@@ -3488,6 +3710,8 @@ async function toptanciTahsilatKaydet() {
     await sbPost('toptanci_hareketleri', { toptanci_kod: aktivToptanciKod, tarih, aciklama: aciklama || '-', borc: 0, tahsilat: tutar });
     
     toptanciHareketleriGoster(aktivToptanciKod);
+    await toptanciBakiyeGuncelleDB(aktivToptanciKod);
+    toptanciTableYukle();
     document.getElementById('txtToptanciTahsilatAciklama').value = '';
     document.getElementById('txtToptanciTahsilatTutar').value = '';
     toast('✓ Tahsilat eklendi');
