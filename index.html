@@ -803,6 +803,16 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
       </div>
     </div>
 
+    <!-- BORÇ DAĞILIMI / MİNİ DASHBOARD -->
+    <div class="hizli-box" style="flex:1;display:flex;flex-direction:column;min-height:170px;">
+      <div class="hizli-header">
+        <span class="hizli-title">📊 BORÇ DAĞILIMI</span>
+      </div>
+      <div class="hizli-body" id="miniDashboard" style="flex:1;overflow:auto;">
+        <div style="text-align:center;color:var(--text-muted);font-size:12px;padding:8px;">Yükleniyor...</div>
+      </div>
+    </div>
+
     <div class="bakiye-box">
       <div class="bakiye-label">Toplam Alacak</div>
       <div id="lblGenelBakiye">0,00</div>
@@ -1348,6 +1358,7 @@ async function init() {
     await carileritabloyaYukle();
     genelBakiyeHesapla();
     await cariDashboardGuncelle();
+    miniDashboardGuncelle();
     otomatikKodVer();
   } catch(e) {
     toast('Veritabanı bağlantı hatası: ' + e.message, true);
@@ -1448,6 +1459,7 @@ function genelBakiyeHesapla() {
   const toplam = cariListesi.reduce((t,c)=>t+Number(c.bakiye),0);
   document.getElementById('lblGenelBakiye').textContent = fmt(toplam);
   cariDashboardGuncelleDebounced();
+  miniDashboardGuncelle();
 }
 
 // Cari ekranı: genel tahsilat grafiği (Toptancı sekmesindeki grafik mantığı)
@@ -3086,7 +3098,7 @@ function urunTabloYenile() {
       <td style="color:var(--blue-bright)">${u.kod}</td>
       <td style="color:var(--white);font-weight:700">${u.ad}</td>
       <td style="color:var(--text-muted);font-family:monospace;font-size:12px">${u.barkod||'—'}</td>
-      <td style="text-align:right;color:var(--green2);font-family:monospace;font-weight:700">${fmt(u.fiyat)} ₺</td>
+      <td style="text-align:right;color:var(--green2);font-family:monospace;font-weight:900;font-size:16px;letter-spacing:.2px;">${fmt(u.fiyat)} ₺</td>
       <td><span style="background:rgba(33,150,243,.12);color:var(--blue-bright);border:1px solid rgba(33,150,243,.25);padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700">${u.kategori||'Genel'}</span></td>`;
     // Önceden seçiliyse satırı işaretle
     if (seciliUrunKodlar.includes(u.kod)) {
