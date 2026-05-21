@@ -126,38 +126,22 @@ body {
 .app-body{
   display:grid;
   grid-template-columns:1fr 460px;
-  height:100%;
-  min-height:calc(100vh - 138px);
+  /* Header yüksekliği mobilde değişebildiği için 138px sabitine bağlamayalım */
+  flex:1;
+  min-height:0;
   overflow:hidden;
 }
-body > #cariPane,
-body > #urunPane {
-  position:absolute;
-  top:138px;
-  left:0;
-  right:0;
-  bottom:0;
+/* Panelleri absolute yerine flex düzeninde büyüt (mobilde üst üste binmeyi engeller) */
+#cariPane, #urunPane, #toptanciPane {
+  flex:1;
+  min-height:0;
   height:auto;
-}
-.app-body {
-  grid-template-columns:1fr 460px;
-}
-#urunPane { height:100%; overflow:hidden; }
-#urunPane > div {
-  height:100%;
   overflow:hidden;
 }
+#urunPane > div { height:100%; overflow:hidden; }
 
 #toptanciPane { height:100%; overflow:hidden; }
 #toptanciPane > div { height:100%; overflow:hidden; }
-body > #toptanciPane {
-  position:absolute;
-  top:138px;
-  left:0;
-  right:0;
-  bottom:0;
-  height:auto;
-}
 /* ── LEFT ── */
 .left-pane { display:flex; flex-direction:column; border-right:2px solid var(--border); overflow:hidden; }
 
@@ -458,7 +442,22 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
 
 /* ── MOBILE ── */
 @media(max-width:850px){
-  .app-body{grid-template-columns:1fr;height:auto;}
+  /* Sekmeler taşmasın: yatay kaydırılabilir yap */
+  .tab-bar{
+    overflow-x:auto;
+    overflow-y:hidden;
+    padding:0 6px;
+    height:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  .tab-bar::-webkit-scrollbar{height:0;}
+  .tab-btn{padding:10px 12px;font-size:12px;}
+
+  /* Cari ekranı: sağ paneli alta indir */
+  .app-body{
+    grid-template-columns:1fr;
+    grid-template-rows:1fr 340px;
+  }
   .right-pane{border-top:2px solid var(--border);}
   .detay-main-layout{grid-template-columns:1fr;}
   .detay-right-pane{border-top:2px solid var(--border);}
@@ -471,12 +470,11 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
   #txtUrunFiyat{width:60px !important;font-size:12px;}
   #txtUrunKategori{width:70px !important;font-size:12px;}
   #txtUrunAra{width:100px !important;font-size:12px;}
-  #urunPane {
-    flex-direction:column;
-  }
-  #urunPane > div {
-    grid-template-columns:1fr;
-  }
+  /* Ürün ekranı: iki paneli (liste + satış) alta diz */
+  #urunPane > div { flex-direction:column; }
+
+  /* Toptancı: sağ paneli alta indir */
+  #toptanciPane > div{grid-template-columns:1fr !important;}
 }
 </style>
 </head>
@@ -558,8 +556,6 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
         <input class="tb-input" id="txtUrunKategori" placeholder="Kategori..." style="width:80px" onkeydown="urunEkleKeyDown(event,'kategori')">
         <button class="btn btn-primary" onclick="urunEkle()" style="background:var(--blue2);color:#fff;">+ EKLE</button>
         <input class="tb-input" id="txtUrunAra" placeholder="🔍 Ara..." style="width:120px" oninput="urunAraFilter()" onkeydown="urunAraKeyDown(event)">
-        <button class="btn btn-secondary" onclick="urunTabloDikeyKaydir('sol')" title="Sola kaydır" style="padding:6px 10px;font-size:14px;">◀</button>
-        <button class="btn btn-secondary" onclick="urunTabloDikeyKaydir('sag')" title="Sağa kaydır" style="padding:6px 10px;font-size:14px;">▶</button>
         <button class="btn btn-danger" onclick="urunSil()" style="margin-left:auto;">SİL</button>
       </div>
       <div style="flex:1;overflow-y:auto;overflow-x:auto;">
@@ -768,10 +764,38 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
 
     <div class="hizli-box">
       <div class="hizli-header">
-        <span class="hizli-title">📊 BORÇ DAĞILIMI</span>
+        <span class="hizli-title">📈 TAHSİLAT GRAFİĞİ</span>
       </div>
-      <div class="hizli-body" id="miniDashboard">
-        <div style="text-align:center;color:var(--text-muted);font-size:12px;padding:8px;">Yükleniyor...</div>
+      <div class="hizli-body" id="cariGrafikBox" style="padding-top:12px;">
+        <div style="display:flex;align-items:center;justify-content:center;gap:14px;">
+          <svg width="120" height="120" viewBox="0 0 120 120" aria-label="Tahsilat grafiği">
+            <defs>
+              <linearGradient id="gradCariPaid" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#66bb6a" />
+                <stop offset="100%" stop-color="#43a047" />
+              </linearGradient>
+            </defs>
+            <circle cx="60" cy="60" r="44" stroke="rgba(255,255,255,.08)" stroke-width="12" fill="none" />
+            <circle id="cariChartPaid" cx="60" cy="60" r="44" stroke="url(#gradCariPaid)" stroke-width="12" fill="none"
+                    stroke-linecap="round" transform="rotate(-90 60 60)" stroke-dasharray="0" stroke-dashoffset="0" />
+            <text x="60" y="56" text-anchor="middle" fill="var(--white)" font-family="Oswald, sans-serif" font-size="20" font-weight="800" id="cariChartPct">0%</text>
+            <text x="60" y="76" text-anchor="middle" fill="var(--text-muted)" font-family="Exo 2, sans-serif" font-size="10">TAHSİLAT</text>
+          </svg>
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;justify-content:space-between;gap:10px;font-size:11px;margin-bottom:6px;">
+              <span style="color:var(--text-muted);">Toplam Borç</span>
+              <span id="cariChartBorcText" style="font-family:monospace;font-weight:800;color:#ff4444;">0,00 ₺</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;gap:10px;font-size:11px;margin-bottom:10px;">
+              <span style="color:var(--text-muted);">Toplam Tahsilat</span>
+              <span id="cariChartOdenenText" style="font-family:monospace;font-weight:800;color:#66bb6a;">0,00 ₺</span>
+            </div>
+            <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:999px;height:9px;overflow:hidden;">
+              <div id="cariChartBar" style="height:100%;width:0%;background:linear-gradient(90deg,#66bb6a,#43a047);border-radius:999px;transition:width .35s ease;"></div>
+            </div>
+            <div style="margin-top:8px;font-size:10px;color:var(--text-muted);text-align:center;">(Tahsilat / Toplam Borç)</div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1308,7 +1332,7 @@ async function init() {
   try {
     await carileritabloyaYukle();
     genelBakiyeHesapla();
-    miniDashboardGuncelle();
+    await cariDashboardGuncelle();
     otomatikKodVer();
   } catch(e) {
     toast('Veritabanı bağlantı hatası: ' + e.message, true);
@@ -1403,7 +1427,43 @@ function tabloYenile() {
 function genelBakiyeHesapla() {
   const toplam = cariListesi.reduce((t,c)=>t+Number(c.bakiye),0);
   document.getElementById('lblGenelBakiye').textContent = fmt(toplam);
-  miniDashboardGuncelle();
+  cariDashboardGuncelleDebounced();
+}
+
+// Cari ekranı: genel tahsilat grafiği (Toptancı sekmesindeki grafik mantığı)
+let cariDashboardTimer;
+function cariDashboardGuncelleDebounced(){
+  clearTimeout(cariDashboardTimer);
+  cariDashboardTimer = setTimeout(() => { cariDashboardGuncelle(); }, 250);
+}
+
+async function cariDashboardGuncelle() {
+  try {
+    const hareketler = await sbGet('hareketler', 'select=borc,tahsilat');
+    const toplamBorc = hareketler.reduce((t, h) => t + Number(h.borc || 0), 0);
+    const toplamTahsilat = hareketler.reduce((t, h) => t + Number(h.tahsilat || 0), 0);
+    const yuzde = toplamBorc > 0 ? Math.min(100, Math.round((toplamTahsilat / toplamBorc) * 100)) : 0;
+
+    const elChartPct = document.getElementById('cariChartPct');
+    const elChartPaid = document.getElementById('cariChartPaid');
+    const elChartBar = document.getElementById('cariChartBar');
+    const elChartBorcText = document.getElementById('cariChartBorcText');
+    const elChartOdenenText = document.getElementById('cariChartOdenenText');
+
+    if (elChartPct) elChartPct.textContent = `${yuzde}%`;
+    if (elChartBorcText) elChartBorcText.textContent = `${fmt(toplamBorc)} ₺`;
+    if (elChartOdenenText) elChartOdenenText.textContent = `${fmt(toplamTahsilat)} ₺`;
+    if (elChartBar) elChartBar.style.width = `${yuzde}%`;
+
+    if (elChartPaid) {
+      const r = 44;
+      const C = 2 * Math.PI * r;
+      elChartPaid.setAttribute('stroke-dasharray', `${C} ${C}`);
+      elChartPaid.setAttribute('stroke-dashoffset', `${C * (1 - yuzde / 100)}`);
+    }
+  } catch (err) {
+    console.log('Cari dashboard:', err);
+  }
 }
 
 function miniDashboardGuncelle() {
