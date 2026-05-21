@@ -208,6 +208,16 @@ table.main-table tbody td {
   text-overflow:ellipsis; 
 }
 
+/* Cari Liste + Toptancı: Ürün Yönetimi gibi biraz daha büyük puntolar */
+#cariPane table.main-table thead th,
+#toptanciPane table.main-table thead th{
+  font-size:16px;
+}
+#cariPane table.main-table tbody td,
+#toptanciPane table.main-table tbody td{
+  font-size:19px;
+}
+
 /* Sütun genişlikleri ayarlanarak aradaki devasa boşluk daraltıldı */
 .col-arrow { width:22px; }
 .col-kod { width:90px; }
@@ -379,12 +389,7 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
 
 /* ── LOGIN ── */
 .login-modal { background:var(--bg2); border:2px solid var(--blue2); border-radius:10px; padding:36px 40px; width:320px; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,.7); }
-.login-logo { display:flex; justify-content:center; align-items:center; margin-bottom:14px; }
-.login-logo img{
-  width:92px;
-  height:auto;
-  filter: drop-shadow(0 10px 18px rgba(0,0,0,.55));
-}
+.login-logo { font-size:42px; margin-bottom:12px; }
 .login-title { font-family:'Oswald',sans-serif; font-size:22px; font-weight:700; color:var(--white); letter-spacing:1px; margin-bottom:4px; }
 .login-sub { font-size:11px; color:var(--text-muted); margin-bottom:24px; }
 .login-input { width:100%; background:var(--input-bg); border:1px solid var(--input-border); border-radius:5px; padding:10px 14px; color:var(--white); font-family:'Exo 2',sans-serif; font-size:14px; font-weight:600; outline:none; text-align:center; letter-spacing:4px; margin-bottom:14px; }
@@ -687,7 +692,7 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
 
 <div class="modal-overlay active" id="loginOverlay">
   <div class="login-modal">
-    <div class="login-logo"><img src="mmk-logo.png" alt="MMK Logo"></div>
+    <div class="login-logo">💳</div>
     <div class="login-title">MMK VERESİYE</div>
     <div class="login-sub">Takip Programına Hoşgeldiniz</div>
     <input class="login-input" type="password" id="loginSifre" placeholder="••••" autocomplete="off">
