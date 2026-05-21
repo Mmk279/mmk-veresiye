@@ -383,13 +383,7 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
 .login-logo img{
   width:92px;
   height:auto;
-  /* Koyu arka planda daha uyumlu / parlak görünüm */
-  background: rgba(0,0,0,.22);
-  border: 1px solid rgba(30,58,95,.55);
-  border-radius: 14px;
-  padding: 10px 12px;
-  box-shadow: 0 18px 28px rgba(0,0,0,.45);
-  filter: brightness(1.15) contrast(1.1) saturate(1.05) drop-shadow(0 8px 16px rgba(0,0,0,.55));
+  filter: drop-shadow(0 10px 18px rgba(0,0,0,.55));
 }
 .login-title { font-family:'Oswald',sans-serif; font-size:22px; font-weight:700; color:var(--white); letter-spacing:1px; margin-bottom:4px; }
 .login-sub { font-size:11px; color:var(--text-muted); margin-bottom:24px; }
@@ -566,7 +560,7 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
     <div style="display:flex;height:100%;overflow:hidden;gap:0;">
 
     <!-- SOL: ÜRÜN LİSTESİ -->
-    <div style="display:flex;flex-direction:column;flex:1.35;min-width:0;border-right:2px solid var(--border);overflow:hidden;">
+    <div style="display:flex;flex-direction:column;flex:0.95;min-width:0;border-right:2px solid var(--border);overflow:hidden;">
       <div style="background:var(--bg2);border-bottom:1px solid var(--border);padding:8px 12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;flex-shrink:0;">
         <input class="tb-input" id="txtUrunAd" placeholder="Ürün adı..." style="width:140px" onkeydown="urunEkleKeyDown(event,'ad')">
         <input class="tb-input" id="txtUrunBarkod" placeholder="Barkod..." style="width:95px" onkeydown="urunEkleKeyDown(event,'barkod')">
@@ -577,12 +571,12 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
         <button class="btn btn-danger" onclick="urunSil()" style="margin-left:auto;">SİL</button>
       </div>
       <div style="flex:1;overflow-y:auto;overflow-x:auto;">
-        <table class="main-table" id="urunTable" style="table-layout:fixed;width:100%;min-width:760px;">
+        <table class="main-table" id="urunTable" style="table-layout:fixed;width:100%;min-width:720px;">
           <thead>
             <tr>
               <th style="width:20px;"></th>
               <th style="width:50px;">Kod</th>
-              <th style="width:auto;">Ürün Adı</th>
+              <th style="width:280px;">Ürün Adı</th>
               <th style="width:100px;">Barkod</th>
               <th style="width:160px;text-align:right;">Fiyat</th>
               <th style="width:90px;">Kategori</th>
@@ -599,7 +593,7 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
     </div>
 
     <!-- SAĞ: SATIŞ PANELİ -->
-    <div style="background:var(--bg2);display:flex;flex-direction:column;flex:0.85;min-width:360px;max-width:520px;height:100%;overflow:hidden;border-left:2px solid var(--border);">
+    <div style="background:var(--bg2);display:flex;flex-direction:column;flex:1.05;min-width:420px;max-width:620px;height:100%;overflow:hidden;border-left:2px solid var(--border);">
       <div style="border-bottom:1px solid var(--border);flex-shrink:0;">
         <div style="background:var(--header-bg);padding:8px 14px;">
           <span style="font-family:Oswald,sans-serif;font-size:14px;font-weight:700;color:var(--blue-bright);letter-spacing:1px;">👤 MÜŞTERİ SEÇ</span>
