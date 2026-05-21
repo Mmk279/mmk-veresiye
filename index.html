@@ -3285,6 +3285,7 @@ async function toptanciYukle() {
     toptanciListesi = await sbGet('toptanciler', 'order=kod.asc');
     toptanciTableYukle();
   } catch(err) { console.log('Toptancı yükleme:', err); }
+}
 
 async function toptanciEkleDirectly() {
   const input = document.getElementById('txtToptanciEkle');
@@ -3308,8 +3309,6 @@ async function toptanciEkleDirectly() {
     toast('✓ ' + unvan + ' eklendi');
   } catch(err) { toast('Hata: ' + err.message, true); }
   loading(false);
-}
-
 }
 
 function toptanciAraFilter() {
