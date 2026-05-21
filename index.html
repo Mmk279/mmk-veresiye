@@ -477,6 +477,24 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
   #urunPane > div {
     grid-template-columns:1fr;
   }
+  /* SEKMELERİ MOBİLDE DÜZELT */
+  .tab-bar {
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  .tab-btn {
+    white-space:nowrap;
+    font-size:12px;
+    padding:10px 12px;
+  }
+  #cariPane, #urunPane, #toptanciPane {
+    position:absolute !important;
+    top:138px !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:0 !important;
+    height:auto !important;
+  }
 }
 </style>
 </head>
@@ -768,10 +786,19 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
 
     <div class="hizli-box">
       <div class="hizli-header">
-        <span class="hizli-title">📊 BORÇ DAĞILIMI</span>
+        <span class="hizli-title">📊 TOPTANCI ÖZET</span>
       </div>
       <div class="hizli-body" id="miniDashboard">
-        <div style="text-align:center;color:var(--text-muted);font-size:12px;padding:8px;">Yükleniyor...</div>
+        <div style="display:grid;grid-template-columns:1fr;gap:12px;">
+          <div style="background:rgba(239,83,80,.12);border:1px solid rgba(239,83,80,.25);border-radius:6px;padding:12px;text-align:center;">
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">TOPLAM BORÇ</div>
+            <div id="miniDashTotalBorc" style="font-family:monospace;font-size:20px;font-weight:700;color:#ff4444;">0,00 ₺</div>
+          </div>
+          <div style="border-top:1px solid var(--border);padding-top:10px;margin-top:10px;">
+            <div style="font-size:11px;color:var(--text-muted);font-weight:700;letter-spacing:.5px;margin-bottom:8px;">EN ÇOKSA BORÇLULAR</div>
+            <div id="miniDashTopBorclu" style="max-height:200px;overflow-y:auto;"></div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1408,54 +1435,48 @@ function genelBakiyeHesapla() {
 
 function miniDashboardGuncelle() {
   const el = document.getElementById('miniDashboard');
-  if (!el || !cariListesi.length) return;
+  if (!el) return;
 
-  const borclu = cariListesi.filter(c=>Number(c.bakiye)>0);
-  const temiz = cariListesi.filter(c=>Number(c.bakiye)===0);
-  const alacakli = cariListesi.filter(c=>Number(c.bakiye)<0);
-  const toplamAlacak = borclu.reduce((t,c)=>t+Number(c.bakiye),0);
-  const top3 = [...borclu].sort((a,b)=>Number(b.bakiye)-Number(a.bakiye)).slice(0,3);
-  const maxBakiye = top3.length ? Number(top3[0].bakiye) : 1;
-
-  el.innerHTML = `
-    <!-- Özet sayılar -->
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px;">
-      <div style="background:rgba(239,83,80,.1);border:1px solid rgba(239,83,80,.25);border-radius:6px;padding:7px;text-align:center;">
-        <div style="font-size:18px;font-weight:700;color:#ff4444;font-family:monospace;">${borclu.length}</div>
-        <div style="font-size:10px;color:var(--text-muted);">Borçlu</div>
-      </div>
-      <div style="background:rgba(67,160,71,.1);border:1px solid rgba(67,160,71,.25);border-radius:6px;padding:7px;text-align:center;">
-        <div style="font-size:18px;font-weight:700;color:#66bb6a;font-family:monospace;">${temiz.length}</div>
-        <div style="font-size:10px;color:var(--text-muted);">Temiz</div>
-      </div>
-      <div style="background:rgba(66,165,245,.1);border:1px solid rgba(66,165,245,.25);border-radius:6px;padding:7px;text-align:center;">
-        <div style="font-size:18px;font-weight:700;color:var(--blue-bright);font-family:monospace;">${alacakli.length}</div>
-        <div style="font-size:10px;color:var(--text-muted);">Alacaklı</div>
-      </div>
-    </div>
-
-    <!-- Toplam -->
-    <div style="background:rgba(239,83,80,.06);border:1px solid rgba(239,83,80,.2);border-radius:6px;padding:8px;text-align:center;margin-bottom:10px;">
-      <div style="font-size:10px;color:var(--text-muted);letter-spacing:.5px;margin-bottom:2px;">TOPLAM ALACAK</div>
-      <div style="font-size:20px;font-weight:700;color:#ff4444;font-family:monospace;">${fmt(toplamAlacak)} ₺</div>
-    </div>
-
-    <!-- Top 3 bar chart -->
-    <div style="font-size:10px;font-weight:700;color:var(--text-muted);letter-spacing:.8px;margin-bottom:6px;">EN FAZLA BORÇLULAR</div>
-    ${top3.map(c => {
-      const yuzde = Math.round((Number(c.bakiye)/maxBakiye)*100);
-      return `<div style="margin-bottom:8px;">
-        <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px;">
-          <span style="color:var(--white);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:140px;">${c.unvan}</span>
-          <span style="color:#ff4444;font-family:monospace;font-weight:700;flex-shrink:0;margin-left:4px;">${fmt(c.bakiye)} ₺</span>
-        </div>
-        <div style="background:rgba(255,255,255,.06);border-radius:3px;height:6px;overflow:hidden;">
-          <div style="background:linear-gradient(90deg,#e53935,#ef5350);height:100%;width:${yuzde}%;border-radius:3px;transition:width .6s ease;"></div>
-        </div>
-      </div>`;
-    }).join('')}
-    ${!top3.length ? '<div style="text-align:center;color:var(--text-muted);font-size:12px;padding:8px;">Borçlu müşteri yok 🎉</div>' : ''}
-  `;
+  // Toptancılardan toplam borç hesapla
+  let toplamToptanciBorcFunc = async () => {
+    try {
+      const toptancis = await sbGet('toptanciler', 'order=kod.asc');
+      const hareketler = await sbGet('toptanci_hareketleri');
+      
+      let toplamBorc = 0;
+      const borcMap = {};
+      
+      hareketler.forEach(h => {
+        if (!borcMap[h.toptanci_kod]) borcMap[h.toptanci_kod] = 0;
+        borcMap[h.toptanci_kod] += (h.borc || 0) - (h.tahsilat || 0);
+      });
+      
+      toptancis.forEach(t => {
+        t.bakiye = borcMap[t.kod] || 0;
+        toplamBorc += t.bakiye;
+      });
+      
+      const topBorclu = [...toptancis]
+        .filter(t => t.bakiye > 0)
+        .sort((a, b) => b.bakiye - a.bakiye)
+        .slice(0, 5);
+      
+      document.getElementById('miniDashTotalBorc').textContent = fmt(toplamBorc) + ' ₺';
+      
+      const topBorcluDiv = document.getElementById('miniDashTopBorclu');
+      topBorcluDiv.innerHTML = topBorclu.length === 0 
+        ? '<div style="color:var(--text-muted);font-size:12px;">Borç yok</div>'
+        : topBorclu.map(t => `
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.05);">
+            <span style="color:var(--white);font-size:12px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:140px;">${t.unvan}</span>
+            <span style="color:#ff4444;font-family:monospace;font-size:12px;font-weight:700;flex-shrink:0;margin-left:4px;">${fmt(t.bakiye)} ₺</span>
+          </div>`).join('');
+    } catch(err) { 
+      console.log('Mini dashboard:', err); 
+    }
+  };
+  
+  toplamToptanciBorcFunc();
 }
 
 function otomatikKodVer() {
