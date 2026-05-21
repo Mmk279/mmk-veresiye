@@ -2306,6 +2306,7 @@ function globalKeyDown(e){
     rows[idx].classList.add('selected');
     rows[idx].querySelector('.row-arrow').style.display='inline';
     seciliUrunKod = parseInt(rows[idx].dataset.kod);
+    seciliUrunKodlar = [seciliUrunKod];
     rows[idx].scrollIntoView({block:'nearest'});
     return;
   }
@@ -2981,6 +2982,7 @@ function sekmeAc(sekme) {
 // ═══════════════════════════════════════════════════════
 let urunListesi = [];
 let seciliUrunKod = null;
+let seciliUrunKodlar = [];
 
 async function urunleriYukle() {
   try {
@@ -3004,12 +3006,40 @@ function urunTabloYenile() {
       <td style="color:var(--text-muted);font-family:monospace;font-size:12px">${u.barkod||'—'}</td>
       <td style="text-align:right;color:var(--green2);font-family:monospace;font-weight:700">${fmt(u.fiyat)} ₺</td>
       <td><span style="background:rgba(33,150,243,.12);color:var(--blue-bright);border:1px solid rgba(33,150,243,.25);padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700">${u.kategori||'Genel'}</span></td>`;
-    tr.addEventListener('click', () => {
-      document.querySelectorAll('#tbodyUrun tr').forEach(r => { r.classList.remove('selected'); r.querySelector('.row-arrow').style.display='none'; });
+    // Önceden seçiliyse satırı işaretle
+    if (seciliUrunKodlar.includes(u.kod)) {
       tr.classList.add('selected');
       tr.querySelector('.row-arrow').style.display = 'inline';
-      seciliUrunKod = u.kod;
-      // Sağ panele tıklanan ürünü sepete ekle butonu
+    }
+
+    tr.addEventListener('click', (ev) => {
+      const kod = u.kod;
+      const ok = tr.querySelector('.row-arrow');
+
+      if (ev && (ev.ctrlKey || ev.metaKey)) {
+        // Çoklu seçim
+        if (seciliUrunKodlar.includes(kod)) {
+          seciliUrunKodlar = seciliUrunKodlar.filter(x => x !== kod);
+          tr.classList.remove('selected');
+          ok.style.display = 'none';
+        } else {
+          seciliUrunKodlar.push(kod);
+          tr.classList.add('selected');
+          ok.style.display = 'inline';
+        }
+      } else {
+        // Tek seçim
+        document.querySelectorAll('#tbodyUrun tr').forEach(r => {
+          r.classList.remove('selected');
+          r.querySelector('.row-arrow').style.display='none';
+        });
+        seciliUrunKodlar = [kod];
+        tr.classList.add('selected');
+        ok.style.display = 'inline';
+      }
+
+      // Düzenleme gibi işlemler için son seçiliyi tut
+      seciliUrunKod = seciliUrunKodlar.length ? seciliUrunKodlar[seciliUrunKodlar.length - 1] : null;
     });
     tr.addEventListener('dblclick', () => sepeteUrunEkle(u));
     tbody.appendChild(tr);
@@ -3041,6 +3071,7 @@ function urunAraKeyDown(e) {
     hedef.classList.add('selected');
     hedef.querySelector('.row-arrow').style.display='inline';
     seciliUrunKod = parseInt(hedef.dataset.kod);
+    seciliUrunKodlar = [seciliUrunKod];
     hedef.scrollIntoView({block:'nearest'});
   } else if (e.key==='ArrowUp') {
     e.preventDefault();
@@ -3050,6 +3081,7 @@ function urunAraKeyDown(e) {
     hedef.classList.add('selected');
     hedef.querySelector('.row-arrow').style.display='inline';
     seciliUrunKod = parseInt(hedef.dataset.kod);
+    seciliUrunKodlar = [seciliUrunKod];
     hedef.scrollIntoView({block:'nearest'});
   } else if (e.key==='Enter') {
     const secili = rows.find(r=>r.classList.contains('selected'));
@@ -3091,13 +3123,16 @@ async function urunEkle() {
 }
 
 async function urunSil() {
-  if (!seciliUrunKod) { toast('Önce bir ürün seçin!', true); return; }
-  const u = urunListesi.find(x => x.kod == seciliUrunKod);
-  if (!confirm(`"${u.ad}" silinsin mi?`)) return;
+  if (!seciliUrunKodlar.length) { toast('Önce en az bir ürün seçin! (Ctrl ile çoklu)', true); return; }
+  const kodlarString = seciliUrunKodlar.join(',');
+  const tek = seciliUrunKodlar.length === 1 ? urunListesi.find(x => x.kod == seciliUrunKodlar[0]) : null;
+  const msg = tek ? `"${tek.ad}" silinsin mi?` : `${seciliUrunKodlar.length} adet ürün silinsin mi?`;
+  if (!confirm(msg)) return;
   loading(true, 'Siliniyor...');
   try {
-    await sbDelete('urunler', `kod=eq.${seciliUrunKod}`);
-    urunListesi = urunListesi.filter(x => x.kod != seciliUrunKod);
+    await sbDelete('urunler', `kod=in.(${kodlarString})`);
+    urunListesi = urunListesi.filter(x => !seciliUrunKodlar.includes(parseInt(x.kod)));
+    seciliUrunKodlar = [];
     seciliUrunKod = null;
     urunTabloYenile();
     toast('Ürün silindi');
@@ -3118,8 +3153,9 @@ function urunExcel() {
 let duzenleUrunKod = null;
 
 function urunDuzenleAc() {
-  if (!seciliUrunKod) { toast('Önce bir ürün seçin!', true); return; }
-  const u = urunListesi.find(x => x.kod == seciliUrunKod);
+  const kod = seciliUrunKod ?? (seciliUrunKodlar.length ? seciliUrunKodlar[0] : null);
+  if (!kod) { toast('Önce bir ürün seçin!', true); return; }
+  const u = urunListesi.find(x => x.kod == kod);
   duzenleUrunKod = u.kod;
   document.getElementById('urunDuzenleEskiAd').textContent = u.ad;
   document.getElementById('urunDuzenleAd').value = u.ad;
@@ -3216,7 +3252,10 @@ function satisAcGuncelle() {
   document.getElementById('satisMusteriKod').value = '';
   document.getElementById('seciliMusteriInfo').style.display = 'none';
 
-  const liste = txt ? cariListesi.filter(c => c.unvan.toLowerCase().includes(txt)) : cariListesi;
+  // Input boşsa listeyi açık bırakma
+  if (!txt) { dropdown.style.display='none'; dropdown.innerHTML=''; return; }
+
+  const liste = cariListesi.filter(c => c.unvan.toLowerCase().includes(txt));
   if (!liste.length) { dropdown.style.display='none'; return; }
 
   dropdown.innerHTML = liste.slice(0,25).map(c => `
@@ -3476,8 +3515,13 @@ async function hesabaIsle() {
     carileritabloyaYukle(); genelBakiyeHesapla();
     sepetTemizle();
     document.getElementById('satisMusteri').value='';
+    document.getElementById('satisMusteriKod').value='';
     document.getElementById('seciliMusteriInfo').style.display='none';
+    const dd = document.getElementById('satisDropdown');
+    dd.style.display = 'none';
+    dd.innerHTML = '';
     satisSeciliKod = null;
+    document.getElementById('satisMusteri').focus();
     toast(`✓ ${fmt(toplam)} ₺ → ${musteriAd} hesabına işlendi!`);
   } catch(err) { toast('Hata: '+err.message, true); }
   loading(false);
