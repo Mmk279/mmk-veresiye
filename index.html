@@ -221,8 +221,16 @@ table.main-table tbody td {
 /* Sütun genişlikleri ayarlanarak aradaki devasa boşluk daraltıldı */
 .col-arrow { width:22px; }
 .col-kod { width:90px; }
-.col-unvan { width:450px; } /* Maksimum genişlik sınırı verilerek tutar sola yaklaştırıldı */
-.col-tutar { width:160px; text-align:right; font-family:'Roboto Mono',monospace; }
+.col-unvan { width:360px; } /* Cari ünvan biraz daraltıldı */
+.col-tutar { width:220px; text-align:right; font-family:'Roboto Mono',monospace; }
+
+/* Cari Liste: Tutar fontu Ürün Yönetimi fiyatı ile aynı olsun */
+#cariPane td.col-tutar{
+  font-size:34px;
+  font-weight:900;
+  line-height:1;
+  letter-spacing:.2px;
+}
 
 .color-red { color:var(--cell-red)!important; }
 .color-blue { color:var(--cell-blue)!important; }
@@ -927,8 +935,8 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
           <thead>
             <tr>
               <th style="width:22px;"></th>
-              <th>TOPTANCI ADI</th>
-              <th style="width:100px;text-align:right;">BORÇ</th>
+              <th style="width:320px;">TOPTANCI ADI</th>
+              <th style="width:180px;text-align:right;">BORÇ</th>
             </tr>
           </thead>
           <tbody id="toptanciTbody"></tbody>
@@ -3815,8 +3823,8 @@ function toptanciTableYukle() {
     const renk = bakiye > 0 ? '#ff4444' : bakiye < 0 ? 'var(--blue-bright)' : '#dce8f5';
     tr.innerHTML = `
       <td><span class="row-arrow" style="display:none">▶</span></td>
-      <td style="font-weight:700">${t.unvan}</td>
-      <td style="text-align:right;color:${renk};font-weight:800;font-family:monospace">${fmt(bakiye)} ₺</td>`;
+      <td style="font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${t.unvan}</td>
+      <td style="text-align:right;color:${renk};font-weight:900;font-family:monospace;font-size:34px;line-height:1;letter-spacing:.2px;">${fmt(bakiye)} ₺</td>`;
     
     tbody.appendChild(tr);
   });
