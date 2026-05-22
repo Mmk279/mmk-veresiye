@@ -221,12 +221,12 @@ table.main-table tbody td {
 /* Sütun genişlikleri ayarlanarak aradaki devasa boşluk daraltıldı */
 .col-arrow { width:22px; }
 .col-kod { width:90px; }
-.col-unvan { width:360px; } /* Cari ünvan biraz daraltıldı */
+.col-unvan { width:280px; } /* Cari ünvan biraz daraltıldı */
 .col-tutar { width:220px; text-align:right; font-family:'Roboto Mono',monospace; }
 
 /* Cari Liste: Tutar fontu Ürün Yönetimi fiyatı ile aynı olsun */
 #cariPane td.col-tutar{
-  font-size:34px;
+  font-size:40px;
   font-weight:900;
   line-height:1;
   letter-spacing:.2px;
@@ -245,20 +245,49 @@ table.main-table tbody td {
 
 /* ── RIGHT PANE ── */
 .right-pane {
-  background:var(--bg2); display:flex; flex-direction:column;
-  overflow-y:auto; padding:4px 10px; gap:8px;
+  background:var(--bg2);
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  grid-auto-rows:min-content;
+  gap:8px;
+  overflow-y:auto;
+  padding:6px 10px;
   height:100%;
+  align-content:start;
 }
 .right-pane::-webkit-scrollbar { width:4px; }
 .right-pane::-webkit-scrollbar-thumb { background:var(--panel2); border-radius:3px; }
 
 /* ── SAAT ── */
-.saat-box { background:var(--bg3); border:1px solid var(--border); border-radius:6px; padding:6px 12px; text-align:center; }
+.saat-box {
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:10px 12px;
+  text-align:center;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
 #lblCanliSaat{ line-height:1.2; }
 #lblCanliSaat { font-family:'Roboto Mono',monospace; font-size:20px; font-weight:700; color:var(--blue-bright); letter-spacing:2px; text-shadow:0 0 12px rgba(66,165,245,.5); }
 
+#lblBugunTarih{
+  font-size:12px;
+  color:var(--text-muted);
+  margin-top:4px;
+  font-family:'Exo 2',sans-serif;
+  font-weight:600;
+}
+
 /* ── TAKVİM ── */
-.takvim-box { background:var(--bg3); border:1px solid var(--border); border-radius:6px; overflow:hidden; }
+.takvim-box {
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:6px;
+  overflow:hidden;
+  align-self:start;
+}
 .takvim-header { background:var(--header-bg); padding:6px 10px; display:flex; align-items:center; justify-content:space-between; font-family:'Oswald',sans-serif; font-size:13px; font-weight:600; color:var(--blue-bright); }
 .takvim-nav { background:none; border:1px solid var(--border2); color:var(--text); width:22px; height:22px; border-radius:3px; cursor:pointer; font-size:12px; display:flex; align-items:center; justify-content:center; }
 .takvim-nav:hover { background:var(--panel2); }
@@ -483,7 +512,11 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
     grid-template-columns:1fr;
     grid-template-rows:1fr 340px;
   }
-  .right-pane{border-top:2px solid var(--border);}
+  .right-pane{
+    border-top:2px solid var(--border);
+    display:flex;
+    flex-direction:column;
+  }
   .detay-main-layout{grid-template-columns:1fr;}
   .detay-right-pane{border-top:2px solid var(--border);}
   .detay-modal{width:99vw;height:96vh;}
@@ -790,84 +823,50 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
 
     <div class="hizli-box">
       <div class="hizli-header">
-        <span class="hizli-title">📊 BORÇ &amp; TAHSİLAT GRAFİĞİ</span>
+        <span class="hizli-title">📈 TAHSİLAT GRAFİĞİ</span>
       </div>
       <div class="hizli-body" id="cariGrafikBox" style="padding:14px;">
-        <div style="background:rgba(0,0,0,.16);border:1px solid rgba(30,58,95,.55);border-radius:14px;padding:16px;box-shadow:0 14px 26px rgba(0,0,0,.25);">
-          <div style="display:flex;align-items:center;justify-content:center;gap:22px;flex-wrap:wrap;">
-            <!-- ÇİFT HALKALI SVG -->
-            <svg width="160" height="160" viewBox="0 0 160 160" aria-label="Borç ve Tahsilat grafiği" style="flex:0 0 auto;">
+        <div style="background:rgba(0,0,0,.16);border:1px solid rgba(30,58,95,.55);border-radius:14px;padding:14px;box-shadow:0 14px 26px rgba(0,0,0,.25);">
+          <div style="display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;">
+            <svg width="150" height="150" viewBox="0 0 140 140" aria-label="Tahsilat grafiği" style="flex:0 0 auto;">
               <defs>
-                <!-- Tahsilat gradyanı (yeşil) -->
                 <linearGradient id="gradCariPaid" x1="0" y1="0" x2="1" y2="1">
                   <stop offset="0%" stop-color="#66bb6a" />
                   <stop offset="100%" stop-color="#43a047" />
                 </linearGradient>
-                <!-- Borç gradyanı (kırmızı) -->
-                <linearGradient id="gradCariBorc" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stop-color="#ff6b6b" />
-                  <stop offset="100%" stop-color="#e53935" />
+                <linearGradient id="gradCariRing" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="rgba(66,165,245,.35)" />
+                  <stop offset="100%" stop-color="rgba(33,150,243,.12)" />
                 </linearGradient>
-                <!-- Parıltı filtresi -->
-                <filter id="glowGreen">
-                  <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
-                  <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
-                </filter>
-                <filter id="glowRed">
-                  <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
-                  <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
-                </filter>
               </defs>
-              <!-- Dış arka halka (Borç) -->
-              <circle cx="80" cy="80" r="68" stroke="rgba(255,68,68,.12)" stroke-width="13" fill="none"/>
-              <!-- Dış aktif halka (Borç - kırmızı) -->
-              <circle id="cariChartBorc" cx="80" cy="80" r="68" stroke="url(#gradCariBorc)" stroke-width="13" fill="none"
-                      stroke-linecap="round" transform="rotate(-90 80 80)"
-                      stroke-dasharray="0 427" filter="url(#glowRed)"/>
-              <!-- İç arka halka (Tahsilat) -->
-              <circle cx="80" cy="80" r="50" stroke="rgba(102,187,106,.12)" stroke-width="13" fill="none"/>
-              <!-- İç aktif halka (Tahsilat - yeşil) -->
-              <circle id="cariChartPaid" cx="80" cy="80" r="50" stroke="url(#gradCariPaid)" stroke-width="13" fill="none"
-                      stroke-linecap="round" transform="rotate(-90 80 80)"
-                      stroke-dasharray="0 314" filter="url(#glowGreen)"/>
-              <!-- Merkez yüzde -->
-              <text x="80" y="75" text-anchor="middle" fill="var(--white)" font-family="Oswald,sans-serif" font-size="26" font-weight="900" id="cariChartPct">0%</text>
-              <text x="80" y="93" text-anchor="middle" fill="var(--text-muted)" font-family="Exo 2,sans-serif" font-size="9.5" letter-spacing="1.2">TAHSİLAT</text>
-              <!-- Legend noktaları -->
-              <circle cx="54" cy="145" r="5" fill="#ff6b6b"/>
-              <text x="62" y="149" fill="rgba(255,255,255,.6)" font-family="Exo 2,sans-serif" font-size="9">BORÇ</text>
-              <circle cx="100" cy="145" r="5" fill="#66bb6a"/>
-              <text x="108" y="149" fill="rgba(255,255,255,.6)" font-family="Exo 2,sans-serif" font-size="9">TAHSİLAT</text>
+              <!-- Dış halka (dekor) -->
+              <circle cx="70" cy="70" r="60" stroke="url(#gradCariRing)" stroke-width="2" fill="none" />
+              <!-- Arka ring -->
+              <circle cx="70" cy="70" r="52" stroke="rgba(255,255,255,.08)" stroke-width="14" fill="none" />
+              <!-- Tahsilat ring -->
+              <circle id="cariChartPaid" cx="70" cy="70" r="52" stroke="url(#gradCariPaid)" stroke-width="14" fill="none"
+                      stroke-linecap="round" transform="rotate(-90 70 70)" stroke-dasharray="0" stroke-dashoffset="0" />
+              <text x="70" y="66" text-anchor="middle" fill="var(--white)" font-family="Oswald, sans-serif" font-size="26" font-weight="900" id="cariChartPct">0%</text>
+              <text x="70" y="88" text-anchor="middle" fill="var(--text-muted)" font-family="Exo 2, sans-serif" font-size="10" letter-spacing="1">TAHSİLAT</text>
             </svg>
-            <!-- Sağ panel: rakamlar -->
-            <div style="flex:1;min-width:220px;">
+            <div style="flex:1;min-width:240px;">
               <div style="display:grid;grid-template-columns:1fr;gap:10px;">
-                <!-- Borç satırı -->
-                <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;background:rgba(255,68,68,.07);border:1px solid rgba(255,68,68,.18);border-radius:8px;padding:8px 12px;">
-                  <span style="color:rgba(255,255,255,.65);font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;">
-                    <span style="width:8px;height:8px;border-radius:50%;background:#ff6b6b;display:inline-block;box-shadow:0 0 6px #ff6b6b;"></span>Toplam Borç
-                  </span>
-                  <span id="cariChartBorcText" style="font-family:monospace;font-weight:900;color:#ff6b6b;font-size:18px;text-shadow:0 0 12px rgba(255,68,68,.4);">0,00 ₺</span>
+                <div style="display:flex;justify-content:space-between;gap:10px;font-size:13px;">
+                  <span style="color:var(--text-muted);font-weight:700;">Toplam Borç</span>
+                  <span id="cariChartBorcText" style="font-family:monospace;font-weight:900;color:#ff4444;font-size:18px;text-shadow:0 0 10px rgba(239,83,80,.25);">0,00 ₺</span>
                 </div>
-                <!-- Tahsilat satırı -->
-                <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;background:rgba(102,187,106,.07);border:1px solid rgba(102,187,106,.18);border-radius:8px;padding:8px 12px;">
-                  <span style="color:rgba(255,255,255,.65);font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;">
-                    <span style="width:8px;height:8px;border-radius:50%;background:#66bb6a;display:inline-block;box-shadow:0 0 6px #66bb6a;"></span>Toplam Tahsilat
-                  </span>
-                  <span id="cariChartOdenenText" style="font-family:monospace;font-weight:900;color:#66bb6a;font-size:18px;text-shadow:0 0 12px rgba(102,187,106,.4);">0,00 ₺</span>
+                <div style="display:flex;justify-content:space-between;gap:10px;font-size:13px;">
+                  <span style="color:var(--text-muted);font-weight:700;">Toplam Tahsilat</span>
+                  <span id="cariChartOdenenText" style="font-family:monospace;font-weight:900;color:#66bb6a;font-size:18px;text-shadow:0 0 10px rgba(102,187,106,.22);">0,00 ₺</span>
                 </div>
-                <!-- Kalan satırı -->
-                <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;background:rgba(66,165,245,.07);border:1px solid rgba(66,165,245,.18);border-radius:8px;padding:8px 12px;">
-                  <span style="color:rgba(255,255,255,.65);font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;">
-                    <span style="width:8px;height:8px;border-radius:50%;background:var(--blue-bright);display:inline-block;box-shadow:0 0 6px var(--blue-bright);"></span>Kalan
-                  </span>
-                  <span id="cariChartKalanText" style="font-family:monospace;font-weight:900;color:var(--blue-bright);font-size:18px;text-shadow:0 0 12px rgba(66,165,245,.4);">0,00 ₺</span>
+                <div style="display:flex;justify-content:space-between;gap:10px;font-size:13px;">
+                  <span style="color:var(--text-muted);font-weight:700;">Kalan</span>
+                  <span id="cariChartKalanText" style="font-family:monospace;font-weight:900;color:var(--blue-bright);font-size:18px;text-shadow:0 0 10px rgba(66,165,245,.22);">0,00 ₺</span>
                 </div>
-                <!-- Progress bar -->
-                <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:999px;height:8px;overflow:hidden;margin-top:2px;">
-                  <div id="cariChartBar" style="height:100%;width:0%;background:linear-gradient(90deg,#66bb6a,#43a047);border-radius:999px;transition:width .5s ease;"></div>
+                <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:999px;height:10px;overflow:hidden;">
+                  <div id="cariChartBar" style="height:100%;width:0%;background:linear-gradient(90deg,#66bb6a,#43a047);border-radius:999px;transition:width .35s ease;"></div>
                 </div>
-                <div style="font-size:10px;color:var(--text-muted);text-align:center;letter-spacing:.5px;">(Tahsilat / Toplam Borç)</div>
+                <div style="margin-top:2px;font-size:10px;color:var(--text-muted);text-align:center;">(Tahsilat / Toplam Borç)</div>
               </div>
             </div>
           </div>
@@ -1553,22 +1552,11 @@ async function cariDashboardGuncelle() {
       elChartKalanText.style.color = kalan > 0 ? '#ff4444' : kalan < 0 ? 'var(--blue-bright)' : '#66bb6a';
     }
 
-    // İç halka: Tahsilat (r=50)
     if (elChartPaid) {
-      const r = 50;
+      const r = 52;
       const C = 2 * Math.PI * r;
       elChartPaid.setAttribute('stroke-dasharray', `${C} ${C}`);
       elChartPaid.setAttribute('stroke-dashoffset', `${C * (1 - yuzde / 100)}`);
-    }
-    // Dış halka: Borç oranı (toplamBorc / (toplamBorc + birşey) → her zaman %100 görünür dekor)
-    const elChartBorc = document.getElementById('cariChartBorc');
-    if (elChartBorc) {
-      const rB = 68;
-      const CB = 2 * Math.PI * rB;
-      // Borç halkası: borç varsa dolu göster, yoksa boş
-      const borcYuzde = toplamBorc > 0 ? 100 : 0;
-      elChartBorc.setAttribute('stroke-dasharray', `${CB * borcYuzde / 100} ${CB}`);
-      elChartBorc.setAttribute('stroke-dashoffset', '0');
     }
   } catch (err) {
     console.log('Cari dashboard:', err);
@@ -4111,6 +4099,14 @@ async function toptanciOdemeKaydet() {
 
   // yyyy-mm-dd -> dd.mm.yyyy HH:MM
   const now = new Date();
+
+document.getElementById("lblBugunTarih").innerText =
+  now.toLocaleDateString("tr-TR", {
+    weekday:"long",
+    day:"2-digit",
+    month:"long",
+    year:"numeric"
+  });
   let d = tarihInput ? new Date(tarihInput + 'T00:00:00') : new Date();
   d.setHours(now.getHours(), now.getMinutes(), 0, 0);
   const f = x => String(x).padStart(2, '0');
