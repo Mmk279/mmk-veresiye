@@ -580,7 +580,7 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
         <input class="tb-input" id="txtUrunFiyat" placeholder="Fiyat ₺" style="width:70px" type="number" onkeydown="urunEkleKeyDown(event,'fiyat')">
         <input class="tb-input" id="txtUrunKategori" placeholder="Kategori..." style="width:80px" onkeydown="urunEkleKeyDown(event,'kategori')">
         <button class="btn btn-primary" onclick="urunEkle()" style="background:var(--blue2);color:#fff;">+ EKLE</button>
-        '<input class="tb-input" id="txtUrunAra" placeholder="🔍 Ara..." style="width:120px" autocomplete="off" oninput="urunAraFilter()" onkeydown="urunAraKeyDown(event)">'
+        '<input class="tb-input" id="txtUrunAra" placeholder="🔍 Ara..." style="width:120px" autocomplete="off" oninput="urunAraFilter()" onkeydown="urunAraKeyDown(event)">
         <button class="btn btn-danger" onclick="urunSil()" style="margin-left:auto;">SİL</button>
       </div>
       <div style="flex:1;overflow-y:auto;overflow-x:auto;">
@@ -927,7 +927,7 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
             <div class="islem-panel-body">
               <div>
                 <div class="islem-field-label">Açıklama</div>
-                '<input class="islem-input" id="txtIslemAciklama" placeholder="Açıklama yazın..." autocomplete="off" onkeydown="islemKeyDown(event,\'aciklama\')">'
+                <input class="islem-input" id="txtIslemAciklama" placeholder="Açıklama yazın..." autocomplete="off" onkeydown="islemKeyDown(event,\'aciklama\')">
               </div>
               <div>
                 <div class="islem-field-label">Tutar (₺)</div>
