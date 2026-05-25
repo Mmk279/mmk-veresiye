@@ -580,7 +580,7 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
         <input class="tb-input" id="txtUrunFiyat" placeholder="Fiyat ₺" style="width:70px" type="number" onkeydown="urunEkleKeyDown(event,'fiyat')">
         <input class="tb-input" id="txtUrunKategori" placeholder="Kategori..." style="width:80px" onkeydown="urunEkleKeyDown(event,'kategori')">
         <button class="btn btn-primary" onclick="urunEkle()" style="background:var(--blue2);color:#fff;">+ EKLE</button>
-        <input class="tb-input" id="txtUrunAra" placeholder="🔍 Ara..." style="width:120px" autocomplete="off" oninput="urunAraFilter()" onkeydown="urunAraKeyDown(event)">
+        <input class="tb-input" id="txtUrunAra" placeholder="🔍 Ara..." style="width:120px" oninput="urunAraFilter()" onkeydown="urunAraKeyDown(event)">
         <button class="btn btn-danger" onclick="urunSil()" style="margin-left:auto;">SİL</button>
       </div>
       <div style="flex:1;overflow-y:auto;overflow-x:auto;">
@@ -766,26 +766,32 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
   </div>
 
   <div class="right-pane">
-    <div class="saat-box">
-      <div id="lblCanliSaat">--.--.---- | --:--:--</div>
-    </div>
+    <div style="display:flex;gap:8px;align-items:stretch;">
 
-    <div class="takvim-box">
-      <div class="takvim-header">
-        <button class="takvim-nav" onclick="takvimGeri()">◀</button>
-        <span id="takvimAyYil"></span>
-        <button class="takvim-nav" onclick="takvimIleri()">▶</button>
+      <!-- SAAT -->
+      <div class="saat-box" style="flex:0 0 auto;display:flex;align-items:center;justify-content:center;padding:6px 10px;">
+        <div id="lblCanliSaat">--.--.---- | --:--:--</div>
       </div>
-      <div class="takvim-grid">
-        <div class="takvim-days">
-          <div class="takvim-day-label">Pzt</div><div class="takvim-day-label">Sal</div>
-          <div class="takvim-day-label">Çar</div><div class="takvim-day-label">Per</div>
-          <div class="takvim-day-label">Cum</div><div class="takvim-day-label">Cmt</div>
-          <div class="takvim-day-label">Paz</div>
+
+      <!-- TAKVİM -->
+      <div class="takvim-box" style="flex:1;min-width:0;">
+        <div class="takvim-header">
+          <button class="takvim-nav" onclick="takvimGeri()">◀</button>
+          <span id="takvimAyYil"></span>
+          <button class="takvim-nav" onclick="takvimIleri()">▶</button>
         </div>
-        <div class="takvim-cells" id="takvimCells"></div>
+        <div class="takvim-grid">
+          <div class="takvim-days">
+            <div class="takvim-day-label">Pzt</div><div class="takvim-day-label">Sal</div>
+            <div class="takvim-day-label">Çar</div><div class="takvim-day-label">Per</div>
+            <div class="takvim-day-label">Cum</div><div class="takvim-day-label">Cmt</div>
+            <div class="takvim-day-label">Paz</div>
+          </div>
+          <div class="takvim-cells" id="takvimCells"></div>
+        </div>
+        <div class="takvim-today-label" id="takvimTodayLabel"></div>
       </div>
-      <div class="takvim-today-label" id="takvimTodayLabel"></div>
+
     </div>
 
     <div class="hizli-box">
@@ -920,7 +926,7 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
             <div class="islem-panel-body">
               <div>
                 <div class="islem-field-label">Açıklama</div>
-                <input class="islem-input" id="txtIslemAciklama" placeholder="Açıklama yazın..." autocomplete="off" onkeydown="islemKeyDown(event,'aciklama')">
+                <input class="islem-input" id="txtIslemAciklama" placeholder="Açıklama yazın..." onkeydown="islemKeyDown(event,'aciklama')">
               </div>
               <div>
                 <div class="islem-field-label">Tutar (₺)</div>
