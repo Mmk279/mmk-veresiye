@@ -255,7 +255,7 @@ table.main-table tbody td {
 /* ── SAAT ── */
 .saat-box { background:var(--bg3); border:1px solid var(--border); border-radius:6px; padding:6px 12px; text-align:center; }
 #lblCanliSaat{ line-height:1.2; }
-#lblCanliSaat { font-family:'Roboto Mono',monospace; font-size:30px; font-weight:700; color:var(--blue-bright); letter-spacing:2px; text-shadow:0 0 12px rgba(66,165,245,.5); }
+#lblCanliSaat { font-family:'Roboto Mono',monospace; font-size:20px; font-weight:700; color:var(--blue-bright); letter-spacing:2px; text-shadow:0 0 12px rgba(66,165,245,.5); }
 
 /* ── TAKVİM ── */
 .takvim-box { background:var(--bg3); border:1px solid var(--border); border-radius:6px; overflow:hidden; }
@@ -354,13 +354,13 @@ table.detay-table thead th {
 table.detay-table tbody tr { border-bottom:1px solid rgba(30,58,95,.4); transition:background .1s; cursor:pointer; }
 table.detay-table tbody tr:hover { background:var(--row-hover); }
 table.detay-table tbody tr.selected { background:var(--row-selected); }
-table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58,95,.2); font-size:14px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+table.detay-table tbody td { padding:7px 10px; border-right:1px solid rgba(30,58,95,.2); font-size:17px; font-weight:700; color:#ffffff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .dcol-arrow { width:22px; }
 .dcol-tarih { width:135px; }
 .dcol-aciklama { width:auto; }
-.dcol-borc { width:95px; text-align:right; font-family:'Roboto Mono',monospace; }
-.dcol-tahsilat { width:95px; text-align:right; font-family:'Roboto Mono',monospace; }
-.dcol-bakiye { width:105px; text-align:right; font-family:'Roboto Mono',monospace; }
+.dcol-borc { width:115px; text-align:right; font-family:'Roboto Mono',monospace; font-size:19px; font-weight:900; }
+.dcol-tahsilat { width:115px; text-align:right; font-family:'Roboto Mono',monospace; font-size:19px; font-weight:900; }
+.dcol-bakiye { width:125px; text-align:right; font-family:'Roboto Mono',monospace; font-size:19px; font-weight:900; }
 
 .detay-right-pane { background:var(--bg2); padding:16px; display:flex; flex-direction:column; gap:16px; overflow-y:auto; }
 
@@ -580,7 +580,7 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
         <input class="tb-input" id="txtUrunFiyat" placeholder="Fiyat ₺" style="width:70px" type="number" onkeydown="urunEkleKeyDown(event,'fiyat')">
         <input class="tb-input" id="txtUrunKategori" placeholder="Kategori..." style="width:80px" onkeydown="urunEkleKeyDown(event,'kategori')">
         <button class="btn btn-primary" onclick="urunEkle()" style="background:var(--blue2);color:#fff;">+ EKLE</button>
-        <input class="tb-input" id="txtUrunAra" placeholder="🔍 Ara..." style="width:120px" autocomplete="off" oninput="urunAraFilter()" onkeydown="urunAraKeyDown(event)">
+        <input class="tb-input" id="txtUrunAra" placeholder="🔍 Ara..." style="width:120px" oninput="urunAraFilter()" onkeydown="urunAraKeyDown(event)">
         <button class="btn btn-danger" onclick="urunSil()" style="margin-left:auto;">SİL</button>
       </div>
       <div style="flex:1;overflow-y:auto;overflow-x:auto;">
@@ -766,33 +766,26 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
   </div>
 
   <div class="right-pane">
-    <div style="display:flex;gap:8px;align-items:stretch;">
+    <div class="saat-box">
+      <div id="lblCanliSaat">--.--.---- | --:--:--</div>
+    </div>
 
-      <!-- SAAT KUTUSU -->
-      <div class="saat-box" style="flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 12px;gap:3px;">
-        <span id="spSaat" style="font-family:'Roboto Mono',monospace;font-size:22px;font-weight:900;color:var(--blue-bright);letter-spacing:2px;text-shadow:0 0 12px rgba(66,165,245,.5);line-height:1;">--:--:--</span>
-        <span id="spTarih" style="font-family:'Roboto Mono',monospace;font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:1px;line-height:1;">&nbsp;</span>
+    <div class="takvim-box">
+      <div class="takvim-header">
+        <button class="takvim-nav" onclick="takvimGeri()">◀</button>
+        <span id="takvimAyYil"></span>
+        <button class="takvim-nav" onclick="takvimIleri()">▶</button>
       </div>
-
-      <!-- TAKVİM -->
-      <div class="takvim-box" style="flex:1;min-width:0;">
-        <div class="takvim-header">
-          <button class="takvim-nav" onclick="takvimGeri()">◀</button>
-          <span id="takvimAyYil"></span>
-          <button class="takvim-nav" onclick="takvimIleri()">▶</button>
+      <div class="takvim-grid">
+        <div class="takvim-days">
+          <div class="takvim-day-label">Pzt</div><div class="takvim-day-label">Sal</div>
+          <div class="takvim-day-label">Çar</div><div class="takvim-day-label">Per</div>
+          <div class="takvim-day-label">Cum</div><div class="takvim-day-label">Cmt</div>
+          <div class="takvim-day-label">Paz</div>
         </div>
-        <div class="takvim-grid">
-          <div class="takvim-days">
-            <div class="takvim-day-label">Pzt</div><div class="takvim-day-label">Sal</div>
-            <div class="takvim-day-label">Çar</div><div class="takvim-day-label">Per</div>
-            <div class="takvim-day-label">Cum</div><div class="takvim-day-label">Cmt</div>
-            <div class="takvim-day-label">Paz</div>
-          </div>
-          <div class="takvim-cells" id="takvimCells"></div>
-        </div>
-        <div class="takvim-today-label" id="takvimTodayLabel"></div>
+        <div class="takvim-cells" id="takvimCells"></div>
       </div>
-
+      <div class="takvim-today-label" id="takvimTodayLabel"></div>
     </div>
 
     <div class="hizli-box">
@@ -927,7 +920,7 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
             <div class="islem-panel-body">
               <div>
                 <div class="islem-field-label">Açıklama</div>
-                <input class="islem-input" id="txtIslemAciklama" placeholder="Açıklama yazın..." autocomplete="off" onkeydown="islemKeyDown(event,\'aciklama\')">
+                <input class="islem-input" id="txtIslemAciklama" placeholder="Açıklama yazın..." onkeydown="islemKeyDown(event,'aciklama')">
               </div>
               <div>
                 <div class="islem-field-label">Tutar (₺)</div>
@@ -1451,10 +1444,8 @@ function loading(aktif, metin='Yükleniyor...') {
 function saatBaslat() {
   function g() {
     const n = new Date(), f = d=>String(d).padStart(2,'0');
-    const spS = document.getElementById('spSaat');
-    const spT = document.getElementById('spTarih');
-    if(spS) spS.textContent = `${f(n.getHours())}:${f(n.getMinutes())}:${f(n.getSeconds())}`;
-    if(spT) spT.textContent = `${f(n.getDate())}.${f(n.getMonth()+1)}.${n.getFullYear()}`;
+    document.getElementById('lblCanliSaat').textContent =
+      `${f(n.getDate())}.${f(n.getMonth()+1)}.${n.getFullYear()} | ${f(n.getHours())}:${f(n.getMinutes())}:${f(n.getSeconds())}`;
   }
   g(); setInterval(g,1000);
 }
@@ -1747,11 +1738,11 @@ async function detayYukle() {
       const renk=isBorc?'#ff4444':'#66bb6a';
       tr.innerHTML=`
         <td class="dcol-arrow"><span class="row-arrow" style="display:none">▶</span></td>
-        <td class="dcol-tarih" style="color:${renk};font-size:13px">${r.tarih}</td>
-        <td class="dcol-aciklama" style="color:${renk}">${r.aciklama}</td>
-        <td class="dcol-borc" style="color:${renk}">${fmt(r.borc)}</td>
-        <td class="dcol-tahsilat" style="color:${renk}">${fmt(r.tahsilat)}</td>
-        <td class="dcol-bakiye" style="color:${renk}">${fmt(bakiyeMap[r.id])}</td>`;
+        <td class="dcol-tarih" style="color:#ffffff;font-size:16px;">${r.tarih}</td>
+        <td class="dcol-aciklama" style="color:#ffffff;">${r.aciklama}</td>
+        <td class="dcol-borc" style="color:${renk};">${fmt(r.borc)}</td>
+        <td class="dcol-tahsilat" style="color:${renk};">${fmt(r.tahsilat)}</td>
+        <td class="dcol-bakiye" style="color:${renk};font-weight:900;">${fmt(bakiyeMap[r.id])}</td>`;
 
       tr.addEventListener('click', ev => {
         if (ev.ctrlKey || ev.metaKey) {
