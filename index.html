@@ -769,7 +769,7 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
     <div style="display:flex;gap:8px;align-items:stretch;">
 
       <!-- SAAT: saat üste, tarih alta -->
-      <div class="saat-box" style="flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0px 12px;gap:4px;">
+      <div class="saat-box" style="flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 12px;gap:4px;">
         <span id="spSaat" style="font-family:'Roboto Mono',monospace;font-size:22px;font-weight:900;color:var(--blue-bright);letter-spacing:2px;text-shadow:0 0 12px rgba(66,165,245,.5);line-height:1;">--:--:--</span>
         <span id="spTarih" style="font-family:'Roboto Mono',monospace;font-size:22px;font-weight:600;color:var(--text-muted);letter-spacing:1px;line-height:1;">--.--.----</span>
       </div>
@@ -2163,8 +2163,14 @@ async function driveTokenAl() {
       client_id: DRIVE_CLIENT_ID,
       scope: DRIVE_SCOPE,
       callback: (resp) => {
-        if (resp.error) { rej(resp.error); return; }
+        if (resp.error) {
+          driveAccessToken = null; // Token başarısız, sıfırla
+          rej(resp.error);
+          return;
+        }
         driveAccessToken = resp.access_token;
+        // Token 1 saat geçerli - süre dolunca otomatik sıfırla
+        setTimeout(() => { driveAccessToken = null; }, 3500 * 1000);
         res(resp.access_token);
       }
     });
@@ -2217,12 +2223,23 @@ async function driveYukle(zipBlob, dosyaAdi) {
 
 // ── Drive'a yedek al (ZIP oluştur + Drive'a yükle) ──
 async function driveYedekAl(otomatik = false) {
-  if (!otomatik) loading(true, '☁️ Google Drive\'a bağlanılıyor...');
+  // Loading overlay KAPALI iken OAuth popup açılmalı
+  // Önce Google token al (popup gösterir), sonra ZIP oluştur, sonra yükle
+  loading(false); // Her durumda önce kapat ki OAuth popup görünsün
   try {
-    // Önce ZIP oluştur
+    // 1. Adım: Önce Drive token'ı al (OAuth popup burada açılır)
+    if (!otomatik) loading(true, '☁️ Google Drive\'a bağlanılıyor...');
+    // Token yoksa OAuth popup açılacak - loading'i kapat
+    if (!driveAccessToken) {
+      loading(false); // Popup görünmesi için overlay kapat
+      await driveTokenAl();
+    }
+
+    // 2. Adım: ZIP oluştur
     const zipBlob = await zipOlustur();
     if (!zipBlob) return;
 
+    // 3. Adım: Drive'a yükle
     loading(true, '☁️ Google Drive\'a yükleniyor...');
     const d = new Date();
     const tarihStr = `${d.getDate()}_${d.getMonth()+1}_${d.getFullYear()}`;
@@ -2232,13 +2249,12 @@ async function driveYedekAl(otomatik = false) {
 
     // Son yedek tarihini kaydet
     localStorage.setItem('mmk_son_yedek', new Date().toISOString());
-    localStorage.setItem('drive_klasor_id', localStorage.getItem('drive_klasor_id')); // koru
 
     toast('✓ Yedek Google Drive\'a yüklendi! (MMK_Veresiye_Yedekler klasörü)');
     yedekEkraniGuncelle();
   } catch(err) {
     if (err === 'access_denied') { toast('Drive erişimi reddedildi.', true); }
-    else { toast('Drive hatası: ' + err.message, true); console.error(err); }
+    else { toast('Drive hatası: ' + (err && err.message ? err.message : err), true); console.error(err); }
   }
   loading(false);
 }
@@ -2326,9 +2342,14 @@ function otomatikYedekKontrol() {
 
   if (gunFark >= 1) {
     // 24 saatten fazla geçmiş — bildirim göster
+    // loading(false) çağrısından sonra confirm açılmalı ki ekran donmasın
     setTimeout(() => {
+      loading(false); // Confirm popup görünsün diye overlay kapat
       const onay = confirm(`⚠️ Son Drive yedeğinizin üzerinden ${gunFark} gün geçti!\n\nŞimdi otomatik yedek alınsın mı?`);
-      if (onay) driveYedekAl(true);
+      if (onay) {
+        // Küçük gecikme ile başlat - kullanıcı "Tamam"a bastıktan sonra
+        setTimeout(() => driveYedekAl(true), 300);
+      }
     }, 2000);
   }
 }
