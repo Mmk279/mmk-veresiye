@@ -1958,12 +1958,12 @@ function yedekEkraniAc() {
     const d = new Date(sonYedek);
     const gunFark = Math.floor((Date.now() - d.getTime()) / (1000*60*60*24));
     const renk = gunFark >= 3 ? 'var(--red)' : 'var(--green2)';
-    sonYedekHtml = `<div id="sonYedekBilgi" style="color:${renk};font-size:12px;text-align:center;padding:4px 0">
-      ✅ Son Drive yedeği: <strong>${d.toLocaleString('tr-TR')}</strong> (${gunFark} gün önce)
+    sonYedekHtml = `<div id="sonYedekBilgi" style="color:${renk};font-size:12px;text-align:center;padding:6px;background:rgba(0,0,0,.2);border-radius:6px;margin-bottom:4px;">
+      💾 Son yedek: <strong>${d.toLocaleString('tr-TR')}</strong> (${gunFark} gün önce)
     </div>`;
   } else {
-    sonYedekHtml = `<div id="sonYedekBilgi" style="color:var(--yellow);font-size:12px;text-align:center;padding:4px 0">
-      ⚠️ Henüz Google Drive yedeği alınmadı.
+    sonYedekHtml = `<div id="sonYedekBilgi" style="color:var(--yellow);font-size:12px;text-align:center;padding:6px;background:rgba(0,0,0,.2);border-radius:6px;margin-bottom:4px;">
+      ⚠️ Henüz yedek alınmadı. Lütfen ZIP ile yedek alın!
     </div>`;
   }
 
@@ -1972,27 +1972,19 @@ function yedekEkraniAc() {
     <div class="yedek-panel-kutusu">
       ${sonYedekHtml}
 
-      <div class="yedek-kart" style="border:2px solid #1565c0">
-        <div class="yedek-kart-baslik" style="color:var(--blue-bright)">☁️ Google Drive'a Yedekle (Önerilen)</div>
-        <div class="yedek-kart-aciklama">ZIP dosyasını (JSON + cari ekstreler) direkt Google Drive hesabınızdaki <strong>MMK_Veresiye_Yedekler</strong> klasörüne yükler. İlk seferinde Google hesabınızla giriş yapmanız istenecek.</div>
-        <button class="btn btn-secondary" style="background:linear-gradient(135deg,#1565c0,#1976d2);color:#fff;margin-top:8px;width:100%;" onclick="driveYedekAl()">
-          ☁️ GOOGLE DRIVE'A YEDEKLE
-        </button>
-      </div>
-
       <div class="yedek-kart">
         <div class="yedek-kart-baslik">💻 Bilgisayara İndir (ZIP)</div>
-        <div class="yedek-kart-aciklama">ZIP dosyasını bilgisayarınıza indirir. İçinde JSON yedek dosyası + her müşteri için ayrı HTML ekstre bulunur. Tarayıcı indirme klasörünüze kaydedilir.</div>
-        <button class="btn btn-secondary" style="background:var(--green);color:#fff;margin-top:8px;" onclick="veritabaniYedekAl()">
+        <div class="yedek-kart-aciklama">ZIP dosyasını bilgisayarınıza indirir. İçinde JSON yedek dosyası + her müşteri için ayrı HTML ekstre bulunur. Kayıt konumunu seçebilirsiniz (D:\VERESİYE YEDEK önerilir).</div>
+        <button class="btn btn-secondary" style="background:var(--green);color:#fff;margin-top:8px;width:100%;font-size:14px;padding:10px;" onclick="veritabaniYedekAl()">
           📦 BİLGİSAYARA İNDİR (ZIP)
         </button>
       </div>
 
       <div class="yedek-kart">
         <div class="yedek-kart-baslik">🔄 Yedeği Geri Yükle</div>
-        <div class="yedek-kart-aciklama">Daha önce indirdiğiniz JSON yedek dosyasını seçerek veritabanına geri yükleyin. <span style="color:var(--red);font-weight:bold;">Dikkat! Mevcut veriler silinir.</span></div>
-        <button class="btn btn-secondary" style="background:var(--red2);color:#fff;margin-top:8px;" onclick="veritabaniYedekYukleTetikle()">
-          YEDEKTEN GERİ YÜKLE (.JSON SEÇ)
+        <div class="yedek-kart-aciklama">Daha önce indirdiğiniz <strong>JSON</strong> yedek dosyasını seçerek veritabanına geri yükleyin. <span style="color:var(--red);font-weight:bold;">⚠️ Dikkat! Mevcut tüm veriler silinir, yerine yedek yüklenir.</span></div>
+        <button class="btn btn-secondary" style="background:#b71c1c;color:#fff;margin-top:8px;width:100%;font-size:14px;padding:10px;border:1px solid #ef5350;" onclick="veritabaniYedekYukleTetikle()">
+          📂 YEDEKTEKİ GERİ YÜKLE (.JSON SEÇ)
         </button>
       </div>
     </div>`;
@@ -2164,7 +2156,9 @@ tfoot td{padding:8px 10px;font-weight:700;font-size:12px}
       a.download = dosyaAdi;
       a.click();
       setTimeout(() => URL.revokeObjectURL(a.href), 5000);
-      toast(`✓ Yedek hazır! ${cariler.length} cari, ${tumHareketler.length} hareket → ZIP indirildi`);
+      // Son yedek tarihini güncelle
+    localStorage.setItem('mmk_son_yedek', new Date().toISOString());
+    toast(`✓ Yedek hazır! ${cariler.length} cari, ${tumHareketler.length} hareket → ZIP indirildi`);
     }
   } catch(err) { toast('Yedek hatası: ' + err.message, true); console.error(err); }
   loading(false);
@@ -2351,17 +2345,36 @@ async function zipOlustur() {
 // ── Otomatik yedek kontrolü (her giriş) ──
 function otomatikYedekKontrol() {
   const sonYedek = localStorage.getItem('mmk_son_yedek');
-  if (!sonYedek) return; // Hiç Drive yedeği alınmamış, gösterme
+  if (!sonYedek) return; // Hiç yedek alınmamış, gösterme
 
   const fark = Date.now() - new Date(sonYedek).getTime();
   const gunFark = Math.floor(fark / (1000 * 60 * 60 * 24));
 
   if (gunFark >= 1) {
-    // 24 saatten fazla geçmiş — bildirim göster
-    setTimeout(() => {
-      const onay = confirm(`⚠️ Son Drive yedeğinizin üzerinden ${gunFark} gün geçti!\n\nŞimdi otomatik yedek alınsın mı?`);
-      if (onay) driveYedekAl(true);
-    }, 2000);
+    const bildirimiGoster = () => {
+      loading(false);
+      const onay = confirm(`💾 Son yedeğinizin üzerinden ${gunFark} gün geçti!\n\nŞimdi ZIP yedeği almak ister misiniz?`);
+      if (onay) {
+        setTimeout(() => veritabaniYedekAl(), 300);
+      }
+    };
+
+    const simdi = new Date();
+    const saat = simdi.getHours();
+
+    if (saat === 9) {
+      // Saat 09:xx - hemen göster
+      setTimeout(bildirimiGoster, 2000);
+    } else {
+      // Saat 09:00'a kadar bekle
+      const hedef = new Date(simdi);
+      if (saat >= 10) {
+        hedef.setDate(hedef.getDate() + 1);
+      }
+      hedef.setHours(9, 0, 0, 0);
+      const bekle = hedef.getTime() - simdi.getTime();
+      setTimeout(bildirimiGoster, bekle);
+    }
   }
 }
 
@@ -2372,10 +2385,12 @@ function yedekEkraniGuncelle() {
   if (!el) return;
   if (sonYedek) {
     const d = new Date(sonYedek);
-    el.innerHTML = `✅ Son Drive yedeği: <strong>${d.toLocaleString('tr-TR')}</strong>`;
-    el.style.color = 'var(--green2)';
+    const gunFark = Math.floor((Date.now() - d.getTime()) / (1000*60*60*24));
+    const renk = gunFark >= 3 ? 'var(--red)' : 'var(--green2)';
+    el.style.color = renk;
+    el.innerHTML = `💾 Son yedek: <strong>${d.toLocaleString('tr-TR')}</strong> (${gunFark} gün önce)`;
   } else {
-    el.innerHTML = `⚠️ Henüz Drive yedeği alınmadı.`;
+    el.innerHTML = `⚠️ Henüz yedek alınmadı. Lütfen ZIP ile yedek alın!`;
     el.style.color = 'var(--yellow)';
   }
 }
