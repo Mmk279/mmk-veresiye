@@ -1958,12 +1958,12 @@ function yedekEkraniAc() {
     const d = new Date(sonYedek);
     const gunFark = Math.floor((Date.now() - d.getTime()) / (1000*60*60*24));
     const renk = gunFark >= 3 ? 'var(--red)' : 'var(--green2)';
-    sonYedekHtml = `<div id="sonYedekBilgi" style="color:${renk};font-size:12px;text-align:center;padding:6px;background:rgba(0,0,0,.2);border-radius:6px;margin-bottom:4px;">
-      💾 Son yedek: <strong>${d.toLocaleString('tr-TR')}</strong> (${gunFark} gün önce)
+    sonYedekHtml = `<div id="sonYedekBilgi" style="color:${renk};font-size:12px;text-align:center;padding:4px 0">
+      ✅ Son Drive yedeği: <strong>${d.toLocaleString('tr-TR')}</strong> (${gunFark} gün önce)
     </div>`;
   } else {
-    sonYedekHtml = `<div id="sonYedekBilgi" style="color:var(--yellow);font-size:12px;text-align:center;padding:6px;background:rgba(0,0,0,.2);border-radius:6px;margin-bottom:4px;">
-      ⚠️ Henüz yedek alınmadı. Lütfen ZIP ile yedek alın!
+    sonYedekHtml = `<div id="sonYedekBilgi" style="color:var(--yellow);font-size:12px;text-align:center;padding:4px 0">
+      ⚠️ Henüz Google Drive yedeği alınmadı.
     </div>`;
   }
 
@@ -1972,19 +1972,27 @@ function yedekEkraniAc() {
     <div class="yedek-panel-kutusu">
       ${sonYedekHtml}
 
+      <div class="yedek-kart" style="border:2px solid #1565c0">
+        <div class="yedek-kart-baslik" style="color:var(--blue-bright)">☁️ Google Drive'a Yedekle (Önerilen)</div>
+        <div class="yedek-kart-aciklama">ZIP dosyasını (JSON + cari ekstreler) direkt Google Drive hesabınızdaki <strong>MMK_Veresiye_Yedekler</strong> klasörüne yükler. İlk seferinde Google hesabınızla giriş yapmanız istenecek.</div>
+        <button class="btn btn-secondary" style="background:linear-gradient(135deg,#1565c0,#1976d2);color:#fff;margin-top:8px;width:100%;" onclick="driveYedekAl()">
+          ☁️ GOOGLE DRIVE'A YEDEKLE
+        </button>
+      </div>
+
       <div class="yedek-kart">
         <div class="yedek-kart-baslik">💻 Bilgisayara İndir (ZIP)</div>
-        <div class="yedek-kart-aciklama">ZIP dosyasını bilgisayarınıza indirir. İçinde JSON yedek dosyası + her müşteri için ayrı HTML ekstre bulunur. Kayıt konumunu seçebilirsiniz (D:\VERESİYE YEDEK önerilir).</div>
-        <button class="btn btn-secondary" style="background:var(--green);color:#fff;margin-top:8px;width:100%;font-size:14px;padding:10px;" onclick="veritabaniYedekAl()">
+        <div class="yedek-kart-aciklama">ZIP dosyasını bilgisayarınıza indirir. İçinde JSON yedek dosyası + her müşteri için ayrı HTML ekstre bulunur. Tarayıcı indirme klasörünüze kaydedilir.</div>
+        <button class="btn btn-secondary" style="background:var(--green);color:#fff;margin-top:8px;" onclick="veritabaniYedekAl()">
           📦 BİLGİSAYARA İNDİR (ZIP)
         </button>
       </div>
 
       <div class="yedek-kart">
         <div class="yedek-kart-baslik">🔄 Yedeği Geri Yükle</div>
-        <div class="yedek-kart-aciklama">Daha önce indirdiğiniz <strong>JSON</strong> yedek dosyasını seçerek veritabanına geri yükleyin. <span style="color:var(--red);font-weight:bold;">⚠️ Dikkat! Mevcut tüm veriler silinir, yerine yedek yüklenir.</span></div>
-        <button class="btn btn-secondary" style="background:#b71c1c;color:#fff;margin-top:8px;width:100%;font-size:14px;padding:10px;border:1px solid #ef5350;" onclick="veritabaniYedekYukleTetikle()">
-          📂 YEDEKTEKİ GERİ YÜKLE (.JSON SEÇ)
+        <div class="yedek-kart-aciklama">Daha önce indirdiğiniz JSON yedek dosyasını seçerek veritabanına geri yükleyin. <span style="color:var(--red);font-weight:bold;">Dikkat! Mevcut veriler silinir.</span></div>
+        <button class="btn btn-secondary" style="background:var(--red2);color:#fff;margin-top:8px;" onclick="veritabaniYedekYukleTetikle()">
+          YEDEKTEN GERİ YÜKLE (.JSON SEÇ)
         </button>
       </div>
     </div>`;
@@ -2156,9 +2164,7 @@ tfoot td{padding:8px 10px;font-weight:700;font-size:12px}
       a.download = dosyaAdi;
       a.click();
       setTimeout(() => URL.revokeObjectURL(a.href), 5000);
-      // Son yedek tarihini güncelle
-    localStorage.setItem('mmk_son_yedek', new Date().toISOString());
-    toast(`✓ Yedek hazır! ${cariler.length} cari, ${tumHareketler.length} hareket → ZIP indirildi`);
+      toast(`✓ Yedek hazır! ${cariler.length} cari, ${tumHareketler.length} hareket → ZIP indirildi`);
     }
   } catch(err) { toast('Yedek hatası: ' + err.message, true); console.error(err); }
   loading(false);
@@ -2345,32 +2351,28 @@ async function zipOlustur() {
 // ── Otomatik yedek kontrolü (her giriş) ──
 function otomatikYedekKontrol() {
   const sonYedek = localStorage.getItem('mmk_son_yedek');
-  if (!sonYedek) return; // Hiç yedek alınmamış, gösterme
+  if (!sonYedek) return;
 
   const fark = Date.now() - new Date(sonYedek).getTime();
   const gunFark = Math.floor(fark / (1000 * 60 * 60 * 24));
 
   if (gunFark >= 1) {
+    // Sadece toast bildirimi göster, işlem yapma
     const bildirimiGoster = () => {
       loading(false);
-      const onay = confirm(`💾 Son yedeğinizin üzerinden ${gunFark} gün geçti!\n\nŞimdi ZIP yedeği almak ister misiniz?`);
-      if (onay) {
-        setTimeout(() => veritabaniYedekAl(), 300);
-      }
+      toast(`💾 Hatırlatma: Son yedeğinizin üzerinden ${gunFark} gün geçti! Yedek almayı unutmayın.`);
     };
 
     const simdi = new Date();
     const saat = simdi.getHours();
 
     if (saat === 9) {
-      // Saat 09:xx - hemen göster
+      // Saat 09:xx — 2 saniye sonra göster
       setTimeout(bildirimiGoster, 2000);
     } else {
       // Saat 09:00'a kadar bekle
       const hedef = new Date(simdi);
-      if (saat >= 10) {
-        hedef.setDate(hedef.getDate() + 1);
-      }
+      if (saat >= 10) hedef.setDate(hedef.getDate() + 1);
       hedef.setHours(9, 0, 0, 0);
       const bekle = hedef.getTime() - simdi.getTime();
       setTimeout(bildirimiGoster, bekle);
@@ -2390,48 +2392,103 @@ function yedekEkraniGuncelle() {
     el.style.color = renk;
     el.innerHTML = `💾 Son yedek: <strong>${d.toLocaleString('tr-TR')}</strong> (${gunFark} gün önce)`;
   } else {
-    el.innerHTML = `⚠️ Henüz yedek alınmadı. Lütfen ZIP ile yedek alın!`;
+    el.innerHTML = `⚠️ Henüz yedek alınmadı!`;
     el.style.color = 'var(--yellow)';
   }
+}
+
+function veritabaniYedekYukleTetikle() {
+  document.getElementById('yedekDosyaSec').click();
 }
 
 function yedekDosyasiniOku(event) {
   const dosya = event.target.files[0];
   if (!dosya) return;
-  
+
   const reader = new FileReader();
   reader.onload = async function(e) {
     try {
       const yedek = JSON.parse(e.target.result);
-      if (!yedek.cariler || !yedek.hareketler) throw new Error('Dosya yapısı geçerli bir yedek dosyası değil.');
-      
-      const onay = confirm(`DİKKAT!\n\nBu işlem Supabase üzerindeki tüm mevcut verilerinizi kalıcı olarak silecek ve bu yedeği yükleyecektir.\n\nDosyadaki ${yedek.cariler.length} müşteri kartı ve ${yedek.hareketler.length} işlem kaydı yüklensin mi?`);
+      if (!yedek.cariler || !yedek.hareketler) throw new Error('Geçerli bir yedek dosyası değil. (cariler/hareketler bulunamadı)');
+
+      const onay = confirm(`⚠️ DİKKAT!\n\nMevcut tüm veriler silinecek ve bu yedek yüklenecek!\n\n• ${yedek.cariler.length} müşteri kartı\n• ${yedek.hareketler.length} hareket kaydı\n\nDevam etmek istiyor musunuz?`);
       if (!onay) return;
 
       raporKapat();
       loading(true, 'Mevcut veriler temizleniyor...');
-      
-      try { await sbDelete('hareketler', 'id=gt.0'); } catch(e){}
-      try { await sbDelete('cariler', 'kod=gt.0'); } catch(e){}
 
-      loading(true, 'Müşteriler aktarılıyor...');
-      for(let cari of yedek.cariler) {
-        await sbPost('cariler', { kod: parseInt(cari.kod), unvan: cari.unvan, bakiye: parseFloat(cari.bakiye) });
+      // Supabase'de tüm hareketleri sil (id=gte.0 → tüm pozitif id'ler)
+      try {
+        const r1 = await fetch(`${SUPA_URL}/rest/v1/hareketler?id=gte.0`, {
+          method: 'DELETE',
+          headers: { ...HEADERS, 'Prefer': 'return=minimal' }
+        });
+        if (!r1.ok) console.warn('hareketler silinemedi:', await r1.text());
+      } catch(e) { console.warn(e); }
+
+      // Supabase'de tüm carileri sil
+      try {
+        const r2 = await fetch(`${SUPA_URL}/rest/v1/cariler?kod=gte.0`, {
+          method: 'DELETE',
+          headers: { ...HEADERS, 'Prefer': 'return=minimal' }
+        });
+        if (!r2.ok) console.warn('cariler silinemedi:', await r2.text());
+      } catch(e) { console.warn(e); }
+
+      // Silme işleminin tamamlanması için bekle
+      await new Promise(r => setTimeout(r, 1000));
+
+      // Carileri 50'lik gruplar halinde ekle
+      loading(true, `Müşteriler yükleniyor... (0/${yedek.cariler.length})`);
+      for (let i = 0; i < yedek.cariler.length; i += 50) {
+        const dilim = yedek.cariler.slice(i, i + 50).map(c => ({
+          kod: parseInt(c.kod),
+          unvan: c.unvan,
+          bakiye: parseFloat(c.bakiye) || 0
+        }));
+        const r = await fetch(`${SUPA_URL}/rest/v1/cariler`, {
+          method: 'POST',
+          headers: { ...HEADERS, 'Prefer': 'return=minimal' },
+          body: JSON.stringify(dilim)
+        });
+        if (!r.ok) throw new Error('Cari yükleme hatası: ' + await r.text());
+        loading(true, `Müşteriler yükleniyor... (${Math.min(i+50, yedek.cariler.length)}/${yedek.cariler.length})`);
       }
 
-      loading(true, 'Hareketler işleniyor...');
-      for(let hkt of yedek.hareketler) {
-        await sbPost('hareketler', { cari_kod: parseInt(hkt.cari_kod), tarih: hkt.tarih, aciklama: hkt.aciklama, borc: parseFloat(hkt.borc), tahsilat: parseFloat(hkt.tahsilat) });
+      // Hareketleri 100'lük gruplar halinde ekle
+      loading(true, `Hareketler yükleniyor... (0/${yedek.hareketler.length})`);
+      for (let i = 0; i < yedek.hareketler.length; i += 100) {
+        const dilim = yedek.hareketler.slice(i, i + 100).map(h => ({
+          cari_kod: parseInt(h.cari_kod),
+          tarih: h.tarih,
+          aciklama: h.aciklama || '',
+          borc: parseFloat(h.borc) || 0,
+          tahsilat: parseFloat(h.tahsilat) || 0
+        }));
+        const r = await fetch(`${SUPA_URL}/rest/v1/hareketler`, {
+          method: 'POST',
+          headers: { ...HEADERS, 'Prefer': 'return=minimal' },
+          body: JSON.stringify(dilim)
+        });
+        if (!r.ok) throw new Error('Hareket yükleme hatası: ' + await r.text());
+        loading(true, `Hareketler yükleniyor... (${Math.min(i+100, yedek.hareketler.length)}/${yedek.hareketler.length})`);
       }
 
-      toast('✓ Veritabanı yedeği geri yüklendi ve eşitlendi!');
+      loading(false);
+      toast(`✓ Geri yükleme tamamlandı! ${yedek.cariler.length} müşteri, ${yedek.hareketler.length} hareket yüklendi.`);
       await carileritabloyaYukle();
       genelBakiyeHesapla();
       otomatikKodVer();
-    } catch(err) { toast('Yedek yükleme hatası: ' + err.message, true); }
-    finally { loading(false); document.getElementById('yedekDosyaSec').value = ''; }
+
+    } catch(err) {
+      toast('Yedek yükleme hatası: ' + err.message, true);
+      console.error(err);
+    } finally {
+      loading(false);
+      document.getElementById('yedekDosyaSec').value = '';
+    }
   };
-  reader.readAsText(dosya);
+  reader.readAsText(dosya, 'utf-8');
 }
 
 // ── MENÜ YÖNLENDİRMELERİ ──
