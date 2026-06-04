@@ -955,7 +955,7 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
 </div>
 
 <!-- TOPTANCI SEKMESİ -->
-<div id="toptanciPane" style="display:none;height:100%;overflow:hidden;">
+<div id="toptanciPane" style="display:none;height:100%;overflow:hidden;" tabindex="0" onkeydown="toptanciPaneKeyDown(event)">
   <div style="display:grid;grid-template-columns:1fr 460px;height:100%;overflow:hidden;">
 
     <!-- SOL: TOPTANCI LİSTESİ -->
@@ -1217,8 +1217,12 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
         <div id="hareketDuzenleInfo" style="font-family:Oswald,sans-serif;font-size:14px;color:var(--white);font-weight:700;"></div>
       </div>
       <div>
+        <div class="islem-field-label">Tarih</div>
+        <input class="islem-input" id="hareketDuzenleTarih" type="datetime-local" style="width:100%;" onkeydown="if(event.key==='Escape')hareketDuzenleKapat()">
+      </div>
+      <div>
         <div class="islem-field-label">Açıklama</div>
-        <input class="islem-input" id="hareketDuzenleAciklama" placeholder="Açıklama..." onkeydown="if(event.key==='Enter')document.getElementById('hareketDuzenleTutar').focus();if(event.key==='Escape')hareketDuzenleKapat()">
+        <input class="islem-input" id="hareketDuzenleAciklama" placeholder="Açıklama..." onkeydown="if(event.key==='Enter')document.getElementById('hareketDuzenleBorc').focus();if(event.key==='Escape')hareketDuzenleKapat()">
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
         <div>
@@ -2754,6 +2758,31 @@ async function toptanciDuzenleKaydet() {
 }
 
 // ═══════════════════════════════════════════════════════
+// TOPTANCI PANEL OKA TUŞU SCROLL
+function toptanciArrowKey(e) {
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    const pane = document.getElementById('toptanciPane');
+    const rows = pane.querySelectorAll('#toptanciTbody tr');
+    if (!rows.length) return;
+
+    // Şu an seçili satırı bul
+    let idx = -1;
+    rows.forEach((r, i) => { if (r.classList.contains('selected')) idx = i; });
+
+    if (e.key === 'ArrowDown') idx = Math.min(idx + 1, rows.length - 1);
+    if (e.key === 'ArrowUp')   idx = Math.max(idx - 1, 0);
+
+    rows.forEach(r => r.classList.remove('selected'));
+    rows[idx].classList.add('selected');
+    rows[idx].scrollIntoView({ block: 'nearest' });
+
+    // Toptancı seçimini güncelle
+    const kod = rows[idx].dataset.kod;
+    if (kod) toptanciSec(parseInt(kod));
+  }
+}
+
 // HAREKET DÜZENLEME (F2 - Detayda)
 // ═══════════════════════════════════════════════════════
 let duzenleHareketId = null;
@@ -2770,12 +2799,40 @@ function hareketDuzenleAc() {
   
   duzenleHareketId = parseInt(id);
   document.getElementById('hareketDuzenleInfo').textContent = `${tarih} — ${aciklama || '(Boş)'}`;
+
+  // Tarihi datetime-local formatına çevir (YYYY-MM-DDTHH:MM)
+  let tarihInput = '';
+  if (tarih) {
+    // Tarih "DD.MM.YYYY HH:MM" veya "YYYY-MM-DDTHH:MM:SS" formatında olabilir
+    try {
+      let d;
+      if (tarih.includes('T')) {
+        // ISO format: "2024-01-15T10:30:00"
+        d = new Date(tarih);
+      } else if (tarih.includes('.')) {
+        // TR format: "15.01.2024 10:30"
+        const parts = tarih.split(' ');
+        const dateParts = parts[0].split('.');
+        const timePart = parts[1] || '00:00';
+        d = new Date(`${dateParts[2]}-${dateParts[1]}-${dateParts[0]}T${timePart}`);
+      } else {
+        d = new Date(tarih);
+      }
+      if (!isNaN(d.getTime())) {
+        // YYYY-MM-DDTHH:MM formatına çevir
+        const pad = n => String(n).padStart(2, '0');
+        tarihInput = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      }
+    } catch(e) {}
+  }
+
+  document.getElementById('hareketDuzenleTarih').value = tarihInput;
   document.getElementById('hareketDuzenleAciklama').value = aciklama;
   document.getElementById('hareketDuzenleBorc').value = borc;
   document.getElementById('hareketDuzenleTahsilat').value = tahsilat;
   document.getElementById('hareketDuzenleOverlay').classList.add('active');
   
-  setTimeout(() => document.getElementById('hareketDuzenleAciklama').focus(), 100);
+  setTimeout(() => document.getElementById('hareketDuzenleTarih').focus(), 100);
 }
 
 function hareketDuzenleKapat() {
@@ -2787,14 +2844,29 @@ async function hareketDuzenleKaydet() {
   const aciklama = document.getElementById('hareketDuzenleAciklama').value.trim();
   const borc = parseFloat(document.getElementById('hareketDuzenleBorc').value) || 0;
   const tahsilat = parseFloat(document.getElementById('hareketDuzenleTahsilat').value) || 0;
-  
+  const tarihRaw = document.getElementById('hareketDuzenleTarih').value; // YYYY-MM-DDTHH:MM
+
   if (borc < 0 || tahsilat < 0) { toast('Negatif tutar girilemez!', true); return; }
   if (borc > 0 && tahsilat > 0) { toast('Borç ve tahsilat aynı anda olamaz!', true); return; }
   if (borc === 0 && tahsilat === 0) { toast('En az bir tutar giriniz!', true); return; }
-  
+
+  // Tarihi ISO formatına çevir (Supabase için)
+  let tarihISO = null;
+  if (tarihRaw) {
+    try {
+      const d = new Date(tarihRaw);
+      if (!isNaN(d.getTime())) {
+        tarihISO = d.toISOString(); // "2024-01-15T10:30:00.000Z"
+      }
+    } catch(e) {}
+  }
+
+  const guncelle = { aciklama, borc, tahsilat };
+  if (tarihISO) guncelle.tarih = tarihISO;
+
   loading(true, 'Güncelleniyor...');
   try {
-    await sbPatch('hareketler', `id=eq.${duzenleHareketId}`, { aciklama, borc, tahsilat });
+    await sbPatch('hareketler', `id=eq.${duzenleHareketId}`, guncelle);
     await bakiyeGuncelleDB(aktifDetayKod);
     genelBakiyeHesapla();
     cariAc(aktifDetayKod); // Detayı yenile
@@ -4005,6 +4077,13 @@ async function toptanciSilSecili() {
     toast('✓ Silindi');
   } catch(err) { toast('Hata: ' + err.message, true); }
   loading(false);
+}
+
+function toptanciPaneKeyDown(e) {
+  // Sadece ok tuşu - input alanındaysa geçme
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  if (e.key === 'ArrowDown') { e.preventDefault(); toptanciOkTusuAc('asagi'); }
+  if (e.key === 'ArrowUp')   { e.preventDefault(); toptanciOkTusuAc('yukari'); }
 }
 
 function toptanciOkTusuAc(yon) {
