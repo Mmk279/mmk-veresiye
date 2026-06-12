@@ -966,13 +966,13 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
         <button class="btn btn-danger" onclick="toptanciSilSecili()" style="margin-left:auto;">SİL</button>
       </div>
       
-      <div style="flex:1;overflow-y:auto;overflow-x:hidden;">
-        <table class="main-table" id="toptanciTable">
+      <div style="flex:1;overflow-y:auto;overflow-x:hidden;padding:4px 0;">
+        <table class="main-table" id="toptanciTable" style="width:100%;">
           <thead>
             <tr>
-              <th style="width:22px;"></th>
-              <th style="width:320px;">TOPTANCI ADI</th>
-              <th style="width:180px;text-align:right;">BORÇ</th>
+              <th style="width:20px;"></th>
+              <th>TOPTANCI ADI</th>
+              <th style="width:150px;text-align:right;">BORÇ</th>
             </tr>
           </thead>
           <tbody id="toptanciTbody"></tbody>
@@ -1146,6 +1146,7 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
           </div>
         </div>
       </div>
+      <div class="bottom-bar" style="flex-shrink:0;"></div>
     </div>
   </div>
 </div>
@@ -3999,6 +4000,14 @@ function toptanciAraFilter() {
   toptanciTableYukle();
 }
 
+function toptanciListeGuncelle() {
+  // Listeyi yükledikten hemen sonra tfoot'u scroll'un en altına getir
+  setTimeout(() => {
+    const anchor = document.getElementById('toptanciListeSonu');
+    if (anchor) anchor.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, 100);
+}
+
 function toptanciTableYukle() {
   const ara = document.getElementById('txtToptanciAra').value.toLowerCase();
   const tbody = document.getElementById('toptanciTbody');
@@ -4046,6 +4055,7 @@ function toptanciTableYukle() {
   });
   
   document.getElementById('toptanciSayiBilgi').textContent = `${filtrelenmis.length} toptancı`;
+  toptanciScrollAltaIndir();
 }
 
 async function toptanciBakiyeGuncelleDB(kod) {
@@ -4083,6 +4093,17 @@ function toptanciPaneKeyDown(e) {
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
   if (e.key === 'ArrowDown') { e.preventDefault(); toptanciOkTusuAc('asagi'); }
   if (e.key === 'ArrowUp')   { e.preventDefault(); toptanciOkTusuAc('yukari'); }
+}
+
+function toptanciScrollAltaIndir() {
+  // Liste yenilendikten sonra scroll'u en alta indir
+  setTimeout(() => {
+    const pane = document.getElementById('toptanciPane');
+    if (pane) {
+      const scrollArea = pane.querySelector('[style*="overflow-y:auto"]');
+      if (scrollArea) scrollArea.scrollTop = scrollArea.scrollHeight;
+    }
+  }, 100);
 }
 
 function toptanciOkTusuAc(yon) {
