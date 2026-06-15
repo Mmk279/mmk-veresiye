@@ -145,8 +145,10 @@ body {
 }
 #urunPane > div { height:100%; overflow:hidden; }
 
+/* Toptancı: `app-body` layout'unu kullanır */
 #toptanciPane { height:100%; overflow:hidden; }
-#toptanciPane > div { height:100%; overflow:hidden; }
+#toptanciPane .left-pane { height:100%; overflow:hidden; }
+#toptanciPane .right-pane { height:100%; }
 /* ── LEFT ── */
 .left-pane { display:flex; flex-direction:column; border-right:2px solid var(--border); overflow:hidden; }
 
@@ -498,8 +500,7 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
   /* Ürün ekranı: iki paneli (liste + satış) alta diz */
   #urunPane > div { flex-direction:column; }
 
-  /* Toptancı: sağ paneli alta indir */
-  #toptanciPane > div{grid-template-columns:1fr !important;}
+  /* Toptancı: `app-body` zaten sağ paneli alta indirir */
 }
 </style>
 </head>
@@ -955,38 +956,37 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
 </div>
 
 <!-- TOPTANCI SEKMESİ -->
-<div id="toptanciPane" style="display:none;height:100%;overflow:hidden;" tabindex="0" onkeydown="toptanciPaneKeyDown(event)">
-  <div style="display:grid;grid-template-columns:1fr 460px;height:100%;overflow:hidden;">
+<div id="toptanciPane" class="app-body" style="display:none;" tabindex="0" onkeydown="toptanciPaneKeyDown(event)">
 
-    <!-- SOL: TOPTANCI LİSTESİ -->
-    <div style="display:flex;flex-direction:column;height:100%;border-right:2px solid var(--border);overflow:hidden;">
-      <div style="background:var(--bg2);border-bottom:1px solid var(--border);padding:10px 14px;display:flex;gap:10px;align-items:center;flex-shrink:0;">
-        <input class="tb-input" id="txtToptanciEkle" placeholder="Toptancı adı girin ve ENTER'a basın..." style="width:280px;font-size:13px;" onkeydown="if(event.key==='Enter')toptanciEkleDirectly()">
-        <input class="tb-input" id="txtToptanciAra" placeholder="🔍 Ara..." style="width:150px;font-size:13px;" oninput="toptanciAraFilter()" onkeydown="if(event.key==='ArrowDown')toptanciOkTusuAc('asagi');if(event.key==='ArrowUp')toptanciOkTusuAc('yukari')">
-        <button class="btn btn-danger" onclick="toptanciSilSecili()" style="margin-left:auto;">SİL</button>
-      </div>
-      
-      <div style="flex:1;overflow-y:auto;overflow-x:hidden;">
-        <table class="main-table" id="toptanciTable">
-          <thead>
-            <tr>
-              <th style="width:22px;"></th>
-              <th style="width:320px;">TOPTANCI ADI</th>
-              <th style="width:180px;text-align:right;">BORÇ</th>
-            </tr>
-          </thead>
-          <tbody id="toptanciTbody"></tbody>
-        </table>
-      </div>
-
-      <div class="bottom-bar">
-        <span id="toptanciSayiBilgi" style="margin-left:auto;font-size:12px;color:var(--text-muted);"></span>
-      </div>
+  <div class="left-pane">
+    <div class="toolbar">
+      <span class="toolbar-label">Toptancı</span>
+      <input class="tb-input" id="txtToptanciEkle" placeholder="Toptancı adı girin ve ENTER'a basın..." style="width:200px;" onkeydown="if(event.key==='Enter')toptanciEkleDirectly()">
+      <span class="toolbar-label" style="margin-left:8px">Ara</span>
+      <input class="tb-input" id="txtToptanciAra" placeholder="Ara..." style="width:160px;" oninput="toptanciAraFilter()" onkeydown="if(event.key==='ArrowDown')toptanciOkTusuAc('asagi');if(event.key==='ArrowUp')toptanciOkTusuAc('yukari')">
+      <button class="btn btn-danger" onclick="toptanciSilSecili()" style="margin-left:auto;">SİL</button>
+    </div>
+    
+    <div class="table-wrap">
+      <table class="main-table" id="toptanciTable">
+        <thead>
+          <tr>
+            <th class="col-arrow"></th>
+            <th class="col-unvan">Toptancı Adı</th>
+            <th class="col-tutar">Borç</th>
+          </tr>
+        </thead>
+        <tbody id="toptanciTbody"></tbody>
+      </table>
     </div>
 
-    <!-- SAĞ: DASHBOARD + ÖDEMELER -->
-    <div style="background:var(--bg2);display:flex;flex-direction:column;height:100%;overflow:hidden;">
-      
+    <div class="bottom-bar">
+      <span id="toptanciSayiBilgi" style="margin-left:auto;font-size:12px;color:var(--text-muted);"></span>
+    </div>
+  </div>
+
+  <div class="right-pane">
+    <div style="display:flex;flex-direction:column;min-height:100%;">
       <!-- DASHBOARD -->
       <div style="background:var(--header-bg);padding:12px 14px;border-bottom:2px solid var(--border);flex-shrink:0;">
         <div style="font-family:Oswald,sans-serif;font-size:14px;font-weight:800;color:var(--blue-bright);letter-spacing:1px;margin-bottom:10px;">📊 TOPTANCI DASHBOARD</div>
