@@ -154,8 +154,8 @@ body {
 /* Toptancı: sütun/padding daha dar olsun */
 #toptanciPane table.main-table thead th{ padding:8px 10px; }
 #toptanciPane table.main-table tbody td{ padding:9px 10px; }
-#toptanciPane th.col-unvan{ width:320px; }
-#toptanciPane th.col-tutar{ width:200px; }
+#toptanciPane th.col-unvan{ width:auto; }
+#toptanciPane th.col-tutar{ width:150px; }
 /* ── LEFT ── */
 .left-pane { display:flex; flex-direction:column; border-right:2px solid var(--border); overflow:hidden; min-height:0; min-width:0; }
 
@@ -4004,6 +4004,29 @@ function toptanciAraFilter() {
   toptanciTableYukle();
 }
 
+function toptanciScrollAltaIndir() {
+  // Yeni toptancı eklendiğinde scroll'u otomatik aşağı indir
+  setTimeout(() => {
+    const pane = document.getElementById('toptanciPane');
+    if (pane) {
+      const scrollArea = pane.querySelector('.table-wrap');
+      if (scrollArea) {
+        scrollArea.scrollTop = scrollArea.scrollHeight;
+      }
+    }
+  }, 100);
+}
+
+function toptanciScrollAltaIndir() {
+  // Yeni toptancı eklendiğinde scroll'u otomatik aşağı indir
+  setTimeout(() => {
+    const tableWrap = document.querySelector('#toptanciPane .table-wrap');
+    if (tableWrap) {
+      tableWrap.scrollTop = tableWrap.scrollHeight;
+    }
+  }, 100);
+}
+
 function toptanciTableYukle() {
   const ara = document.getElementById('txtToptanciAra').value.toLowerCase();
   const tbody = document.getElementById('toptanciTbody');
@@ -4051,6 +4074,8 @@ function toptanciTableYukle() {
   });
   
   document.getElementById('toptanciSayiBilgi').textContent = `${filtrelenmis.length} toptancı`;
+  // Yeni toptancı eklendiğinde scroll'u aşağı kaydır
+  toptanciScrollAltaIndir();
 }
 
 async function toptanciBakiyeGuncelleDB(kod) {
