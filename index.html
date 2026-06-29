@@ -149,7 +149,7 @@ body {
 #toptanciPane { height:100%; overflow:hidden; }
 #toptanciPane .left-pane { height:100%; overflow:hidden; min-height:0; min-width:0; }
 #toptanciPane .right-pane { height:100%; min-height:0; min-width:0; }
-#toptanciPane .table-wrap { min-height:0; }
+#toptanciPane .table-wrap { flex:1; overflow-y:auto; overflow-x:hidden; min-height:0; height:100%; }
 
 /* Toptancı: sütun/padding daha dar olsun */
 #toptanciPane table.main-table thead th{ padding:8px 10px; }
@@ -990,6 +990,7 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
     </div>
 
     <div class="bottom-bar">
+      <button class="btn btn-secondary" id="btnToptanciDuzenle" style="display:none;" onclick="toptanciDuzenleAc()">✏️ F2 DÜZENLE</button>
       <span id="toptanciSayiBilgi" style="margin-left:auto;font-size:12px;color:var(--text-muted);"></span>
     </div>
   </div>
@@ -1394,7 +1395,6 @@ function setSifre(s) { localStorage.setItem('mmk_sifre', s); }
 function loginDene() {
   const v = document.getElementById('loginSifre').value;
   if (v === getSifre()) {
-    localStorage.setItem('mmk_giris_tarihi', new Date().getTime());
     document.getElementById('loginOverlay').classList.remove('active');
     init();
   } else {
@@ -2501,7 +2501,7 @@ function menuAraclar(){
   const s=prompt('Araçlar:\n1) Günlük Rapor Paneli (F3)\n2) Yedekleme & Geri Yükleme (F4)\n3) Giriş Şifresini Değiştir\nSeçin:');
   if(s==='1')gunlukRaporEkraniAc();
   else if(s==='2')yedekEkraniAc();
-  else if(s==='3'){const y=prompt('Yeni şifre:');if(y&&y.trim()){setSifre(y.trim());localStorage.removeItem('mmk_giris_tarihi');toast('Şifre güncellendi! Sayfayı yenileyin.');setTimeout(()=>location.reload(),1000);}}
+  else if(s==='3'){const y=prompt('Yeni şifre:');if(y&&y.trim()){setSifre(y.trim());toast('Şifre güncellendi!');}}
 }
 function hakkinda(){alert('MMK Veresiye Kısayolları:\n\nF3 — Tarih Seçimli Günlük Rapor\nF4 — Yedekleme & Geri Yükleme Paneli\nF5 — Borç Girişi (Detayda)\nF6 — Tahsilat Girişi (Detayda)\nESC — Kapat / Gizle\nENTER — Kaydet / Geçiş\nOk Tuşları ↑↓ — Listede gezinme');}
 
@@ -3306,8 +3306,6 @@ function sekmeAc(sekme) {
   if (sekme === 'cari') {
     cariPane.style.display = 'grid';
     tabCari.classList.add('active');
-    carileritabloyaYukle(); // BURADA TABLO YÜKLE
-    genelBakiyeHesapla();
   } else if (sekme === 'urun') {
     urunPane.style.display = 'block';
     tabUrun.classList.add('active');
@@ -4020,6 +4018,7 @@ function toptanciTableYukle() {
     tr.dataset.index = idx;
     
     tr.addEventListener('click', ev => {
+      document.getElementById('btnToptanciDuzenle').style.display = 'inline-block';
       if (ev.ctrlKey || ev.metaKey) {
         if (toptanciSeciliKodlar.includes(t.kod)) {
           toptanciSeciliKodlar = toptanciSeciliKodlar.filter(x => x !== t.kod);
@@ -4115,6 +4114,8 @@ function toptanciOkTusuAc(yon) {
   const kod = parseInt(rows[idx].dataset.kod);
   toptanciSeciliKodlar = [kod];
   rows[idx].scrollIntoView({block: 'nearest'});
+  // F2 Düzenle butonu göster
+  document.getElementById('btnToptanciDuzenle').style.display = 'inline-block';
 }
 
 function toptanciDetayAc(kod) {
