@@ -146,10 +146,10 @@ body {
 #urunPane > div { height:100%; overflow:hidden; }
 
 /* Toptancı: `app-body` layout'unu kullanır */
-#toptanciPane { height:100%; overflow:hidden; }
-#toptanciPane .left-pane { height:100%; overflow:hidden; min-height:0; min-width:0; }
+#toptanciPane { overflow:hidden; display:grid; grid-template-columns:1fr 460px; }
+#toptanciPane .left-pane { display:flex; flex-direction:column; height:100%; overflow:hidden; min-height:0; min-width:0; }
 #toptanciPane .right-pane { height:100%; min-height:0; min-width:0; }
-#toptanciPane .table-wrap { flex:1; overflow-y:auto; overflow-x:hidden; min-height:0; height:100%; }
+#toptanciPane .table-wrap { flex:1; overflow-y:auto; overflow-x:hidden; min-height:0; }
 
 /* Toptancı: sütun/padding daha dar olsun */
 #toptanciPane table.main-table thead th{ padding:8px 10px; }
@@ -250,6 +250,7 @@ table.main-table tbody td {
 .bottom-bar {
   background:var(--bg3); border-top:1px solid var(--border);
   padding:6px 12px; display:flex; align-items:center; gap:8px;
+  flex-shrink:0;
 }
 
 /* ── RIGHT PANE ── */
@@ -965,7 +966,7 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
 </div>
 
 <!-- TOPTANCI SEKMESİ -->
-<div id="toptanciPane" class="app-body" style="display:none;" tabindex="0" onkeydown="toptanciPaneKeyDown(event)">
+<div id="toptanciPane" style="display:none;" tabindex="0" onkeydown="toptanciPaneKeyDown(event)">
 
   <div class="left-pane">
     <div class="toolbar">
