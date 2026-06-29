@@ -912,6 +912,9 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
             <thead>
               <tr>
                 <th class="dcol-arrow"></th>
+                <th style="width:32px;text-align:center;padding:6px 4px;" title="Tümünü Seç / Kaldır">
+                  <input type="checkbox" id="chkDetayTumu" style="cursor:pointer;width:15px;height:15px;accent-color:var(--accent);" onchange="detayTumunuSec(this.checked)">
+                </th>
                 <th class="dcol-tarih">Tarih/Saat</th>
                 <th class="dcol-aciklama">Açıklama</th>
                 <th class="dcol-borc">Borç</th>
@@ -1752,6 +1755,7 @@ async function detayYukle() {
       const renk=isBorc?'#ff4444':'#66bb6a';
       tr.innerHTML=`
         <td class="dcol-arrow"><span class="row-arrow" style="display:none">▶</span></td>
+        <td style="text-align:center;padding:6px 4px;"><input type="checkbox" class="chk-detay-satir" data-id="${rId}" style="cursor:pointer;width:15px;height:15px;accent-color:var(--accent);" onclick="event.stopPropagation();detaySatirChkDegisti(this)"></td>
         <td class="dcol-tarih" style="color:${renk};font-size:13px">${r.tarih}</td>
         <td class="dcol-aciklama" style="color:${renk}">${r.aciklama}</td>
         <td class="dcol-borc" style="color:${renk}">${fmt(r.borc)}</td>
@@ -1764,25 +1768,75 @@ async function detayYukle() {
             seciliDetayIds = seciliDetayIds.filter(x => x !== rId);
             tr.classList.remove('selected');
             tr.querySelector('.row-arrow').style.display = 'none';
+            tr.querySelector('.chk-detay-satir').checked = false;
           } else {
             seciliDetayIds.push(rId);
             tr.classList.add('selected');
             tr.querySelector('.row-arrow').style.display = 'inline';
+            tr.querySelector('.chk-detay-satir').checked = true;
           }
         } else {
           document.querySelectorAll('#detayTbody tr').forEach(t => {
             t.classList.remove('selected');
             t.querySelector('.row-arrow').style.display = 'none';
+            t.querySelector('.chk-detay-satir').checked = false;
           });
           seciliDetayIds = [rId];
           tr.classList.add('selected');
           tr.querySelector('.row-arrow').style.display = 'inline';
+          tr.querySelector('.chk-detay-satir').checked = true;
         }
+        // Ana checkbox senkronizasyonu
+        const tumChkler = document.querySelectorAll('.chk-detay-satir');
+        const hepsiSecili = [...tumChkler].every(c => c.checked);
+        const hicbiriSecili = [...tumChkler].every(c => !c.checked);
+        const anaChk = document.getElementById('chkDetayTumu');
+        if (anaChk) { anaChk.checked = hepsiSecili; anaChk.indeterminate = !hepsiSecili && !hicbiriSecili; }
       });
       tbody.appendChild(tr);
     });
   } catch(err){toast('Detay yükleme hatası: '+err.message,true);}
   loading(false);
+}
+
+function detayTumunuSec(secili) {
+  const satirlar = document.querySelectorAll('#detayTbody tr');
+  const chkler = document.querySelectorAll('.chk-detay-satir');
+  seciliDetayIds = [];
+  satirlar.forEach(tr => {
+    if (secili) {
+      tr.classList.add('selected');
+      tr.querySelector('.row-arrow').style.display = 'inline';
+      seciliDetayIds.push(parseInt(tr.dataset.id));
+    } else {
+      tr.classList.remove('selected');
+      tr.querySelector('.row-arrow').style.display = 'none';
+    }
+  });
+  chkler.forEach(c => c.checked = secili);
+}
+
+function detaySatirChkDegisti(chk) {
+  const rId = parseInt(chk.dataset.id);
+  const tr = chk.closest('tr');
+  if (chk.checked) {
+    if (!seciliDetayIds.includes(rId)) seciliDetayIds.push(rId);
+    tr.classList.add('selected');
+    tr.querySelector('.row-arrow').style.display = 'inline';
+  } else {
+    seciliDetayIds = seciliDetayIds.filter(x => x !== rId);
+    tr.classList.remove('selected');
+    tr.querySelector('.row-arrow').style.display = 'none';
+  }
+  // Ana checkbox'ı güncelle (hepsi seçiliyse işaretle)
+  const tumChkler = document.querySelectorAll('.chk-detay-satir');
+  const hepsiSecili = [...tumChkler].every(c => c.checked);
+  const hicbiriSecili = [...tumChkler].every(c => !c.checked);
+  const anaChk = document.getElementById('chkDetayTumu');
+  if (anaChk) {
+    anaChk.checked = hepsiSecili;
+    anaChk.indeterminate = !hepsiSecili && !hicbiriSecili;
+  }
 }
 
 async function detayKapat() {
@@ -1793,6 +1847,8 @@ async function detayKapat() {
     tabloYenile(); genelBakiyeHesapla();
   }
   aktifDetayKod=null; seciliDetayIds=[];
+  const anaChk = document.getElementById('chkDetayTumu');
+  if (anaChk) { anaChk.checked = false; anaChk.indeterminate = false; }
 }
 function detayOverlayClick(e){if(e.target===document.getElementById('detayOverlay'))detayKapat();}
 
