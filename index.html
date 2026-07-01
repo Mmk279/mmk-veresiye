@@ -513,6 +513,7 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
   /* Toptancı: `app-body` zaten sağ paneli alta indirir */
 }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 
@@ -960,6 +961,7 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
       <button class="btn btn-pdf" onclick="detayPdf()">PDF AL</button>
       <button class="btn" style="background:#075e54;color:#fff;" onclick="whatsappMesajAc()">📱 WHATSAPP</button>
       <button class="btn" style="background:#6a1b9a;color:#fff;" onclick="makbuzYazdir()">🧾 MAKBUZ</button>
+      <button class="btn" style="background:#1565c0;color:#fff;border:1px solid #1976d2;" onclick="exceldenAlAc()">📥 EXCEL'DEN AL</button>
       <div class="detay-spacer"></div>
       <button class="btn btn-borc" onclick="borcPanelAc()">F5 Borç</button>
       <button class="btn btn-tahsilat" onclick="tahsilatPanelAc()">F6 Tahsilat</button>
@@ -1082,6 +1084,80 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
       </div>
 
       <div style="flex:1;"></div>
+
+    </div>
+  </div>
+</div>
+
+<!-- EXCEL'DEN AL MODALİ -->
+<div class="modal-overlay" id="exceldenAlOverlay" onclick="if(event.target===this)exceldenAlKapat()" style="z-index:9999;">
+  <div class="detay-modal" style="max-width:700px;max-height:80vh;display:flex;flex-direction:column;">
+    <div class="detay-titlebar">
+      <span class="detay-title">📥 EXCEL'DEN VERİ AKTAR</span>
+      <button class="detay-close" onclick="exceldenAlKapat()">✕</button>
+    </div>
+    <div style="padding:16px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:14px;">
+      
+      <!-- Adım 1: Dosya seç -->
+      <div style="background:rgba(21,101,192,.12);border:1px solid #1565c0;border-radius:8px;padding:14px;">
+        <div style="color:var(--blue-bright);font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:.8px;margin-bottom:10px;">📂 ADIM 1 — EXCEL DOSYASI SEÇ</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px;line-height:1.6;">
+          Excel dosyanızda şu sütunlar olmalı (sıra önemli değil, başlık satırı olmalı):<br>
+          <span style="color:#ffd54f;font-family:monospace;">Tarih</span> · 
+          <span style="color:#ffd54f;font-family:monospace;">Açıklama</span> · 
+          <span style="color:#ffd54f;font-family:monospace;">Borç</span> · 
+          <span style="color:#ffd54f;font-family:monospace;">Tahsilat</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <label style="cursor:pointer;background:var(--accent);color:#fff;padding:7px 16px;border-radius:5px;font-size:13px;font-weight:700;font-family:'Oswald',sans-serif;letter-spacing:.5px;">
+            📂 DOSYA SEÇ
+            <input type="file" id="excelFileInput" accept=".xlsx,.xls,.csv" style="display:none;" onchange="excelDosyaOku(this)">
+          </label>
+          <span id="excelDosyaAdi" style="font-size:12px;color:var(--text-muted);">Dosya seçilmedi</span>
+        </div>
+      </div>
+
+      <!-- Sütun eşleştirme -->
+      <div id="excelEslestirmeDiv" style="display:none;background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:8px;padding:14px;">
+        <div style="color:var(--blue-bright);font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:.8px;margin-bottom:10px;">🔗 ADIM 2 — SÜTUN EŞLEŞTİR</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div>
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">TARİH sütunu</div>
+            <select id="selTarih" class="islem-input" style="font-size:13px;"></select>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">AÇIKLAMA sütunu</div>
+            <select id="selAciklama" class="islem-input" style="font-size:13px;"></select>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">BORÇ sütunu</div>
+            <select id="selBorc" class="islem-input" style="font-size:13px;"></select>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">TAHSİLAT sütunu</div>
+            <select id="selTahsilat" class="islem-input" style="font-size:13px;"></select>
+          </div>
+        </div>
+        <button class="btn" style="margin-top:12px;background:#1b5e20;color:#fff;width:100%;font-size:13px;" onclick="excelOnizle()">👁 ÖNİZLE</button>
+      </div>
+
+      <!-- Önizleme -->
+      <div id="excelOnizleDiv" style="display:none;background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:8px;padding:14px;">
+        <div style="color:var(--blue-bright);font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:.8px;margin-bottom:10px;">👁 ADIM 3 — ÖNİZLEME <span id="excelSatirSayisi" style="color:#ffd54f;"></span></div>
+        <div style="overflow-x:auto;max-height:200px;overflow-y:auto;">
+          <table id="excelOnizleTable" style="width:100%;border-collapse:collapse;font-size:12px;">
+            <thead id="excelOnizleThead" style="position:sticky;top:0;background:var(--header-bg);"></thead>
+            <tbody id="excelOnizleTbody"></tbody>
+          </table>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:10px;align-items:center;">
+          <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted);cursor:pointer;">
+            <input type="checkbox" id="chkMevcutSil" style="accent-color:var(--red);width:15px;height:15px;">
+            <span>Yüklemeden önce mevcut hareketleri sil</span>
+          </label>
+        </div>
+        <button class="btn" style="margin-top:10px;background:#b71c1c;color:#fff;width:100%;font-size:14px;font-weight:800;" onclick="excelYukle()">⬆ YÜKLE ({{ satır }} kayıt)</button>
+      </div>
 
     </div>
   </div>
@@ -1914,6 +1990,171 @@ async function detayExcel(){
   hareketler.forEach(r=>{b+=(Number(r.borc)-Number(r.tahsilat));csv+=`${r.tarih};${r.aciklama};${fmt(r.borc)};${fmt(r.tahsilat)};${fmt(b)}\n`;});
   const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`${c?.unvan||'cari'}_Hareketleri.csv`;a.click();
+}
+
+/* ── EXCEL'DEN AL ── */
+let excelSatirlar = [];  // okunan ham satırlar
+let excelBasliklar = []; // sütun başlıkları
+
+function exceldenAlAc() {
+  excelSatirlar = []; excelBasliklar = [];
+  document.getElementById('excelFileInput').value = '';
+  document.getElementById('excelDosyaAdi').textContent = 'Dosya seçilmedi';
+  document.getElementById('excelEslestirmeDiv').style.display = 'none';
+  document.getElementById('excelOnizleDiv').style.display = 'none';
+  document.getElementById('chkMevcutSil').checked = false;
+  document.getElementById('exceldenAlOverlay').classList.add('active');
+}
+
+function exceldenAlKapat() {
+  document.getElementById('exceldenAlOverlay').classList.remove('active');
+}
+
+function excelDosyaOku(input) {
+  const file = input.files[0];
+  if (!file) return;
+  document.getElementById('excelDosyaAdi').textContent = file.name;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = new Uint8Array(e.target.result);
+      const wb = XLSX.read(data, { type: 'array', cellDates: true });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+      if (rows.length < 2) { toast('Dosya boş veya başlık satırı yok!', true); return; }
+      excelBasliklar = rows[0].map(String);
+      excelSatirlar = rows.slice(1).filter(r => r.some(c => c !== ''));
+      // Sütun seçeneklerini doldur
+      const opts = ['— Seç —', ...excelBasliklar].map((b,i) =>
+        `<option value="${i-1}">${b}</option>`).join('');
+      ['selTarih','selAciklama','selBorc','selTahsilat'].forEach(id => {
+        document.getElementById(id).innerHTML = opts;
+      });
+      // Akıllı otomatik eşleştirme
+      const esles = (anahtar) => {
+        const idx = excelBasliklar.findIndex(b =>
+          b.toLowerCase().includes(anahtar));
+        return idx >= 0 ? idx + 1 : 0; // +1 çünkü ilk seçenek "— Seç —" (value=-1 → 0 offset)
+      };
+      // value değerleri: index-1 olarak ayarlı; "— Seç —" = -1
+      const setVal = (id, colIdx) => {
+        const sel = document.getElementById(id);
+        sel.value = colIdx; // colIdx = excelBasliklar indexi
+      };
+      setVal('selTarih', esles('tarih'));
+      setVal('selAciklama', esles('açıklama') || esles('aciklama') || esles('açıkl') || esles('acikl'));
+      setVal('selBorc', esles('borç') || esles('borc'));
+      setVal('selTahsilat', esles('tahsilat') || esles('ödeme') || esles('odeme'));
+      document.getElementById('excelEslestirmeDiv').style.display = 'block';
+      document.getElementById('excelOnizleDiv').style.display = 'none';
+      toast(`✓ ${excelSatirlar.length} satır okundu`);
+    } catch(err) { toast('Dosya okunamadı: ' + err.message, true); }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function excelDegerCoz(val) {
+  if (val === null || val === undefined || val === '') return 0;
+  if (typeof val === 'number') return val;
+  // Türkçe format: "1.234,56" → 1234.56
+  const s = String(val).replace(/[^\d,.-]/g, '');
+  return parseFloat(s.replace(/\./g, '').replace(',', '.')) || 0;
+}
+
+function excelTarihCoz(val) {
+  if (!val) return new Date().toLocaleString('tr-TR');
+  if (val instanceof Date) {
+    return val.toLocaleDateString('tr-TR') + ' ' +
+           val.toLocaleTimeString('tr-TR', {hour:'2-digit',minute:'2-digit'});
+  }
+  // Sayısal Excel tarihi
+  if (typeof val === 'number') {
+    const d = new Date(Math.round((val - 25569) * 86400 * 1000));
+    return d.toLocaleDateString('tr-TR') + ' 00:00';
+  }
+  const s = String(val).trim();
+  // GG.AA.YYYY → formatla
+  if (/^\d{2}[.\/-]\d{2}[.\/-]\d{4}/.test(s)) return s.slice(0,10) + (s.length > 10 ? s.slice(10) : ' 00:00');
+  // YYYY-MM-DD
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) {
+    const d = new Date(s);
+    return d.toLocaleDateString('tr-TR') + ' 00:00';
+  }
+  return s;
+}
+
+function excelOnizle() {
+  const idxTarih    = parseInt(document.getElementById('selTarih').value);
+  const idxAciklama = parseInt(document.getElementById('selAciklama').value);
+  const idxBorc     = parseInt(document.getElementById('selBorc').value);
+  const idxTahsilat = parseInt(document.getElementById('selTahsilat').value);
+  if (idxTarih < 0 || idxAciklama < 0 || idxBorc < 0 || idxTahsilat < 0) {
+    toast('Lütfen tüm sütunları seçin!', true); return;
+  }
+  // Önizleme tablosunu doldur
+  const thead = document.getElementById('excelOnizleThead');
+  const tbody = document.getElementById('excelOnizleTbody');
+  const th = s => `<th style="padding:6px 8px;border:1px solid var(--border);color:var(--blue-bright);">${s}</th>`;
+  const td = (s,c) => `<td style="padding:5px 8px;border:1px solid var(--border);${c?'color:'+c:''}">${s}</td>`;
+  thead.innerHTML = `<tr>${th('Tarih')}${th('Açıklama')}${th('Borç')}${th('Tahsilat')}</tr>`;
+  const maks = Math.min(excelSatirlar.length, 20);
+  tbody.innerHTML = excelSatirlar.slice(0, maks).map(r => {
+    const tarih = excelTarihCoz(r[idxTarih]);
+    const acik  = r[idxAciklama] || '';
+    const borc  = excelDegerCoz(r[idxBorc]);
+    const tahsil = excelDegerCoz(r[idxTahsilat]);
+    const renk = borc > 0 ? '#ff6666' : '#66bb6a';
+    return `<tr>${td(tarih,renk)}${td(acik,renk)}${td(fmt(borc),borc>0?'#ff6666':'')}${td(fmt(tahsil),tahsil>0?'#66bb6a':'')}</tr>`;
+  }).join('');
+  const satirSayisi = excelSatirlar.length;
+  document.getElementById('excelSatirSayisi').textContent = `(${satirSayisi} kayıt)`;
+  // Yükle butonunu güncelle
+  document.querySelector('#excelOnizleDiv button[onclick="excelYukle()"]').textContent =
+    `⬆ YÜKLE — ${satirSayisi} KAYIT EKLENECEK`;
+  document.getElementById('excelOnizleDiv').style.display = 'block';
+  if (satirSayisi > 20) toast(`İlk 20 satır gösteriliyor. Toplam: ${satirSayisi}`);
+}
+
+async function excelYukle() {
+  if (!aktifDetayKod) { toast('Aktif müşteri yok!', true); return; }
+  const idxTarih    = parseInt(document.getElementById('selTarih').value);
+  const idxAciklama = parseInt(document.getElementById('selAciklama').value);
+  const idxBorc     = parseInt(document.getElementById('selBorc').value);
+  const idxTahsilat = parseInt(document.getElementById('selTahsilat').value);
+  const mevcutSil   = document.getElementById('chkMevcutSil').checked;
+
+  const kayitlar = excelSatirlar.map(r => ({
+    cari_kod  : aktifDetayKod,
+    tarih     : excelTarihCoz(r[idxTarih]),
+    aciklama  : String(r[idxAciklama] || '').trim(),
+    borc      : excelDegerCoz(r[idxBorc]),
+    tahsilat  : excelDegerCoz(r[idxTahsilat])
+  })).filter(k => k.borc > 0 || k.tahsilat > 0);
+
+  if (kayitlar.length === 0) { toast('Yüklenecek geçerli kayıt yok!', true); return; }
+
+  const onay = confirm(
+    `${mevcutSil ? '⚠️ Mevcut hareketler SİLİNECEK ve ' : ''}${kayitlar.length} kayıt yüklenecek.\n\nDevam?`
+  );
+  if (!onay) return;
+
+  loading(true);
+  try {
+    if (mevcutSil) {
+      await sbDelete('hareketler', `cari_kod=eq.${aktifDetayKod}`);
+    }
+    // Toplu yükleme (50'şer parça)
+    const parcaBoy = 50;
+    for (let i = 0; i < kayitlar.length; i += parcaBoy) {
+      await sbPost('hareketler', kayitlar.slice(i, i + parcaBoy));
+    }
+    exceldenAlKapat();
+    await detayYukle();
+    await bakiyeGuncelleDB(aktifDetayKod);
+    tabloYenile(); genelBakiyeHesapla();
+    toast(`✓ ${kayitlar.length} kayıt başarıyla yüklendi!`);
+  } catch(err) { toast('Yükleme hatası: ' + err.message, true); }
+  loading(false);
 }
 
 async function detayPdf(){
