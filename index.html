@@ -1126,6 +1126,10 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
             <select id="selTarih" class="islem-input" style="font-size:13px;"></select>
           </div>
           <div>
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">SAAT sütunu <span style="color:#555;">(isteğe bağlı)</span></div>
+            <select id="selSaat" class="islem-input" style="font-size:13px;"></select>
+          </div>
+          <div>
             <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">AÇIKLAMA sütunu</div>
             <select id="selAciklama" class="islem-input" style="font-size:13px;"></select>
           </div>
@@ -1134,7 +1138,7 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
             <select id="selBorc" class="islem-input" style="font-size:13px;"></select>
           </div>
           <div>
-            <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">TAHSİLAT sütunu</div>
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">TAHSİLAT / ALACAK sütunu</div>
             <select id="selTahsilat" class="islem-input" style="font-size:13px;"></select>
           </div>
         </div>
@@ -2018,33 +2022,60 @@ function excelDosyaOku(input) {
   reader.onload = (e) => {
     try {
       const data = new Uint8Array(e.target.result);
-      const wb = XLSX.read(data, { type: 'array', cellDates: true });
+      const wb = XLSX.read(data, { type: 'array', cellDates: false });
       const ws = wb.Sheets[wb.SheetNames[0]];
       const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
       if (rows.length < 2) { toast('Dosya boş veya başlık satırı yok!', true); return; }
-      excelBasliklar = rows[0].map(String);
-      excelSatirlar = rows.slice(1).filter(r => r.some(c => c !== ''));
+
+      // İlk satır başlık mı yoksa müşteri adı mı? Başlık satırını bul
+      // Başlık satırı: "tarih", "borç", "alacak", "açıklama" gibi kelimeler içerir
+      let baslikSatirIdx = 0;
+      for (let i = 0; i < Math.min(rows.length, 5); i++) {
+        const rowStr = rows[i].join(' ').toLowerCase();
+        if (rowStr.includes('tarih') || rowStr.includes('borç') || rowStr.includes('borc') || rowStr.includes('açıklama')) {
+          baslikSatirIdx = i;
+          break;
+        }
+      }
+
+      excelBasliklar = rows[baslikSatirIdx].map(String);
+      excelSatirlar = rows.slice(baslikSatirIdx + 1).filter(r => r.some(c => c !== ''));
+
+      // "Liste Borç", "Liste Alacak" gibi özet satırları filtrele
+      excelSatirlar = excelSatirlar.filter(r => {
+        const ilk = String(r[0] || '').toLowerCase();
+        return !ilk.includes('liste') && !ilk.includes('toplam') && !ilk.includes('genel');
+      });
+
       // Sütun seçeneklerini doldur
       const opts = ['— Seç —', ...excelBasliklar].map((b,i) =>
         `<option value="${i-1}">${b}</option>`).join('');
-      ['selTarih','selAciklama','selBorc','selTahsilat'].forEach(id => {
-        document.getElementById(id).innerHTML = opts;
+      ['selTarih','selAciklama','selBorc','selTahsilat','selSaat'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = opts;
       });
+
       // Akıllı otomatik eşleştirme
-      const esles = (anahtar) => {
-        const idx = excelBasliklar.findIndex(b =>
-          b.toLowerCase().includes(anahtar));
-        return idx >= 0 ? idx + 1 : 0; // +1 çünkü ilk seçenek "— Seç —" (value=-1 → 0 offset)
+      const esles = (...anahtarlar) => {
+        for (const anahtar of anahtarlar) {
+          const idx = excelBasliklar.findIndex(b => b.toLowerCase().includes(anahtar));
+          if (idx >= 0) return idx; // ham index
+        }
+        return -1;
       };
-      // value değerleri: index-1 olarak ayarlı; "— Seç —" = -1
+
       const setVal = (id, colIdx) => {
         const sel = document.getElementById(id);
-        sel.value = colIdx; // colIdx = excelBasliklar indexi
+        if (sel) sel.value = colIdx; // colIdx = ham index (value = index)
       };
-      setVal('selTarih', esles('tarih'));
-      setVal('selAciklama', esles('açıklama') || esles('aciklama') || esles('açıkl') || esles('acikl'));
-      setVal('selBorc', esles('borç') || esles('borc'));
-      setVal('selTahsilat', esles('tahsilat') || esles('ödeme') || esles('odeme'));
+
+      // "— Seç —" value=-1, kolonlar 0'dan başlıyor
+      setVal('selTarih',    esles('tarih'));
+      setVal('selSaat',     esles('saat'));
+      setVal('selAciklama', esles('açıklama','aciklama','açıkl','acikl'));
+      setVal('selBorc',     esles('borç','borc'));
+      setVal('selTahsilat', esles('alacak','tahsilat','ödeme','odeme'));
+
       document.getElementById('excelEslestirmeDiv').style.display = 'block';
       document.getElementById('excelOnizleDiv').style.display = 'none';
       toast(`✓ ${excelSatirlar.length} satır okundu`);
@@ -2055,60 +2086,87 @@ function excelDosyaOku(input) {
 
 function excelDegerCoz(val) {
   if (val === null || val === undefined || val === '') return 0;
-  if (typeof val === 'number') return val;
-  // Türkçe format: "1.234,56" → 1234.56
-  const s = String(val).replace(/[^\d,.-]/g, '');
-  return parseFloat(s.replace(/\./g, '').replace(',', '.')) || 0;
+  if (typeof val === 'number') return Math.abs(val); // Excel'de negatif gelebilir
+  // "1.300,00 TL" veya "1,300.00" formatları
+  let s = String(val).replace(/[^\d,.-]/g, '').trim();
+  if (!s) return 0;
+  // Türkçe format: nokta binlik, virgül ondalık → "1.300,00"
+  if (/\d\.\d{3},\d{2}$/.test(s) || /^\d{1,3}(\.\d{3})+,\d+$/.test(s)) {
+    s = s.replace(/\./g, '').replace(',', '.');
+  } else if (/,/.test(s) && /\./.test(s)) {
+    // virgül ve nokta beraber → son virgül ondalık mı nokta mı?
+    const lastComma = s.lastIndexOf(',');
+    const lastDot   = s.lastIndexOf('.');
+    if (lastComma > lastDot) s = s.replace(/\./g, '').replace(',', '.'); // Türkçe
+    else s = s.replace(/,/g, ''); // İngilizce
+  } else {
+    s = s.replace(',', '.');
+  }
+  return parseFloat(s) || 0;
 }
 
-function excelTarihCoz(val) {
-  if (!val) return new Date().toLocaleString('tr-TR');
-  if (val instanceof Date) {
-    return val.toLocaleDateString('tr-TR') + ' ' +
-           val.toLocaleTimeString('tr-TR', {hour:'2-digit',minute:'2-digit'});
+function excelTarihSaatBirlestir(tarihVal, saatVal) {
+  // Excel sayısal tarih (ör: 44645.489 = 23.02.2022 11:45)
+  if (typeof tarihVal === 'number') {
+    const msPerDay = 86400000;
+    // Excel epoch: 1 Ocak 1900 (ama Excel'de 1900 yanlışlıkla artık yıl sayılır, 25569 offset)
+    const d = new Date(Math.round((tarihVal - 25569) * msPerDay));
+    let tarihStr = d.toLocaleDateString('tr-TR');
+    // Saat ayrı sütunda string ise kullan
+    if (saatVal !== undefined && saatVal !== '') {
+      tarihStr += ' ' + String(saatVal).trim().slice(0, 5);
+    } else {
+      // Ondalık kısmından saat hesapla
+      const saatKesir = tarihVal % 1;
+      const toplamSn  = Math.round(saatKesir * 86400);
+      const ss = String(Math.floor(toplamSn / 3600)).padStart(2,'0');
+      const dd = String(Math.floor((toplamSn % 3600) / 60)).padStart(2,'0');
+      tarihStr += ` ${ss}:${dd}`;
+    }
+    return tarihStr;
   }
-  // Sayısal Excel tarihi
-  if (typeof val === 'number') {
-    const d = new Date(Math.round((val - 25569) * 86400 * 1000));
-    return d.toLocaleDateString('tr-TR') + ' 00:00';
+  // String tarih
+  let s = String(tarihVal || '').trim();
+  if (!s) return new Date().toLocaleDateString('tr-TR') + ' 00:00';
+  // GG.AA.YYYY
+  if (/^\d{2}[.\/-]\d{2}[.\/-]\d{4}/.test(s)) {
+    const saat = saatVal ? ' ' + String(saatVal).trim().slice(0,5) : ' 00:00';
+    return s.slice(0,10) + saat;
   }
-  const s = String(val).trim();
-  // GG.AA.YYYY → formatla
-  if (/^\d{2}[.\/-]\d{2}[.\/-]\d{4}/.test(s)) return s.slice(0,10) + (s.length > 10 ? s.slice(10) : ' 00:00');
   // YYYY-MM-DD
   if (/^\d{4}-\d{2}-\d{2}/.test(s)) {
     const d = new Date(s);
-    return d.toLocaleDateString('tr-TR') + ' 00:00';
+    const saat = saatVal ? ' ' + String(saatVal).trim().slice(0,5) : ' 00:00';
+    return d.toLocaleDateString('tr-TR') + saat;
   }
   return s;
 }
 
 function excelOnizle() {
   const idxTarih    = parseInt(document.getElementById('selTarih').value);
+  const idxSaat     = parseInt(document.getElementById('selSaat').value);
   const idxAciklama = parseInt(document.getElementById('selAciklama').value);
   const idxBorc     = parseInt(document.getElementById('selBorc').value);
   const idxTahsilat = parseInt(document.getElementById('selTahsilat').value);
   if (idxTarih < 0 || idxAciklama < 0 || idxBorc < 0 || idxTahsilat < 0) {
-    toast('Lütfen tüm sütunları seçin!', true); return;
+    toast('Lütfen zorunlu sütunları seçin!', true); return;
   }
-  // Önizleme tablosunu doldur
   const thead = document.getElementById('excelOnizleThead');
   const tbody = document.getElementById('excelOnizleTbody');
   const th = s => `<th style="padding:6px 8px;border:1px solid var(--border);color:var(--blue-bright);">${s}</th>`;
   const td = (s,c) => `<td style="padding:5px 8px;border:1px solid var(--border);${c?'color:'+c:''}">${s}</td>`;
-  thead.innerHTML = `<tr>${th('Tarih')}${th('Açıklama')}${th('Borç')}${th('Tahsilat')}</tr>`;
+  thead.innerHTML = `<tr>${th('Tarih/Saat')}${th('Açıklama')}${th('Borç')}${th('Tahsilat')}</tr>`;
   const maks = Math.min(excelSatirlar.length, 20);
   tbody.innerHTML = excelSatirlar.slice(0, maks).map(r => {
-    const tarih = excelTarihCoz(r[idxTarih]);
-    const acik  = r[idxAciklama] || '';
-    const borc  = excelDegerCoz(r[idxBorc]);
+    const tarih  = excelTarihSaatBirlestir(r[idxTarih], idxSaat >= 0 ? r[idxSaat] : undefined);
+    const acik   = r[idxAciklama] || '';
+    const borc   = excelDegerCoz(r[idxBorc]);
     const tahsil = excelDegerCoz(r[idxTahsilat]);
-    const renk = borc > 0 ? '#ff6666' : '#66bb6a';
-    return `<tr>${td(tarih,renk)}${td(acik,renk)}${td(fmt(borc),borc>0?'#ff6666':'')}${td(fmt(tahsil),tahsil>0?'#66bb6a':'')}</tr>`;
+    const renk   = borc > 0 ? '#ff6666' : '#66bb6a';
+    return `<tr>${td(tarih,'#ccc')}${td(acik,renk)}${td(borc>0?fmt(borc):'',borc>0?'#ff6666':'')}${td(tahsil>0?fmt(tahsil):'',tahsil>0?'#66bb6a':'')}</tr>`;
   }).join('');
   const satirSayisi = excelSatirlar.length;
   document.getElementById('excelSatirSayisi').textContent = `(${satirSayisi} kayıt)`;
-  // Yükle butonunu güncelle
   document.querySelector('#excelOnizleDiv button[onclick="excelYukle()"]').textContent =
     `⬆ YÜKLE — ${satirSayisi} KAYIT EKLENECEK`;
   document.getElementById('excelOnizleDiv').style.display = 'block';
@@ -2118,17 +2176,18 @@ function excelOnizle() {
 async function excelYukle() {
   if (!aktifDetayKod) { toast('Aktif müşteri yok!', true); return; }
   const idxTarih    = parseInt(document.getElementById('selTarih').value);
+  const idxSaat     = parseInt(document.getElementById('selSaat').value);
   const idxAciklama = parseInt(document.getElementById('selAciklama').value);
   const idxBorc     = parseInt(document.getElementById('selBorc').value);
   const idxTahsilat = parseInt(document.getElementById('selTahsilat').value);
   const mevcutSil   = document.getElementById('chkMevcutSil').checked;
 
   const kayitlar = excelSatirlar.map(r => ({
-    cari_kod  : aktifDetayKod,
-    tarih     : excelTarihCoz(r[idxTarih]),
-    aciklama  : String(r[idxAciklama] || '').trim(),
-    borc      : excelDegerCoz(r[idxBorc]),
-    tahsilat  : excelDegerCoz(r[idxTahsilat])
+    cari_kod : aktifDetayKod,
+    tarih    : excelTarihSaatBirlestir(r[idxTarih], idxSaat >= 0 ? r[idxSaat] : undefined),
+    aciklama : String(r[idxAciklama] || '').trim(),
+    borc     : excelDegerCoz(r[idxBorc]),
+    tahsilat : excelDegerCoz(r[idxTahsilat])
   })).filter(k => k.borc > 0 || k.tahsilat > 0);
 
   if (kayitlar.length === 0) { toast('Yüklenecek geçerli kayıt yok!', true); return; }
@@ -2143,7 +2202,6 @@ async function excelYukle() {
     if (mevcutSil) {
       await sbDelete('hareketler', `cari_kod=eq.${aktifDetayKod}`);
     }
-    // Toplu yükleme (50'şer parça)
     const parcaBoy = 50;
     for (let i = 0; i < kayitlar.length; i += parcaBoy) {
       await sbPost('hareketler', kayitlar.slice(i, i + parcaBoy));
