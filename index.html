@@ -1091,57 +1091,43 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
 
 <!-- EXCEL'DEN AL MODALİ -->
 <div class="modal-overlay" id="exceldenAlOverlay" onclick="if(event.target===this)exceldenAlKapat()" style="z-index:9999;">
-  <div class="detay-modal" style="max-width:700px;max-height:80vh;display:flex;flex-direction:column;">
+  <div class="detay-modal" style="max-width:560px;">
     <div class="detay-titlebar">
       <span class="detay-title">📥 EXCEL'DEN VERİ AKTAR</span>
       <button class="detay-close" onclick="exceldenAlKapat()">✕</button>
     </div>
-    <div style="padding:16px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:14px;">
-
-      <!-- Bilgi -->
-      <div style="background:rgba(21,101,192,.12);border:1px solid #1565c0;border-radius:8px;padding:14px;">
-        <div style="color:var(--blue-bright);font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:.8px;margin-bottom:8px;">📋 EXCEL DOSYA FORMATI</div>
-        <div style="font-size:12px;color:var(--text-muted);line-height:2;">
-          Başlık satırında tam olarak şu sütunlar olmalı:<br>
-          <span style="color:#ffd54f;font-family:monospace;background:rgba(0,0,0,.3);padding:2px 8px;border-radius:4px;margin:2px;display:inline-block;">Tarih</span>
-          <span style="color:#ffd54f;font-family:monospace;background:rgba(0,0,0,.3);padding:2px 8px;border-radius:4px;margin:2px;display:inline-block;">Saat</span>
-          <span style="color:#ffd54f;font-family:monospace;background:rgba(0,0,0,.3);padding:2px 8px;border-radius:4px;margin:2px;display:inline-block;">Tür</span>
-          <span style="color:#ffd54f;font-family:monospace;background:rgba(0,0,0,.3);padding:2px 8px;border-radius:4px;margin:2px;display:inline-block;">Açıklama</span>
-          <span style="color:#ffd54f;font-family:monospace;background:rgba(0,0,0,.3);padding:2px 8px;border-radius:4px;margin:2px;display:inline-block;">Borç</span>
-          <span style="color:#ffd54f;font-family:monospace;background:rgba(0,0,0,.3);padding:2px 8px;border-radius:4px;margin:2px;display:inline-block;">Alacak</span>
+    <div style="padding:20px;">
+      <div style="font-size:13px;color:var(--text-muted);margin-bottom:14px;">
+        Excel dosyanızda şu sütunlar olmalı (sıra önemli değil):
+        <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;">
+          <span style="background:rgba(66,165,245,0.15);color:var(--blue-bright);padding:3px 8px;border-radius:4px;font-size:12px;font-weight:700;">Tarih</span>
+          <span style="background:rgba(66,165,245,0.15);color:var(--blue-bright);padding:3px 8px;border-radius:4px;font-size:12px;font-weight:700;">Açıklama</span>
+          <span style="background:rgba(255,68,68,0.15);color:var(--red);padding:3px 8px;border-radius:4px;font-size:12px;font-weight:700;">Borç</span>
+          <span style="background:rgba(102,187,106,0.15);color:var(--green2);padding:3px 8px;border-radius:4px;font-size:12px;font-weight:700;">Tahsilat</span>
         </div>
-        <div style="font-size:11px;color:#888;margin-top:8px;">Sütun sırası önemli değil · Başlık satırından önceki satırlar (müşteri adı vb.) otomatik atlanır · Alt özet satırları (Liste Borç vb.) otomatik filtrelenir</div>
+        <div style="font-size:11px;color:#888;margin-top:8px;">Başlık satırından önceki satırlar (müşteri adı vb.) otomatik atlanır · Alt özet satırları (Liste Borç vb.) otomatik filtrelenir</div>
       </div>
 
-      <!-- Dosya seç -->
-      <div style="display:flex;gap:10px;align-items:center;">
-        <label style="cursor:pointer;background:var(--accent);color:#fff;padding:9px 20px;border-radius:5px;font-size:13px;font-weight:700;font-family:'Oswald',sans-serif;letter-spacing:.5px;">
-          📂 DOSYA SEÇ (.xlsx / .xls)
-          <input type="file" id="excelFileInput" accept=".xlsx,.xls,.csv" style="display:none;" onchange="excelDosyaOku(this)">
+      <div id="excelDropZone" style="border:2px dashed var(--border2);border-radius:8px;padding:30px;text-align:center;cursor:pointer;transition:all .2s;" onclick="document.getElementById('excelDosyaInput').click()" ondragover="event.preventDefault();this.style.borderColor='var(--blue-bright)'" ondragleave="this.style.borderColor='var(--border2)'" ondrop="excelDrop(event)">
+        <div style="font-size:32px;margin-bottom:8px;">📂</div>
+        <div style="font-weight:700;color:var(--text);">Excel dosyasını buraya sürükle veya tıkla</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">.xlsx veya .xls</div>
+      </div>
+      <input type="file" id="excelDosyaInput" accept=".xlsx,.xls" style="display:none;" onchange="excelDosyaOku(this.files[0])">
+
+      <div id="excelOnizleme" style="margin-top:16px;display:none;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <span id="excelOnizlemeBilgi" style="font-size:13px;color:var(--blue-bright);font-weight:700;"></span>
+        </div>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#f88;cursor:pointer;margin-bottom:10px;">
+          <input type="checkbox" id="chkMevcutSil" style="accent-color:var(--red);width:15px;height:15px;">
+          ⚠️ Yüklemeden önce mevcut hareketleri sil
         </label>
-        <span id="excelDosyaAdi" style="font-size:12px;color:var(--text-muted);">Dosya seçilmedi</span>
+        <div id="excelOnizlemeTabloWrap" style="max-height:280px;overflow-y:auto;">
+          <table style="width:100%;border-collapse:collapse;font-size:12px;" id="excelOnizlemeTablo"></table>
+        </div>
+        <button class="btn-islem-kaydet" id="excelYukleBtn" style="width:100%;margin-top:12px;padding:10px 20px;" onclick="excelVerisiniYukle()">İÇERİ AKTAR</button>
       </div>
-
-      <!-- Önizleme -->
-      <div id="excelOnizleDiv" style="display:none;background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:8px;padding:14px;">
-        <div style="color:var(--blue-bright);font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:.8px;margin-bottom:10px;">
-          👁 ÖNİZLEME — <span id="excelSatirSayisi" style="color:#ffd54f;"></span>
-        </div>
-        <div style="overflow-x:auto;max-height:220px;overflow-y:auto;">
-          <table style="width:100%;border-collapse:collapse;font-size:12px;">
-            <thead id="excelOnizleThead" style="position:sticky;top:0;background:var(--header-bg);"></thead>
-            <tbody id="excelOnizleTbody"></tbody>
-          </table>
-        </div>
-        <div style="margin-top:12px;display:flex;gap:10px;align-items:center;">
-          <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#f88;cursor:pointer;">
-            <input type="checkbox" id="chkMevcutSil" style="accent-color:var(--red);width:15px;height:15px;">
-            ⚠️ Yüklemeden önce mevcut hareketleri sil
-          </label>
-        </div>
-        <button class="btn" id="btnExcelYukle" style="margin-top:10px;background:#1b5e20;color:#fff;width:100%;font-size:14px;font-weight:800;" onclick="excelYukle()">⬆ YÜKLE</button>
-      </div>
-
     </div>
   </div>
 </div>
@@ -1976,14 +1962,12 @@ async function detayExcel(){
 }
 
 /* ── EXCEL'DEN AL ── */
-let excelSatirlar = [];  // okunan ham satırlar
-let excelBasliklar = []; // sütun başlıkları
+let excelVerisi = [];
 
 function exceldenAlAc() {
-  excelSatirlar = [];
-  document.getElementById('excelFileInput').value = '';
-  document.getElementById('excelDosyaAdi').textContent = 'Dosya seçilmedi';
-  document.getElementById('excelOnizleDiv').style.display = 'none';
+  excelVerisi = [];
+  document.getElementById('excelOnizleme').style.display = 'none';
+  document.getElementById('excelDosyaInput').value = '';
   document.getElementById('chkMevcutSil').checked = false;
   document.getElementById('exceldenAlOverlay').classList.add('active');
 }
@@ -1992,172 +1976,221 @@ function exceldenAlKapat() {
   document.getElementById('exceldenAlOverlay').classList.remove('active');
 }
 
-function excelDosyaOku(input) {
-  const file = input.files[0];
+function excelDrop(e) {
+  e.preventDefault();
+  document.getElementById('excelDropZone').style.borderColor = 'var(--border2)';
+  const file = e.dataTransfer.files[0];
+  if (file) excelDosyaOku(file);
+}
+
+function excelDosyaOku(file) {
   if (!file) return;
-  document.getElementById('excelDosyaAdi').textContent = file.name;
-  document.getElementById('excelOnizleDiv').style.display = 'none';
-
   const reader = new FileReader();
-  reader.onload = (e) => {
+  reader.onload = function(e) {
     try {
-      const wb = XLSX.read(new Uint8Array(e.target.result), { type:'array', cellDates:false });
+      const wb = XLSX.read(e.target.result, { type: 'array', cellDates: true });
       const ws = wb.Sheets[wb.SheetNames[0]];
-      const tumSatirlar = XLSX.utils.sheet_to_json(ws, { header:1, defval:'' });
+      // Ham değerleri oku (raw:true) — metin/formatlı hale çevrilirse ABD/TR ayırıcı (,/.) karışıklığı
+      // ve tarih GG/AA sıralaması karışıklığı oluşuyordu. Ham değerle bu tamamen ortadan kalkıyor.
+      const rows = XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: '' });
 
-      // Başlık satırını bul: Tarih + Borç/Alacak kelimelerini içeren satır
-      let baslikIdx = -1;
-      for (let i = 0; i < Math.min(tumSatirlar.length, 10); i++) {
-        const str = tumSatirlar[i].join(' ').toLowerCase();
-        if ((str.includes('tarih') || str.includes('saat')) &&
-            (str.includes('borç') || str.includes('borc') || str.includes('alacak'))) {
-          baslikIdx = i;
+      if (!rows.length) { toast('Excel boş veya okunamadı!', true); return; }
+
+      const norm = s => (s || '').toString().toLowerCase()
+        .replace(/i̇/g,'i').replace(/ı/g,'i').replace(/ç/g,'c')
+        .replace(/ş/g,'s').replace(/ö/g,'o').replace(/ü/g,'u').replace(/ğ/g,'g')
+        .replace(/\s+/g,'').replace(/[^a-z0-9]/g,'');
+
+      // Başlık satırını bul: içinde "tarih" yazan hücre olan ilk satır (Tür sütunu hiç aranmıyor, gerekmiyor)
+      let headerRowIdx = -1;
+      let kolonIdx = {};
+      for (let i = 0; i < Math.min(rows.length, 15); i++) {
+        const row = rows[i] || [];
+        const idxTarih = row.findIndex(c => norm(c) === 'tarih');
+        if (idxTarih !== -1) {
+          headerRowIdx = i;
+          row.forEach((c, ci) => {
+            const n = norm(c);
+            if (n === 'tarih') kolonIdx.tarih = ci;
+            else if (n === 'saat') kolonIdx.saat = ci;
+            else if (['aciklama','detay','not','islem'].includes(n)) kolonIdx.aciklama = ci;
+            else if (n === 'borc') kolonIdx.borc = ci;
+            else if (['alacak','tahsilat','odeme'].includes(n)) kolonIdx.alacak = ci;
+          });
           break;
         }
       }
-      if (baslikIdx < 0) { toast('Başlık satırı bulunamadı! (Tarih, Borç, Alacak sütunları olmalı)', true); return; }
 
-      const basliklar = tumSatirlar[baslikIdx].map(s => String(s).trim());
+      // Başlık satırı bulunamazsa standart A-F sırasını varsay (Tarih,Saat,Tür,Açıklama,Borç,Alacak)
+      if (headerRowIdx === -1) {
+        headerRowIdx = 0;
+        kolonIdx = { tarih: 0, saat: 1, aciklama: 3, borc: 4, alacak: 5 };
+      }
+      if (kolonIdx.tarih === undefined) kolonIdx.tarih = 0;
+      if (kolonIdx.saat === undefined) kolonIdx.saat = 1;
+      if (kolonIdx.aciklama === undefined) kolonIdx.aciklama = 3;
+      if (kolonIdx.borc === undefined) kolonIdx.borc = 4;
+      if (kolonIdx.alacak === undefined) kolonIdx.alacak = 5;
 
-      // Sabit sütun indexlerini bul (büyük/küçük harf duyarsız)
-      const bul = (...aranan) => {
-        for (const a of aranan) {
-          const idx = basliklar.findIndex(b => b.toLowerCase().includes(a.toLowerCase()));
-          if (idx >= 0) return idx;
+      // Tarih hücresinden yıl/ay/gün çıkar — Date nesnesi, Excel seri numarası veya metin olabilir
+      const tarihParcala = (deger) => {
+        if (deger instanceof Date && !isNaN(deger)) {
+          return { y: deger.getUTCFullYear(), m: deger.getUTCMonth() + 1, d: deger.getUTCDate() };
         }
-        return -1;
+        if (typeof deger === 'number') {
+          const dc = XLSX.SSF && XLSX.SSF.parse_date_code ? XLSX.SSF.parse_date_code(deger) : null;
+          if (dc) return { y: dc.y, m: dc.m, d: dc.d };
+          return null;
+        }
+        const s = (deger || '').toString().trim();
+        const m = s.match(/(\d{1,4})[.\/-](\d{1,2})[.\/-](\d{1,4})/);
+        if (!m) return null;
+        let a = parseInt(m[1], 10), b = parseInt(m[2], 10), c = parseInt(m[3], 10);
+        if (a > 31 || m[1].length === 4) {
+          return { y: a, m: b, d: c }; // YYYY-MM-DD
+        }
+        const yil = c < 100 ? 2000 + c : c; // GG.AA.YYYY (Türkçe standart format)
+        return { y: yil, m: b, d: a };
       };
 
-      const idxTarih    = bul('tarih');
-      const idxSaat     = bul('saat');
-      const idxAciklama = bul('açıklama', 'aciklama', 'açıkl');
-      const idxBorc     = bul('borç', 'borc');
-      const idxAlacak   = bul('alacak', 'tahsilat');
+      // Saat hücresinden saat/dakika/saniye çıkar
+      const saatParcala = (deger) => {
+        if (deger instanceof Date && !isNaN(deger)) {
+          return { H: deger.getUTCHours(), M: deger.getUTCMinutes(), S: deger.getUTCSeconds() };
+        }
+        if (typeof deger === 'number') {
+          const dc = XLSX.SSF && XLSX.SSF.parse_date_code ? XLSX.SSF.parse_date_code(deger) : null;
+          if (dc) return { H: dc.H || 0, M: dc.M || 0, S: Math.floor(dc.S || 0) };
+          return null;
+        }
+        const s = (deger || '').toString().trim();
+        const m = s.match(/(\d{1,2}):(\d{1,2})(?::(\d{1,2}))?/);
+        if (!m) return null;
+        return { H: parseInt(m[1], 10) || 0, M: parseInt(m[2], 10) || 0, S: parseInt(m[3] || '0', 10) || 0 };
+      };
 
-      if (idxTarih < 0 || idxBorc < 0 || idxAlacak < 0) {
-        toast('Zorunlu sütunlar eksik: Tarih, Borç, Alacak sütunları olmalı!', true); return;
+      // Borç/Alacak hücresinden sayı çıkar — sayı tipi zaten doğru, metinse TR/US ayırıcı karışıklığını çöz
+      const temizSayi = (deger) => {
+        if (deger === '' || deger === null || deger === undefined) return 0;
+        if (typeof deger === 'number') return deger;
+        let s = deger.toString().replace(/\s*TL\s*/gi, '').trim();
+        if (!s) return 0;
+        const sonNokta = s.lastIndexOf('.');
+        const sonVirgul = s.lastIndexOf(',');
+        if (sonVirgul > sonNokta) {
+          s = s.replace(/\./g, '').replace(',', '.'); // TR: nokta binlik, virgül ondalık
+        } else if (sonNokta > sonVirgul) {
+          s = s.replace(/,/g, ''); // US: virgül binlik, nokta ondalık
+        } else {
+          s = s.replace(/,/g, '');
+        }
+        return parseFloat(s) || 0;
+      };
+
+      const pad2 = n => n.toString().padStart(2, '0');
+      const satirlar = [];
+
+      for (let i = headerRowIdx + 1; i < rows.length; i++) {
+        const row = rows[i];
+        if (!row || !row.length) continue;
+
+        const tp = tarihParcala(row[kolonIdx.tarih]);
+        // Tarihi olmayan/okunamayan satırları atla (ör. en alttaki "Liste Borç / Liste Alacak / Liste Bakiye" özet satırları)
+        if (!tp || !tp.y || !tp.m || !tp.d) continue;
+
+        const sp = saatParcala(row[kolonIdx.saat]) || { H: 0, M: 0, S: 0 };
+        const aciklama = (row[kolonIdx.aciklama] || '').toString().trim();
+        const borc     = temizSayi(row[kolonIdx.borc]);
+        const tahsilat = temizSayi(row[kolonIdx.alacak]);
+
+        // Bu uygulamada tarih "GG.AA.YYYY SS:DD" düz metin olarak saklanıyor (manuel kayıtlarla aynı format)
+        const tarihGosterim = `${pad2(tp.d)}.${pad2(tp.m)}.${tp.y}`;
+        const saatGosterim  = `${pad2(sp.H)}:${pad2(sp.M)}:${pad2(sp.S)}`;
+        const tarih = `${tarihGosterim} ${pad2(sp.H)}:${pad2(sp.M)}`;
+
+        satirlar.push({ tarih, tarihGosterim, saatGosterim, aciklama, borc, tahsilat });
       }
 
-      // Veri satırlarını al, özet satırlarını filtrele
-      excelSatirlar = tumSatirlar.slice(baslikIdx + 1)
-        .filter(r => {
-          const ilk = String(r[0] || '').toLowerCase().trim();
-          if (ilk === '') return false;
-          if (ilk.includes('liste') || ilk.includes('toplam') || ilk.includes('genel')) return false;
-          // En az borç veya alacak değeri olan satırları al
-          const b = excelDegerCoz(r[idxBorc]);
-          const a = excelDegerCoz(r[idxAlacak]);
-          return b > 0 || a > 0;
-        });
+      if (!satirlar.length) {
+        toast('Okunabilir hareket verisi bulunamadı!', true);
+        return;
+      }
 
-      if (excelSatirlar.length === 0) { toast('Yüklenecek geçerli kayıt bulunamadı!', true); return; }
-
-      // Önizleme tablosunu doldur
-      const th = s => `<th style="padding:6px 10px;border:1px solid var(--border);color:var(--blue-bright);white-space:nowrap;">${s}</th>`;
-      const td = (s, c) => `<td style="padding:5px 10px;border:1px solid var(--border);${c?'color:'+c:''};white-space:nowrap;">${s??''}</td>`;
-
-      document.getElementById('excelOnizleThead').innerHTML =
-        `<tr>${th('Tarih/Saat')}${th('Açıklama')}${th('Borç')}${th('Alacak')}</tr>`;
-
-      const maks = Math.min(excelSatirlar.length, 30);
-      document.getElementById('excelOnizleTbody').innerHTML = excelSatirlar.slice(0, maks).map(r => {
-        const tarih  = excelTarihSaatBirlestir(r[idxTarih], idxSaat >= 0 ? r[idxSaat] : '');
-        const acik   = idxAciklama >= 0 ? (r[idxAciklama] || '') : '';
-        const borc   = excelDegerCoz(r[idxBorc]);
-        const alacak = excelDegerCoz(r[idxAlacak]);
-        return `<tr>
-          ${td(tarih, '#aaa')}
-          ${td(acik, borc > 0 ? '#ff8a80' : '#69f0ae')}
-          ${td(borc > 0 ? fmt(borc) : '—', borc > 0 ? '#ff8a80' : '#555')}
-          ${td(alacak > 0 ? fmt(alacak) : '—', alacak > 0 ? '#69f0ae' : '#555')}
-        </tr>`;
-      }).join('');
-
-      const sayi = excelSatirlar.length;
-      document.getElementById('excelSatirSayisi').textContent = `${sayi} kayıt`;
-      document.getElementById('btnExcelYukle').textContent = `⬆ ${sayi} KAYDI YÜKLE`;
-
-      // Sütun indexlerini global sakla (yükle fonksiyonu kullanacak)
-      window._excelIdx = { idxTarih, idxSaat, idxAciklama, idxBorc, idxAlacak };
-
-      document.getElementById('excelOnizleDiv').style.display = 'block';
-      if (sayi > 30) toast(`İlk 30 satır gösteriliyor. Toplam: ${sayi}`);
-      else toast(`✓ ${sayi} kayıt okundu, kontrol edip yükleyebilirsiniz.`);
-
-    } catch(err) { toast('Dosya okunamadı: ' + err.message, true); }
+      excelVerisi = satirlar;
+      excelOnizlemeGoster();
+    } catch(err) {
+      toast('Dosya okunamadı: ' + err.message, true);
+    }
   };
   reader.readAsArrayBuffer(file);
 }
 
-function excelDegerCoz(val) {
-  if (val === null || val === undefined || val === '') return 0;
-  if (typeof val === 'number') return Math.abs(val);
-  let s = String(val).replace(/[^\d,.-]/g, '').trim();
-  if (!s) return 0;
-  // Türkçe: "1.300,00"
-  if (/^\d{1,3}(\.\d{3})+,\d*$/.test(s)) return parseFloat(s.replace(/\./g,'').replace(',','.')) || 0;
-  // Virgül ondalık: "1300,00"
-  if (/,/.test(s) && !/\./.test(s)) return parseFloat(s.replace(',','.')) || 0;
-  // Nokta ondalık veya binlik: genel
-  return parseFloat(s.replace(',','')) || 0;
+function excelOnizlemeGoster() {
+  const wrap = document.getElementById('excelOnizleme');
+  const bilgi = document.getElementById('excelOnizlemeBilgi');
+  const tablo = document.getElementById('excelOnizlemeTablo');
+
+  wrap.style.display = 'block';
+  bilgi.textContent = `${excelVerisi.length} satır okundu — önizleme:`;
+
+  const goruntu = excelVerisi.slice(0, 8);
+  tablo.innerHTML = `
+    <thead style="position:sticky;top:0;">
+      <tr>
+        <th style="background:var(--panel2);padding:6px 8px;text-align:left;border-bottom:1px solid var(--border);color:var(--text-muted);">Tarih</th>
+        <th style="background:var(--panel2);padding:6px 8px;text-align:left;border-bottom:1px solid var(--border);color:var(--text-muted);">Açıklama</th>
+        <th style="background:var(--panel2);padding:6px 8px;text-align:right;border-bottom:1px solid var(--border);color:var(--red);">Borç</th>
+        <th style="background:var(--panel2);padding:6px 8px;text-align:right;border-bottom:1px solid var(--border);color:var(--green2);">Tahsilat</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${goruntu.map(r => `
+        <tr>
+          <td style="padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.05);color:var(--text-muted);font-size:11px;">${r.tarihGosterim} ${r.saatGosterim}</td>
+          <td style="padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.05);">${r.aciklama || '-'}</td>
+          <td style="padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.05);text-align:right;color:var(--red);">${r.borc > 0 ? fmt(r.borc) : ''}</td>
+          <td style="padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.05);text-align:right;color:var(--green2);">${r.tahsilat > 0 ? fmt(r.tahsilat) : ''}</td>
+        </tr>
+      `).join('')}
+      ${excelVerisi.length > 8 ? `<tr><td colspan="4" style="padding:6px 8px;color:var(--text-muted);font-size:11px;text-align:center;">... ve ${excelVerisi.length - 8} satır daha</td></tr>` : ''}
+    </tbody>
+  `;
 }
 
-function excelTarihSaatBirlestir(tarihVal, saatVal) {
-  let tarihStr = '';
+async function excelVerisiniYukle() {
+  if (!excelVerisi.length || !aktifDetayKod) { toast('Cari seçili değil veya veri yok!', true); return; }
 
-  if (typeof tarihVal === 'number') {
-    // Excel sayısal tarih: 44645 → 23.02.2022
-    const d = new Date(Math.round((tarihVal - 25569) * 86400000));
-    tarihStr = d.toLocaleDateString('tr-TR'); // GG.AA.YYYY
-  } else {
-    const s = String(tarihVal || '').trim();
-    if (!s) return new Date().toLocaleDateString('tr-TR') + ' 00:00';
-    // GG.AA.YYYY veya GG/AA/YYYY
-    if (/^\d{2}[.\/-]\d{2}[.\/-]\d{4}/.test(s)) tarihStr = s.slice(0, 10);
-    // YYYY-MM-DD
-    else if (/^\d{4}-\d{2}-\d{2}/.test(s)) {
-      tarihStr = new Date(s).toLocaleDateString('tr-TR');
-    } else tarihStr = s;
-  }
-
-  // Saat: string "11:42:24" → "11:42" al
-  const saatStr = String(saatVal || '').trim();
-  if (saatStr) return tarihStr + ' ' + saatStr.slice(0, 5);
-  return tarihStr + ' 00:00';
-}
-
-async function excelYukle() {
-  if (!aktifDetayKod) { toast('Aktif müşteri yok!', true); return; }
-  const idx = window._excelIdx;
-  if (!idx) { toast('Önce dosya seçin!', true); return; }
   const mevcutSil = document.getElementById('chkMevcutSil').checked;
+  if (!confirm(`${mevcutSil ? '⚠️ Mevcut hareketler önce SİLİNECEK!\n\n' : ''}${excelVerisi.length} kayıt yüklenecek. Devam?`)) return;
 
-  const kayitlar = excelSatirlar.map(r => ({
-    cari_kod : aktifDetayKod,
-    tarih    : excelTarihSaatBirlestir(r[idx.idxTarih], idx.idxSaat >= 0 ? r[idx.idxSaat] : ''),
-    aciklama : idx.idxAciklama >= 0 ? String(r[idx.idxAciklama] || '').trim() : '',
-    borc     : excelDegerCoz(r[idx.idxBorc]),
-    tahsilat : excelDegerCoz(r[idx.idxAlacak])
+  const btn = document.getElementById('excelYukleBtn');
+  btn.textContent = 'Yükleniyor...';
+  btn.disabled = true;
+
+  const kayitlar = excelVerisi.map(r => ({
+    cari_kod: aktifDetayKod,
+    tarih: r.tarih,
+    aciklama: r.aciklama || 'Excel aktarım',
+    borc: r.borc || 0,
+    tahsilat: r.tahsilat || 0
   }));
 
-  const onay = confirm(
-    `${mevcutSil ? '⚠️ Mevcut hareketler önce SİLİNECEK!\n\n' : ''}${kayitlar.length} kayıt yüklenecek. Devam?`
-  );
-  if (!onay) return;
-
-  loading(true);
   try {
     if (mevcutSil) await sbDelete('hareketler', `cari_kod=eq.${aktifDetayKod}`);
     for (let i = 0; i < kayitlar.length; i += 50) {
       await sbPost('hareketler', kayitlar.slice(i, i + 50));
     }
-    exceldenAlKapat();
     await detayYukle();
     await bakiyeGuncelleDB(aktifDetayKod);
     tabloYenile(); genelBakiyeHesapla();
     toast(`✓ ${kayitlar.length} kayıt başarıyla yüklendi!`);
-  } catch(err) { toast('Yükleme hatası: ' + err.message, true); }
-  loading(false);
+  } catch(err) {
+    toast('Yükleme hatası: ' + err.message, true);
+  }
+
+  btn.textContent = 'İÇERİ AKTAR';
+  btn.disabled = false;
+  exceldenAlKapat();
 }
 
 
