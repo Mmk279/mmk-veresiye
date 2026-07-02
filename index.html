@@ -2188,7 +2188,7 @@ async function excelYukle() {
     aciklama : String(r[idxAciklama] || '').trim(),
     borc     : excelDegerCoz(r[idxBorc]),
     tahsilat : excelDegerCoz(r[idxTahsilat])
-  })).filter(k => k.borc > 0 || k.tahsilat > 0);
+  }));
 
   if (kayitlar.length === 0) { toast('Yüklenecek geçerli kayıt yok!', true); return; }
 
