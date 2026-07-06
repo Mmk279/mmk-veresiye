@@ -498,8 +498,49 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
   .detay-main-layout{grid-template-columns:1fr;}
   .detay-right-pane{border-top:2px solid var(--border);}
   .detay-modal{width:99vw;height:96vh;}
-  #txtCariUnvan{width:130px;}
-  #txtAra{width:110px;}
+
+  /* Toolbar: iki satıra diz */
+  .toolbar{
+    flex-wrap:wrap;
+    gap:6px;
+    padding:6px 8px;
+  }
+  .toolbar-label{font-size:11px;}
+  #txtCariKod{width:40px;}
+  #txtCariUnvan{width:calc(100% - 90px) !important;flex:1;}
+  #txtAra{width:100% !important;flex:1;}
+
+  /* Alt butonlar: eşit genişlik, iki sıra */
+  .bottom-bar{
+    flex-wrap:wrap;
+    gap:4px;
+    padding:6px;
+  }
+  .bottom-bar .btn{
+    flex:1;
+    min-width:calc(33% - 4px);
+    font-size:11px;
+    padding:8px 4px;
+    text-align:center;
+  }
+
+  /* Cari tablo sütunları */
+  .th-kod,.td-kod{width:36px !important;font-size:12px;padding:6px 4px !important;}
+  .th-unvan,.td-unvan{font-size:13px;padding:6px 4px !important;}
+  .th-tutar,.td-tutar{width:80px !important;font-size:12px;padding:6px 4px !important;}
+
+  /* Titlebar */
+  .titlebar{padding:6px 8px;}
+  .titlebar-market{font-size:16px !important;}
+  .titlebar-logo{width:32px !important;height:32px !important;}
+
+  /* Menubar gizle */
+  .menubar{display:none;}
+
+  /* Sağ pane içi */
+  .right-pane{padding:8px;}
+  .saat-display{font-size:28px !important;}
+
   /* ÜRÜN TOOLBAR MOBİL */
   #txtUrunAd{width:100px !important;font-size:12px;}
   #txtUrunBarkod{width:80px !important;font-size:12px;}
@@ -510,6 +551,20 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
   #urunPane > div { flex-direction:column; }
 
   /* Toptancı: `app-body` zaten sağ paneli alta indirir */
+
+  /* Detay modal toolbar */
+  .detay-titlebar{flex-wrap:wrap;gap:6px;padding:8px;}
+  .detay-title{font-size:15px !important;}
+  .detay-titlebar .btn{font-size:11px;padding:5px 8px;}
+
+  /* Detay tablo */
+  .dcol-tarih{width:100px !important;font-size:11px;}
+  .dcol-aciklama{min-width:80px !important;font-size:12px;}
+  .dcol-borc,.dcol-tahsilat,.dcol-bakiye{width:75px !important;font-size:11px;}
+
+  /* Bakiye kutuları */
+  .genel-bakiye-bar{flex-wrap:wrap;gap:6px;padding:6px;}
+  .bakiye-box{flex:1;min-width:calc(50% - 6px);}
 }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
