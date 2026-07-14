@@ -1469,29 +1469,216 @@ const SUPA_URL = 'https://jmpyjudzpxijmpuhatxy.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptcHlqdWR6cHhpam1wdWhhdHh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4MDY2MDAsImV4cCI6MjA5NDM4MjYwMH0.wNDXV46Bsxn7-PtovsFD2wsrhuQKpya8S7V8mui4jbc';
 const HEADERS = { 'Content-Type':'application/json', 'apikey':SUPA_KEY, 'Authorization':'Bearer '+SUPA_KEY };
 
+// ═══════════════════════════════════════════════════════
+// ÇEVRİMDIŞI SİSTEM — IndexedDB + Otomatik Senkronizasyon
+// ═══════════════════════════════════════════════════════
+let idb = null;
+let cevrimici = navigator.onLine;
+
+window.addEventListener('online',  () => { cevrimici = true;  bantGoster(); bekleyenleriSync(); });
+window.addEventListener('offline', () => { cevrimici = false; bantGoster(); });
+
+function bantGoster() {
+  let el = document.getElementById('_offlineBant');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = '_offlineBant';
+    el.style.cssText = 'position:fixed;bottom:0;left:0;right:0;padding:5px;font-size:12px;font-weight:700;z-index:99999;text-align:center;transition:.3s';
+    document.body.appendChild(el);
+  }
+  if (cevrimici) {
+    el.textContent = '🟢 Çevrimiçi — Veriler senkronize ediliyor...';
+    el.style.cssText += ';background:rgba(27,94,32,.92);color:#fff;display:block';
+    setTimeout(() => el.style.display='none', 3000);
+  } else {
+    el.textContent = '🔴 Çevrimdışı — Değişiklikler yerel kaydediliyor, bağlantı gelince senkronize edilecek';
+    el.style.cssText += ';background:rgba(180,30,30,.92);color:#fff;display:block';
+  }
+}
+
+// IndexedDB başlat
+function idbAc() {
+  return new Promise((res, rej) => {
+    const req = indexedDB.open('mmk_offline_v1', 1);
+    req.onupgradeneeded = e => {
+      const db = e.target.result;
+      ['cariler','hareketler','bekleyen'].forEach(s => {
+        if (!db.objectStoreNames.contains(s)) {
+          if (s === 'cariler')    db.createObjectStore(s, { keyPath:'kod' });
+          else if (s === 'hareketler') db.createObjectStore(s, { keyPath:'id', autoIncrement:true });
+          else db.createObjectStore(s, { keyPath:'_sid', autoIncrement:true });
+        }
+      });
+    };
+    req.onsuccess  = e => res(e.target.result);
+    req.onerror    = e => rej(e.target.error);
+  });
+}
+
+async function idbTumunuGetir(store) {
+  const db = idb || (idb = await idbAc());
+  return new Promise((res, rej) => {
+    const tx = db.transaction(store, 'readonly');
+    const req = tx.objectStore(store).getAll();
+    req.onsuccess = e => res(e.target.result || []);
+    req.onerror   = e => rej(e.target.error);
+  });
+}
+
+async function idbYaz(store, data) {
+  const db = idb || (idb = await idbAc());
+  return new Promise((res, rej) => {
+    const tx = db.transaction(store, 'readwrite');
+    const st = tx.objectStore(store);
+    (Array.isArray(data) ? data : [data]).forEach(d => st.put(d));
+    tx.oncomplete = () => res();
+    tx.onerror    = e => rej(e.target.error);
+  });
+}
+
+async function idbSilKey(store, key) {
+  const db = idb || (idb = await idbAc());
+  return new Promise((res, rej) => {
+    const tx = db.transaction(store, 'readwrite');
+    tx.objectStore(store).delete(key);
+    tx.oncomplete = () => res();
+    tx.onerror    = e => rej(e.target.error);
+  });
+}
+
+async function bekleyeneEkle(islem) {
+  const db = idb || (idb = await idbAc());
+  return new Promise((res, rej) => {
+    const tx = db.transaction('bekleyen', 'readwrite');
+    tx.objectStore('bekleyen').add({ ...islem, _zaman: Date.now() });
+    tx.oncomplete = () => res();
+    tx.onerror    = e => rej(e.target.error);
+  });
+}
+
+// Çevrimdışıyken biriken işlemleri Supabase'e gönder
+async function bekleyenleriSync() {
+  if (!cevrimici) return;
+  const liste = await idbTumunuGetir('bekleyen');
+  if (!liste.length) return;
+  let ok = 0;
+  for (const is of liste) {
+    try {
+      if (is.tip === 'post')   await fetch(`${SUPA_URL}/rest/v1/${is.tablo}`, { method:'POST',   headers:{...HEADERS,'Prefer':'return=representation'}, body:JSON.stringify(is.data) });
+      if (is.tip === 'patch')  await fetch(`${SUPA_URL}/rest/v1/${is.tablo}?${is.params}`, { method:'PATCH',  headers:{...HEADERS,'Prefer':'return=representation'}, body:JSON.stringify(is.data) });
+      if (is.tip === 'delete') await fetch(`${SUPA_URL}/rest/v1/${is.tablo}?${is.params}`, { method:'DELETE', headers:HEADERS });
+      await idbSilKey('bekleyen', is._sid);
+      ok++;
+    } catch(e) { console.warn('Sync hatası:', e); }
+  }
+  if (ok > 0) { await cacheYenile(); if(typeof toast==='function') toast(`✓ ${ok} bekleyen işlem senkronize edildi`); }
+}
+
+// Supabase → IndexedDB cache güncelle
+async function cacheYenile() {
+  if (!cevrimici) return;
+  try {
+    const [c, h] = await Promise.all([
+      fetch(`${SUPA_URL}/rest/v1/cariler?order=kod.asc`,      { headers:HEADERS }).then(r=>r.json()),
+      fetch(`${SUPA_URL}/rest/v1/hareketler?order=id.asc`,    { headers:HEADERS }).then(r=>r.json()),
+    ]);
+    if (Array.isArray(c)) await idbYaz('cariler',    c);
+    if (Array.isArray(h)) await idbYaz('hareketler', h);
+  } catch(e) { console.warn('Cache yenileme hatası:', e); }
+}
+
+// Offline parametre filtresi
+function idbFiltrele(liste, params) {
+  let sonuc = [...liste];
+  for (const p of params.split('&').filter(Boolean)) {
+    const eq = p.match(/^(\w+)=eq\.(.+)$/);
+    if (eq) sonuc = sonuc.filter(r => String(r[eq[1]]) === String(eq[2]));
+    const inn = p.match(/^(\w+)=in\.\((.+)\)$/);
+    if (inn) { const vals = inn[2].split(','); sonuc = sonuc.filter(r => vals.includes(String(r[inn[1]]))); }
+  }
+  return sonuc;
+}
+
+// ── AKILLI SUPABASE FONKSİYONLARI ──────────────────────
+
 async function sbGet(tablo, params='') {
-  const r = await fetch(`${SUPA_URL}/rest/v1/${tablo}?${params}`, { headers:HEADERS });
-  if (!r.ok) throw new Error(await r.text());
-  return r.json();
+  if (cevrimici) {
+    try {
+      const r = await fetch(`${SUPA_URL}/rest/v1/${tablo}?${params}`, { headers:HEADERS });
+      if (!r.ok) throw new Error(await r.text());
+      const veri = await r.json();
+      if (tablo==='cariler'||tablo==='hareketler') await idbYaz(tablo, Array.isArray(veri)?veri:[veri]);
+      return veri;
+    } catch(e) { cevrimici=false; bantGoster(); }
+  }
+  const tumVeri = await idbTumunuGetir(tablo);
+  return params ? idbFiltrele(tumVeri, params) : tumVeri;
 }
+
 async function sbPost(tablo, data) {
-  const r = await fetch(`${SUPA_URL}/rest/v1/${tablo}`, {
-    method:'POST', headers:{...HEADERS,'Prefer':'return=representation'}, body:JSON.stringify(data)
-  });
-  if (!r.ok) throw new Error(await r.text());
-  return r.json();
+  if (cevrimici) {
+    try {
+      const r = await fetch(`${SUPA_URL}/rest/v1/${tablo}`, { method:'POST', headers:{...HEADERS,'Prefer':'return=representation'}, body:JSON.stringify(data) });
+      if (!r.ok) throw new Error(await r.text());
+      const sonuc = await r.json();
+      await idbYaz(tablo, Array.isArray(sonuc)?sonuc:[sonuc]);
+      return sonuc;
+    } catch(e) { cevrimici=false; bantGoster(); }
+  }
+  // Çevrimdışı
+  const items = (Array.isArray(data)?data:[data]).map((d,i)=>({...d, id:d.id||(Date.now()+i), _gecici:true}));
+  await idbYaz(tablo, items);
+  await bekleyeneEkle({ tip:'post', tablo, data });
+  if(typeof toast==='function') toast('📵 Çevrimdışı kaydedildi — bağlantıda senkronize edilecek');
+  return items;
 }
+
 async function sbPatch(tablo, params, data) {
-  const r = await fetch(`${SUPA_URL}/rest/v1/${tablo}?${params}`, {
-    method:'PATCH', headers:{...HEADERS,'Prefer':'return=representation'}, body:JSON.stringify(data)
-  });
-  if (!r.ok) throw new Error(await r.text());
-  return r.json();
+  if (cevrimici) {
+    try {
+      const r = await fetch(`${SUPA_URL}/rest/v1/${tablo}?${params}`, { method:'PATCH', headers:{...HEADERS,'Prefer':'return=representation'}, body:JSON.stringify(data) });
+      if (!r.ok) throw new Error(await r.text());
+      return r.json();
+    } catch(e) { cevrimici=false; bantGoster(); }
+  }
+  // Çevrimdışı güncelle
+  const tumVeri = await idbTumunuGetir(tablo);
+  const eq = params.match(/^(\w+)=eq\.(.+)$/);
+  if (eq) {
+    const guncellenmis = tumVeri.map(r => String(r[eq[1]])===String(eq[2]) ? {...r,...data} : r);
+    await idbYaz(tablo, guncellenmis);
+  }
+  await bekleyeneEkle({ tip:'patch', tablo, params, data });
 }
+
 async function sbDelete(tablo, params) {
-  const r = await fetch(`${SUPA_URL}/rest/v1/${tablo}?${params}`, { method:'DELETE', headers:HEADERS });
-  if (!r.ok) throw new Error(await r.text());
+  if (cevrimici) {
+    try {
+      const r = await fetch(`${SUPA_URL}/rest/v1/${tablo}?${params}`, { method:'DELETE', headers:HEADERS });
+      if (!r.ok) throw new Error(await r.text());
+    } catch(e) { cevrimici=false; bantGoster(); }
+  }
+  // Çevrimdışı sil
+  const tumVeri = await idbTumunuGetir(tablo);
+  const silinecekler = idbFiltrele(tumVeri, params);
+  const db = idb || (idb = await idbAc());
+  await new Promise(res => {
+    const tx = db.transaction(tablo, 'readwrite');
+    const st = tx.objectStore(tablo);
+    silinecekler.forEach(r => st.delete(tablo==='cariler' ? r.kod : r.id));
+    tx.oncomplete = res;
+  });
+  if (!cevrimici) await bekleyeneEkle({ tip:'delete', tablo, params });
 }
+
+// Başlangıç
+(async () => {
+  try {
+    idb = await idbAc();
+    bantGoster();
+    if (cevrimici) { await bekleyenleriSync(); await cacheYenile(); }
+  } catch(e) { console.warn('Başlangıç hatası:', e); }
+})();
 
 // ═══════════════════════════════════════════════════════
 // ŞİFRE
