@@ -1229,7 +1229,7 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
             <button class="btn btn-tahsilat" style="flex:1;" onclick="toptanciTahsilatPanelAc()">F6 Tahsilat</button>
           </div>
 
-          <div style="padding:14px;">
+          <div style="padding:14px;display:flex;flex-direction:column;flex:1;min-height:0;">
             <div id="toptanciBorcPanel" style="display:none;">
               <div class="islem-field-label">Açıklama</div>
               <input class="islem-input" id="txtToptanciBorcAciklama" placeholder="Fatura / açıklama..." onkeydown="if(event.key==='Enter')document.getElementById('txtToptanciBorcTutar').focus();if(event.key==='Escape')toptanciDetayKapat()">
@@ -1255,6 +1255,12 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
               • <span style="color:var(--red)">F5</span>: Borç paneli<br>
               • <span style="color:var(--green2)">F6</span>: Ödeme paneli<br>
               • <strong>ESC</strong>: Kapat
+            </div>
+
+            <div id="toptanciDetayBakiyeKutu" style="margin-top:auto;background:rgba(0,0,0,0.28);border:2px solid var(--border2);border-radius:10px;padding:18px;text-align:center;">
+              <div style="font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:1.8px;color:var(--text-muted);text-transform:uppercase;margin-bottom:8px;">GÜNCEL BAKİYE</div>
+              <div id="toptanciDetayBakiyeTutar" style="font-family:'Roboto Mono',monospace;font-size:34px;font-weight:900;line-height:1.1;">0,00 ₺</div>
+              <div id="toptanciDetayBakiyeDurum" style="font-size:12px;font-weight:800;letter-spacing:1px;margin-top:6px;"></div>
             </div>
           </div>
         </div>
@@ -1499,13 +1505,13 @@ function bantGoster() {
 // IndexedDB başlat
 function idbAc() {
   return new Promise((res, rej) => {
-    const req = indexedDB.open('mmk_offline_v1', 1);
+    const req = indexedDB.open('mmk_offline_v1', 2);
     req.onupgradeneeded = e => {
       const db = e.target.result;
-      ['cariler','hareketler','bekleyen'].forEach(s => {
+      ['cariler','hareketler','bekleyen','toptanciler','toptanci_hareketleri'].forEach(s => {
         if (!db.objectStoreNames.contains(s)) {
-          if (s === 'cariler')    db.createObjectStore(s, { keyPath:'kod' });
-          else if (s === 'hareketler') db.createObjectStore(s, { keyPath:'id', autoIncrement:true });
+          if (s === 'cariler' || s === 'toptanciler') db.createObjectStore(s, { keyPath:'kod' });
+          else if (s === 'hareketler' || s === 'toptanci_hareketleri') db.createObjectStore(s, { keyPath:'id', autoIncrement:true });
           else db.createObjectStore(s, { keyPath:'_sid', autoIncrement:true });
         }
       });
@@ -1607,7 +1613,7 @@ async function sbGet(tablo, params='') {
       const r = await fetch(`${SUPA_URL}/rest/v1/${tablo}?${params}`, { headers:HEADERS });
       if (!r.ok) throw new Error(await r.text());
       const veri = await r.json();
-      if (tablo==='cariler'||tablo==='hareketler') await idbYaz(tablo, Array.isArray(veri)?veri:[veri]);
+      if (tablo==='cariler'||tablo==='hareketler'||tablo==='toptanciler'||tablo==='toptanci_hareketleri') await idbYaz(tablo, Array.isArray(veri)?veri:[veri]);
       return veri;
     } catch(e) { cevrimici=false; bantGoster(); }
   }
@@ -1665,7 +1671,7 @@ async function sbDelete(tablo, params) {
   await new Promise(res => {
     const tx = db.transaction(tablo, 'readwrite');
     const st = tx.objectStore(tablo);
-    silinecekler.forEach(r => st.delete(tablo==='cariler' ? r.kod : r.id));
+    silinecekler.forEach(r => st.delete((tablo==='cariler'||tablo==='toptanciler') ? r.kod : r.id));
     tx.oncomplete = res;
   });
   if (!cevrimici) await bekleyeneEkle({ tip:'delete', tablo, params });
@@ -4720,9 +4726,22 @@ function toptanciDetayAc(kod) {
   toptanciSeciliDetayIds = [];
   const t = toptanciListesi.find(x => x.kod === kod);
   document.getElementById('toptanciDetayTitle').textContent = t.unvan;
+  toptanciDetayBakiyeGuncelle(t.bakiye);
   toptanciHareketleriGoster(kod);
   document.getElementById('toptanciDetayOverlay').classList.add('active');
   toptanciBorcPanelAc();
+}
+
+function toptanciDetayBakiyeGuncelle(bakiye) {
+  const tutarEl = document.getElementById('toptanciDetayBakiyeTutar');
+  const durumEl = document.getElementById('toptanciDetayBakiyeDurum');
+  if (!tutarEl || !durumEl) return;
+  const b = Number(bakiye) || 0;
+  const renk = b > 0 ? '#ff4444' : b < 0 ? 'var(--blue-bright)' : '#66bb6a';
+  tutarEl.style.color = renk;
+  tutarEl.textContent = fmt(b) + ' ₺';
+  durumEl.style.color = renk;
+  durumEl.textContent = b > 0 ? 'BORÇLU' : b < 0 ? 'ALACAKLI' : 'HESAP KAPALI';
 }
 
 function toptanciDetayKapat() {
@@ -4782,6 +4801,7 @@ async function toptanciHareketleriGoster(kod) {
 
       tbody.appendChild(tr);
     });
+    toptanciDetayBakiyeGuncelle(bakiye);
   } catch(err) { console.log('Hareketler:', err); }
 }
 
