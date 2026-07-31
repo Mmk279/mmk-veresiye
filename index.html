@@ -1470,6 +1470,17 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
 
 <script>
 // ═══════════════════════════════════════════════════════
+// SERVICE WORKER — Uygulamanın kendisini (index.html) çevrimdışı
+// açılabilir kılmak için. sw.js dosyasının index.html ile AYNI
+// klasörde sunucuya yüklenmiş olması gerekir.
+// ═══════════════════════════════════════════════════════
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(e => console.warn('Service Worker kayıt hatası:', e));
+  });
+}
+
+// ═══════════════════════════════════════════════════════
 // SUPABASE AYARLARI
 // ═══════════════════════════════════════════════════════
 const SUPA_URL = 'https://jmpyjudzpxijmpuhatxy.supabase.co';
