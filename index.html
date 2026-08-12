@@ -792,8 +792,7 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
 <!-- SEKMELER -->
 <div class="tab-bar">
   <div id="tabCari" class="tab-btn active" onclick="sekmeAc('cari')">👥 CARİ LİSTESİ</div>
-  <!-- Ürün Yönetimi sekmesi gizlendi. Tekrar aktif etmek için aşağıdaki satırdaki style="display:none;" kısmını silin. -->
- <div id="tabUrun" class="tab-btn" onclick="sekmeAc('urun')">🛒 ÜRÜN YÖNETİMİ</div>
+  <div id="tabUrun" class="tab-btn" onclick="sekmeAc('urun')">🛒 ÜRÜN YÖNETİMİ</div>
   <div id="tabToptanci" class="tab-btn" onclick="sekmeAc('toptanci')">🏭 TOPTANCI</div>
   <div class="tab-spacer"></div>
   <div id="tabDashboard" class="tab-btn" onclick="dashboardAc()" style="color:var(--blue-bright);">📊 DASHBOARD</div>
@@ -1517,12 +1516,12 @@ function bantGoster() {
 // IndexedDB başlat
 function idbAc() {
   return new Promise((res, rej) => {
-    const req = indexedDB.open('mmk_offline_v1', 2);
+    const req = indexedDB.open('mmk_offline_v1', 3);
     req.onupgradeneeded = e => {
       const db = e.target.result;
-      ['cariler','hareketler','bekleyen','toptanciler','toptanci_hareketleri'].forEach(s => {
+      ['cariler','hareketler','bekleyen','toptanciler','toptanci_hareketleri','urunler'].forEach(s => {
         if (!db.objectStoreNames.contains(s)) {
-          if (s === 'cariler' || s === 'toptanciler') db.createObjectStore(s, { keyPath:'kod' });
+          if (s === 'cariler' || s === 'toptanciler' || s === 'urunler') db.createObjectStore(s, { keyPath:'kod' });
           else if (s === 'hareketler' || s === 'toptanci_hareketleri') db.createObjectStore(s, { keyPath:'id', autoIncrement:true });
           else db.createObjectStore(s, { keyPath:'_sid', autoIncrement:true });
         }
@@ -1625,7 +1624,7 @@ async function sbGet(tablo, params='') {
       const r = await fetch(`${SUPA_URL}/rest/v1/${tablo}?${params}`, { headers:HEADERS });
       if (!r.ok) throw new Error(await r.text());
       const veri = await r.json();
-      if (tablo==='cariler'||tablo==='hareketler'||tablo==='toptanciler'||tablo==='toptanci_hareketleri') await idbYaz(tablo, Array.isArray(veri)?veri:[veri]);
+      if (tablo==='cariler'||tablo==='hareketler'||tablo==='toptanciler'||tablo==='toptanci_hareketleri'||tablo==='urunler') await idbYaz(tablo, Array.isArray(veri)?veri:[veri]);
       return veri;
     } catch(e) { cevrimici=false; bantGoster(); }
   }
@@ -1683,7 +1682,7 @@ async function sbDelete(tablo, params) {
   await new Promise(res => {
     const tx = db.transaction(tablo, 'readwrite');
     const st = tx.objectStore(tablo);
-    silinecekler.forEach(r => st.delete((tablo==='cariler'||tablo==='toptanciler') ? r.kod : r.id));
+    silinecekler.forEach(r => st.delete((tablo==='cariler'||tablo==='toptanciler'||tablo==='urunler') ? r.kod : r.id));
     tx.oncomplete = res;
   });
   if (!cevrimici) await bekleyeneEkle({ tip:'delete', tablo, params });
