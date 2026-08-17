@@ -3639,9 +3639,10 @@ function whatsappGonder() {
 // ═══════════════════════════════════════════════════════
 // BORÇ MAKBUZU
 // ═══════════════════════════════════════════════════════
-function makbuzIcerikOlustur(cari, hareketler, sadeceSon, ozelBaslik) {
+function makbuzIcerikOlustur(cari, hareketler, sadeceSon, ozelBaslik, ozelBakiye, ozelBakiyeEtiket) {
   const bugun = new Date().toLocaleString('tr-TR');
-  const bakiye = Number(cari.bakiye);
+  const bakiye = (ozelBakiye !== undefined && ozelBakiye !== null) ? Number(ozelBakiye) : Number(cari.bakiye);
+  const bakiyeEtiket = ozelBakiyeEtiket || 'Güncel Bakiye';
   const bilgi = musteriBilgisiAl(cari.kod);
 
   // Logo base64'ü al (titlebar img'den)
@@ -3699,7 +3700,7 @@ function makbuzIcerikOlustur(cari, hareketler, sadeceSon, ozelBaslik) {
             ${bilgi.adres ? `<div style="font-size:11px;color:#666;">📍 ${bilgi.adres}</div>` : ''}
           </div>
           <div style="text-align:right;">
-            <div style="font-size:11px;color:#666;">Güncel Bakiye</div>
+            <div style="font-size:11px;color:#666;">${bakiyeEtiket}</div>
             <div style="font-size:22px;font-weight:700;color:${bakiye>0?'#c0392b':bakiye<0?'#2980b9':'#27ae60'};">${bakiye.toLocaleString('tr-TR',{minimumFractionDigits:2})} ₺</div>
             <div style="font-size:11px;font-weight:700;color:${bakiye>0?'#c0392b':bakiye<0?'#2980b9':'#27ae60'};">${bakiye>0?'BORÇLU':bakiye<0?'ALACAKLI':'HESAP KAPALI'}</div>
           </div>
@@ -3743,6 +3744,8 @@ function makbuzIcerikOlustur(cari, hareketler, sadeceSon, ozelBaslik) {
 
 let aktifMakbuzHareketler = [];
 let aktifMakbuzBaslik = null;
+let aktifMakbuzBakiye = null;
+let aktifMakbuzBakiyeEtiket = null;
 
 async function makbuzYazdir() {
   const c = cariListesi.find(x => x.kod == aktifDetayKod);
@@ -3752,6 +3755,8 @@ async function makbuzYazdir() {
     const hareketler = await sbGet('hareketler', `cari_kod=eq.${aktifDetayKod}&order=id.desc`);
     aktifMakbuzHareketler = hareketler;
     aktifMakbuzBaslik = null;
+    aktifMakbuzBakiye = null;
+    aktifMakbuzBakiyeEtiket = null;
     const icerik = makbuzIcerikOlustur(c, hareketler, true);
     document.getElementById('makbuzOnizleme').innerHTML = icerik;
     document.getElementById('makbuzOverlay').classList.add('active');
@@ -3768,9 +3773,14 @@ async function secilenFisYazdir() {
     const hareketler = await sbGet('hareketler', `cari_kod=eq.${aktifDetayKod}&order=id.desc`);
     const secilenler = hareketler.filter(r => seciliDetayIds.includes(parseInt(r.id)));
     if (!secilenler.length) { toast('Seçili hareketler bulunamadı, listeyi yenileyip tekrar deneyin.', true); loading(false); return; }
+    let toplam = 0;
+    secilenler.forEach(r => { toplam += Number(r.borc) - Number(r.tahsilat); });
+    const tumuSecili = secilenler.length === hareketler.length;
     aktifMakbuzHareketler = secilenler;
     aktifMakbuzBaslik = `SEÇİLİ HAREKETLER (${secilenler.length} adet)`;
-    const icerik = makbuzIcerikOlustur(c, secilenler, false, aktifMakbuzBaslik);
+    aktifMakbuzBakiye = toplam;
+    aktifMakbuzBakiyeEtiket = tumuSecili ? 'Genel Toplam' : 'Seçili Toplam';
+    const icerik = makbuzIcerikOlustur(c, secilenler, false, aktifMakbuzBaslik, aktifMakbuzBakiye, aktifMakbuzBakiyeEtiket);
     document.getElementById('makbuzOnizleme').innerHTML = icerik;
     document.getElementById('makbuzOverlay').classList.add('active');
   } catch(err) { toast('Fiş hatası: ' + err.message, true); }
@@ -3780,7 +3790,7 @@ async function secilenFisYazdir() {
 function makbuzYazdirTam() {
   const c = cariListesi.find(x => x.kod == aktifDetayKod);
   if (!c) return;
-  const icerik = makbuzIcerikOlustur(c, aktifMakbuzHareketler, false, aktifMakbuzBaslik);
+  const icerik = makbuzIcerikOlustur(c, aktifMakbuzHareketler, false, aktifMakbuzBaslik, aktifMakbuzBakiye, aktifMakbuzBakiyeEtiket);
   const w = window.open('', '_blank');
   if (!w) { toast('Popup engelleyici aktif! Lütfen izin verin.', true); return; }
   w.document.write(`<!DOCTYPE html>
