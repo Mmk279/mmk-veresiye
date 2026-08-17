@@ -962,6 +962,13 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
     
     <div class="detay-main-layout">
       <div class="detay-left-pane">
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid var(--border);flex-shrink:0;">
+          <span style="font-size:14px;opacity:.7;">🔎</span>
+          <input type="text" id="txtDetayAra" placeholder="Açıklama / isim ara..." autocomplete="off"
+            style="flex:1;background:var(--panel2);border:1px solid var(--border2);color:var(--white);border-radius:6px;padding:7px 10px;font-size:13px;outline:none;"
+            oninput="detayAra(this.value)">
+          <button class="btn" id="btnDetayAraTemizle" onclick="detayAraTemizle()" style="display:none;background:var(--panel2);border:1px solid var(--border2);color:var(--text-muted);font-size:12px;padding:6px 10px;">✕</button>
+        </div>
         <div class="detay-table-wrap">
           <table class="detay-table">
             <thead>
@@ -1019,6 +1026,7 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
       <button class="btn btn-pdf" onclick="detayPdf()">PDF AL</button>
       <button class="btn" style="background:#075e54;color:#fff;" onclick="whatsappMesajAc()">📱 WHATSAPP</button>
       <button class="btn" style="background:#6a1b9a;color:#fff;" onclick="makbuzYazdir()">🧾 MAKBUZ</button>
+      <button class="btn" style="background:#00695c;color:#fff;" onclick="secilenFisYazdir()">🧾 SEÇİLİ FİŞ</button>
       <button class="btn" style="background:#1565c0;color:#fff;border:1px solid #1976d2;" onclick="exceldenAlAc()">📥 EXCEL'DEN AL</button>
       <div class="detay-spacer"></div>
       <button class="btn btn-borc" onclick="borcPanelAc()">F5 Borç</button>
@@ -2035,7 +2043,10 @@ async function cariAc(kod) {
   aktifDetayKod=kod; seciliDetayIds=[];
   document.getElementById('detayTitle').textContent=c.unvan;
   detayBakiyeGuncelle(c.bakiye);
+  const araKutu = document.getElementById('txtDetayAra');
+  if (araKutu) araKutu.value = '';
   await detayYukle();
+  detayAra('');
   document.getElementById('detayOverlay').classList.add('active');
   islemPanelKapat();
 }
@@ -2108,6 +2119,37 @@ async function detayYukle() {
   loading(false);
 }
 
+function detayAra(deger) {
+  const kelime = (deger || '').trim().toLocaleLowerCase('tr-TR');
+  const satirlar = document.querySelectorAll('#detayTbody tr');
+  let goruntulenen = 0;
+  satirlar.forEach(tr => {
+    const aciklama = (tr.dataset.aciklama || '').toLocaleLowerCase('tr-TR');
+    const eslesiyor = !kelime || aciklama.includes(kelime);
+    tr.style.display = eslesiyor ? '' : 'none';
+    if (eslesiyor) goruntulenen++;
+  });
+  const temizleBtn = document.getElementById('btnDetayAraTemizle');
+  if (temizleBtn) temizleBtn.style.display = kelime ? 'inline-block' : 'none';
+  let bosMesaj = document.getElementById('detayAraBosMesaj');
+  if (kelime && goruntulenen === 0) {
+    if (!bosMesaj) {
+      bosMesaj = document.createElement('tr');
+      bosMesaj.id = 'detayAraBosMesaj';
+      bosMesaj.innerHTML = `<td colspan="6" style="text-align:center;padding:20px;color:var(--text-muted);">"${deger}" için sonuç bulunamadı.</td>`;
+      document.getElementById('detayTbody').appendChild(bosMesaj);
+    }
+  } else if (bosMesaj) {
+    bosMesaj.remove();
+  }
+}
+
+function detayAraTemizle() {
+  const kutu = document.getElementById('txtDetayAra');
+  if (kutu) kutu.value = '';
+  detayAra('');
+}
+
 function detayBakiyeGuncelle(bakiye) {
   const tutarEl = document.getElementById('detayBakiyeTutar');
   const durumEl = document.getElementById('detayBakiyeDurum');
@@ -2121,20 +2163,22 @@ function detayBakiyeGuncelle(bakiye) {
 }
 
 function detayTumunuSec(secili) {
-  const satirlar = document.querySelectorAll('#detayTbody tr');
-  const chkler = document.querySelectorAll('.chk-detay-satir');
+  const satirlar = document.querySelectorAll('#detayTbody tr[data-id]');
   seciliDetayIds = [];
   satirlar.forEach(tr => {
-    if (secili) {
+    const gizli = tr.style.display === 'none';
+    const chk = tr.querySelector('.chk-detay-satir');
+    if (secili && !gizli) {
       tr.classList.add('selected');
       tr.querySelector('.row-arrow').style.display = 'inline';
+      if (chk) chk.checked = true;
       seciliDetayIds.push(parseInt(tr.dataset.id));
     } else {
       tr.classList.remove('selected');
       tr.querySelector('.row-arrow').style.display = 'none';
+      if (chk) chk.checked = false;
     }
   });
-  chkler.forEach(c => c.checked = secili);
 }
 
 function detaySatirChkDegisti(chk) {
@@ -3595,7 +3639,7 @@ function whatsappGonder() {
 // ═══════════════════════════════════════════════════════
 // BORÇ MAKBUZU
 // ═══════════════════════════════════════════════════════
-function makbuzIcerikOlustur(cari, hareketler, sadeceSon) {
+function makbuzIcerikOlustur(cari, hareketler, sadeceSon, ozelBaslik) {
   const bugun = new Date().toLocaleString('tr-TR');
   const bakiye = Number(cari.bakiye);
   const bilgi = musteriBilgisiAl(cari.kod);
@@ -3664,7 +3708,7 @@ function makbuzIcerikOlustur(cari, hareketler, sadeceSon) {
         <!-- HAREKETLER -->
         <div style="padding:12px 18px;">
           <div style="font-size:11px;font-weight:700;color:#666;margin-bottom:8px;letter-spacing:.5px;">
-            ${sadeceSon ? 'SON İŞLEMLER' : 'TÜM HAREKETLER'}
+            ${ozelBaslik || (sadeceSon ? 'SON İŞLEMLER' : 'TÜM HAREKETLER')}
           </div>
           <table style="width:100%;border-collapse:collapse;font-size:12px;">
             <thead>
@@ -3698,6 +3742,7 @@ function makbuzIcerikOlustur(cari, hareketler, sadeceSon) {
 }
 
 let aktifMakbuzHareketler = [];
+let aktifMakbuzBaslik = null;
 
 async function makbuzYazdir() {
   const c = cariListesi.find(x => x.kod == aktifDetayKod);
@@ -3706,6 +3751,7 @@ async function makbuzYazdir() {
   try {
     const hareketler = await sbGet('hareketler', `cari_kod=eq.${aktifDetayKod}&order=id.desc`);
     aktifMakbuzHareketler = hareketler;
+    aktifMakbuzBaslik = null;
     const icerik = makbuzIcerikOlustur(c, hareketler, true);
     document.getElementById('makbuzOnizleme').innerHTML = icerik;
     document.getElementById('makbuzOverlay').classList.add('active');
@@ -3713,10 +3759,28 @@ async function makbuzYazdir() {
   loading(false);
 }
 
+async function secilenFisYazdir() {
+  if (!seciliDetayIds.length) { toast('Fiş için önce hareket seçin (kutucukları işaretleyin)!', true); return; }
+  const c = cariListesi.find(x => x.kod == aktifDetayKod);
+  if (!c) return;
+  loading(true, 'Fiş hazırlanıyor...');
+  try {
+    const hareketler = await sbGet('hareketler', `cari_kod=eq.${aktifDetayKod}&order=id.desc`);
+    const secilenler = hareketler.filter(r => seciliDetayIds.includes(parseInt(r.id)));
+    if (!secilenler.length) { toast('Seçili hareketler bulunamadı, listeyi yenileyip tekrar deneyin.', true); loading(false); return; }
+    aktifMakbuzHareketler = secilenler;
+    aktifMakbuzBaslik = `SEÇİLİ HAREKETLER (${secilenler.length} adet)`;
+    const icerik = makbuzIcerikOlustur(c, secilenler, false, aktifMakbuzBaslik);
+    document.getElementById('makbuzOnizleme').innerHTML = icerik;
+    document.getElementById('makbuzOverlay').classList.add('active');
+  } catch(err) { toast('Fiş hatası: ' + err.message, true); }
+  loading(false);
+}
+
 function makbuzYazdirTam() {
   const c = cariListesi.find(x => x.kod == aktifDetayKod);
   if (!c) return;
-  const icerik = makbuzIcerikOlustur(c, aktifMakbuzHareketler, false);
+  const icerik = makbuzIcerikOlustur(c, aktifMakbuzHareketler, false, aktifMakbuzBaslik);
   const w = window.open('', '_blank');
   if (!w) { toast('Popup engelleyici aktif! Lütfen izin verin.', true); return; }
   w.document.write(`<!DOCTYPE html>
