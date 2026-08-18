@@ -2038,6 +2038,14 @@ async function bakiyeGuncelleDB(kod) {
 let aktifDetayKod=null;
 let seciliDetayIds=[];
 
+function hareketleriTariheGoreSirala(hareketler, azalan) {
+  return [...hareketler].sort((a,b)=>{
+    const ta=a.tarih?new Date(a.tarih).getTime():0, tb=b.tarih?new Date(b.tarih).getTime():0;
+    if (ta!==tb) return azalan ? (tb-ta) : (ta-tb);
+    return azalan ? (Number(b.id)-Number(a.id)) : (Number(a.id)-Number(b.id));
+  });
+}
+
 async function cariAc(kod) {
   const c=cariListesi.find(x=>x.kod==kod); if(!c) return;
   aktifDetayKod=kod; seciliDetayIds=[];
@@ -2054,7 +2062,8 @@ async function cariAc(kod) {
 async function detayYukle() {
   loading(true,'Hareketler yükleniyor...');
   try {
-    const hareketler = await sbGet('hareketler',`cari_kod=eq.${aktifDetayKod}&order=id.desc`);
+    let hareketler = await sbGet('hareketler',`cari_kod=eq.${aktifDetayKod}&order=tarih.desc,id.desc`);
+    hareketler = hareketleriTariheGoreSirala(hareketler, true);
     const tbody=document.getElementById('detayTbody'); tbody.innerHTML='';
     seciliDetayIds=[];
     const eskidenYeni=[...hareketler].reverse();
@@ -2273,7 +2282,8 @@ async function hareketSil(){
 }
 
 async function detayExcel(){
-  const hareketler=await sbGet('hareketler',`cari_kod=eq.${aktifDetayKod}&order=id.asc`);
+  let hareketler=await sbGet('hareketler',`cari_kod=eq.${aktifDetayKod}&order=tarih.asc,id.asc`);
+  hareketler=hareketleriTariheGoreSirala(hareketler, false);
   const c=cariListesi.find(x=>x.kod==aktifDetayKod);
   let csv='Tarih;Açıklama;Borç;Tahsilat;Bakiye\n',b=0;
   hareketler.forEach(r=>{b+=(Number(r.borc)-Number(r.tahsilat));csv+=`${r.tarih};${r.aciklama};${fmt(r.borc)};${fmt(r.tahsilat)};${fmt(b)}\n`;});
@@ -2515,7 +2525,8 @@ async function excelVerisiniYukle() {
 
 
 async function detayPdf(){
-  const hareketler=await sbGet('hareketler',`cari_kod=eq.${aktifDetayKod}&order=id.asc`);
+  let hareketler=await sbGet('hareketler',`cari_kod=eq.${aktifDetayKod}&order=tarih.asc,id.asc`);
+  hareketler=hareketleriTariheGoreSirala(hareketler, false);
   const c=cariListesi.find(x=>x.kod==aktifDetayKod);
   let html=`<html><head><meta charset='utf-8'><style>body{font-family:Arial;padding:20px}h2{color:#1565c0}table{width:100%;border-collapse:collapse;margin-top:16px}th,td{border:1px solid #ddd;padding:8px}th{background:#1a2f4a;color:#fff}.r{color:red;font-weight:bold}.g{color:green;font-weight:bold}</style></head><body><h2>${c?.unvan||''} - Müşteri Ekstresi</h2><table><tr><th>Tarih</th><th>Açıklama</th><th>Borç</th><th>Tahsilat</th><th>Bakiye</th></tr>`;
   let b=0;
@@ -3752,7 +3763,7 @@ async function makbuzYazdir() {
   if (!c) return;
   loading(true, 'Makbuz hazırlanıyor...');
   try {
-    const hareketler = await sbGet('hareketler', `cari_kod=eq.${aktifDetayKod}&order=id.desc`);
+    const hareketler = hareketleriTariheGoreSirala(await sbGet('hareketler', `cari_kod=eq.${aktifDetayKod}&order=tarih.desc,id.desc`), true);
     aktifMakbuzHareketler = hareketler;
     aktifMakbuzBaslik = null;
     aktifMakbuzBakiye = null;
@@ -3770,7 +3781,7 @@ async function secilenFisYazdir() {
   if (!c) return;
   loading(true, 'Fiş hazırlanıyor...');
   try {
-    const hareketler = await sbGet('hareketler', `cari_kod=eq.${aktifDetayKod}&order=id.desc`);
+    const hareketler = hareketleriTariheGoreSirala(await sbGet('hareketler', `cari_kod=eq.${aktifDetayKod}&order=tarih.desc,id.desc`), true);
     const secilenler = hareketler.filter(r => seciliDetayIds.includes(parseInt(r.id)));
     if (!secilenler.length) { toast('Seçili hareketler bulunamadı, listeyi yenileyip tekrar deneyin.', true); loading(false); return; }
     let toplam = 0;
