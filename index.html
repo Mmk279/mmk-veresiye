@@ -2038,9 +2038,22 @@ async function bakiyeGuncelleDB(kod) {
 let aktifDetayKod=null;
 let seciliDetayIds=[];
 
+function tarihStrToZaman(tarihStr) {
+  if (!tarihStr) return 0;
+  // Beklenen format: "dd.mm.yyyy HH:MM" (örn: 19.08.2026 14:30)
+  const m = String(tarihStr).match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})(?:[ T](\d{1,2}):(\d{2}))?/);
+  if (!m) {
+    // Format tanınmazsa eski davranışa (Date ile parse denemesi) düş
+    const t = new Date(tarihStr).getTime();
+    return isNaN(t) ? 0 : t;
+  }
+  const [, d, mo, y, h, mi] = m;
+  return new Date(Number(y), Number(mo)-1, Number(d), Number(h||0), Number(mi||0)).getTime();
+}
+
 function hareketleriTariheGoreSirala(hareketler, azalan) {
   return [...hareketler].sort((a,b)=>{
-    const ta=a.tarih?new Date(a.tarih).getTime():0, tb=b.tarih?new Date(b.tarih).getTime():0;
+    const ta=tarihStrToZaman(a.tarih), tb=tarihStrToZaman(b.tarih);
     if (ta!==tb) return azalan ? (tb-ta) : (ta-tb);
     return azalan ? (Number(b.id)-Number(a.id)) : (Number(a.id)-Number(b.id));
   });
