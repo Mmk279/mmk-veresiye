@@ -490,9 +490,23 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
   .tab-spacer{flex:0;max-width:0;}
 
   /* Cari ekranı: sağ paneli alta indir */
-  .app-body{
-    grid-template-columns:1fr;
-    grid-template-rows:1fr 340px;
+  /* Liste ekranı kaplar; saat/takvim listenin ALTINDA, kaydırınca görünür */
+  #cariPane{
+    display:block;
+    overflow-y:auto;
+    overflow-x:hidden;
+    -webkit-overflow-scrolling:touch;
+  }
+  #cariPane .left-pane{
+    height:100%;
+    min-height:380px;
+    border-right:none;
+  }
+  #cariPane .right-pane{
+    height:auto;
+    overflow:visible;
+    border-top:2px solid var(--border);
+    padding:8px 10px 24px;
   }
   .right-pane{border-top:2px solid var(--border);}
   .detay-main-layout{grid-template-columns:1fr;}
@@ -507,7 +521,8 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
   }
   .toolbar-label{font-size:11px;}
   #txtCariKod{width:40px;}
-  #txtCariUnvan{width:calc(100% - 90px) !important;flex:1;}
+  #txtCariUnvan{width:auto !important;flex:1;min-width:0;}
+  #btnCariEkle{padding:8px 14px;}
   #txtAra{width:100% !important;flex:1;}
 
   /* Alt butonlar: eşit genişlik, iki sıra */
@@ -524,7 +539,20 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
     text-align:center;
   }
 
-  /* Cari tablo sütunları */
+  /* Cari/Toptancı tablo sütunları: ünvan esner, tutar görünür kalır */
+  #cariPane table.main-table thead th,
+  #toptanciPane table.main-table thead th{font-size:12px;padding:8px 4px;letter-spacing:.3px;}
+  #cariPane table.main-table tbody td,
+  #toptanciPane table.main-table tbody td{font-size:15px;padding:10px 4px;}
+  #cariPane th.col-arrow,#cariPane td.col-arrow{width:16px;padding:0;}
+  #cariPane th.col-kod,#cariPane td.col-kod{width:40px;text-align:center;}
+  #cariPane th.col-unvan,#cariPane td.col-unvan,
+  #toptanciPane th.col-unvan,#toptanciPane td.col-unvan{width:auto;}
+  #cariPane th.col-tutar,#cariPane td.col-tutar{width:104px;}
+  #toptanciPane th.col-tutar,#toptanciPane td.col-tutar{width:104px;}
+  #cariPane td.col-tutar{font-size:18px;font-weight:800;}
+  #cariPane td.col-unvan{white-space:normal;word-break:break-word;line-height:1.15;}
+  /* Cari tablo sütunları (eski) */
   .th-kod,.td-kod{width:36px !important;font-size:12px;padding:6px 4px !important;}
   .th-unvan,.td-unvan{font-size:13px;padding:6px 4px !important;}
   .th-tutar,.td-tutar{width:80px !important;font-size:12px;padding:6px 4px !important;}
@@ -565,6 +593,15 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
   /* Bakiye kutuları */
   .genel-bakiye-bar{flex-wrap:wrap;gap:6px;padding:6px;}
   .bakiye-box{flex:1;min-width:calc(50% - 6px);}
+}
+
+/* Telefon yatay / kısa ekran: liste solda, saat-takvim sağda */
+@media (max-height:520px) and (orientation:landscape), (max-width:950px) and (orientation:landscape){
+  #cariPane{display:grid !important;overflow:hidden !important;
+    grid-template-columns:minmax(0,1fr) minmax(200px,38vw) !important;
+    grid-template-rows:minmax(0,1fr) !important;}
+  #cariPane .left-pane{height:100% !important;min-height:0 !important;}
+  #cariPane .right-pane{height:100% !important;overflow-y:auto !important;border-top:none !important;border-left:2px solid var(--border);}
 }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -803,7 +840,8 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
     <div class="toolbar">
       <span class="toolbar-label">Cari Ünvan</span>
       <input class="tb-input" id="txtCariKod" placeholder="Kod" readonly>
-      <input class="tb-input" id="txtCariUnvan" placeholder="Müşteri adı girin..." onkeydown="cariUnvanKeyDown(event)">
+      <input class="tb-input" id="txtCariUnvan" placeholder="Müşteri adı girin..." enterkeyhint="done" onkeydown="cariUnvanKeyDown(event)">
+      <button class="btn" id="btnCariEkle" style="background:var(--accent);color:#fff;" onclick="cariEkle()">+ EKLE</button>
       <span class="toolbar-label" style="margin-left:8px">Müşteri Ara</span>
       <input class="tb-input" id="txtAra" placeholder="Ara..." oninput="araFilter()">
       <button class="btn" style="background:var(--panel2);color:var(--blue-bright);border:1px solid var(--border2);" onclick="cariDuzenleAc()">✏️ F2 Düzenle</button>
@@ -1989,8 +2027,12 @@ function satirSec(tr, ev) {
 
 function araFilter() { tabloYenile(); }
 
-async function cariUnvanKeyDown(e) {
+function cariUnvanKeyDown(e) {
   if (e.key!=='Enter') return;
+  cariEkle();
+}
+
+async function cariEkle() {
   const unvan = document.getElementById('txtCariUnvan').value.trim().toUpperCase();
   if (!unvan) return;
   const kod = parseInt(document.getElementById('txtCariKod').value);
