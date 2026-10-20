@@ -491,8 +491,8 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
 
   /* Cari ekranı: sağ paneli alta indir */
   /* Liste ekranı kaplar; saat/takvim listenin ALTINDA, kaydırınca görünür */
-  #cariPane{
-    display:block;
+  #cariPane[style*="grid"]{
+    display:block !important;
     overflow-y:auto;
     overflow-x:hidden;
     -webkit-overflow-scrolling:touch;
@@ -539,6 +539,25 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
     text-align:center;
   }
 
+  /* Toptancı: Cari ekranı gibi — liste ekranı doldurur, dashboard altta kaydırılır */
+  #toptanciPane[style*="grid"]{
+    display:block !important;
+    overflow-y:auto;
+    overflow-x:hidden;
+    -webkit-overflow-scrolling:touch;
+  }
+  #toptanciPane .left-pane{height:100%;min-height:380px;border-right:none;}
+  #toptanciPane .right-pane{
+    height:auto;
+    overflow:visible;
+    border-top:2px solid var(--border);
+    padding:8px 10px 24px;
+  }
+  #toptanciPane .toolbar .tb-input{width:auto !important;flex:1;min-width:0;}
+  #toptanciPane #txtToptanciAra{width:100% !important;flex-basis:100%;}
+  #toptanciPane th.col-arrow,#toptanciPane td.col-arrow{width:16px;padding:0;}
+  #toptanciPane td.col-tutar{font-size:18px;font-weight:800;}
+  #toptanciPane td.col-unvan{white-space:normal;word-break:break-word;line-height:1.15;}
   /* Cari/Toptancı tablo sütunları: ünvan esner, tutar görünür kalır */
   #cariPane table.main-table thead th,
   #toptanciPane table.main-table thead th{font-size:12px;padding:8px 4px;letter-spacing:.3px;}
@@ -597,11 +616,16 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
 
 /* Telefon yatay / kısa ekran: liste solda, saat-takvim sağda */
 @media (max-height:520px) and (orientation:landscape), (max-width:950px) and (orientation:landscape){
-  #cariPane{display:grid !important;overflow:hidden !important;
+  #cariPane[style*="grid"]{display:grid !important;overflow:hidden !important;
     grid-template-columns:minmax(0,1fr) minmax(200px,38vw) !important;
     grid-template-rows:minmax(0,1fr) !important;}
   #cariPane .left-pane{height:100% !important;min-height:0 !important;}
   #cariPane .right-pane{height:100% !important;overflow-y:auto !important;border-top:none !important;border-left:2px solid var(--border);}
+  #toptanciPane[style*="grid"]{display:grid !important;overflow:hidden !important;
+    grid-template-columns:minmax(0,1fr) minmax(200px,38vw) !important;
+    grid-template-rows:minmax(0,1fr) !important;}
+  #toptanciPane .left-pane{height:100% !important;min-height:0 !important;}
+  #toptanciPane .right-pane{height:100% !important;overflow-y:auto !important;border-top:none !important;border-left:2px solid var(--border);}
 }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -1080,7 +1104,8 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
   <div class="left-pane">
     <div class="toolbar">
       <span class="toolbar-label">Toptancı</span>
-      <input class="tb-input" id="txtToptanciEkle" placeholder="Toptancı adı girin ve ENTER'a basın..." style="width:200px;" onkeydown="if(event.key==='Enter')toptanciEkleDirectly()">
+      <input class="tb-input" id="txtToptanciEkle" placeholder="Toptancı adı girin ve ENTER'a basın..." style="width:200px;" enterkeyhint="done" onkeydown="if(event.key==='Enter')toptanciEkleDirectly()">
+      <button class="btn" id="btnToptanciEkle" style="background:var(--accent);color:#fff;" onclick="toptanciEkleDirectly()">+ EKLE</button>
       <span class="toolbar-label" style="margin-left:8px">Ara</span>
       <input class="tb-input" id="txtToptanciAra" placeholder="Ara..." style="width:160px;" oninput="toptanciAraFilter()" onkeydown="if(event.key==='ArrowDown')toptanciOkTusuAc('asagi');if(event.key==='ArrowUp')toptanciOkTusuAc('yukari')">
       <button class="btn btn-danger" onclick="toptanciSilSecili()" style="margin-left:auto;">SİL</button>
